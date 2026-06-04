@@ -1,3 +1,9 @@
+# Notice
+This repository is an archive of Mesen as it was around version 2.1.1 in mid-2025.  
+For the latest version of Mesen, see here: https://github.com/nesdev-org/MesenCE
+
+---
+
 # Mesen
 
 Mesen is a multi-system emulator (NES, SNES, Game Boy, Game Boy Advance, PC Engine, SMS/Game Gear, WonderSwan) for Windows, Linux and macOS.  
