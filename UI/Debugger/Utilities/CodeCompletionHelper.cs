@@ -230,9 +230,9 @@ namespace Mesen.Debugger.Utilities
 
 			sb.AppendLine("<div class=\"maincontent\">");
 
-			sb.AppendLine("<h1 class=\"mainheader\">Mesen Lua API reference</h1>");
+			sb.AppendLine("<h1 class=\"mainheader\">Mesen Orion Lua API reference</h1>");
 			sb.AppendLine("<p><strong>Important: </strong>This API is similar but not completely compatible with the old Mesen 0.9.x (or Mesen-S) Lua APIs.</p>");
-			sb.AppendLine("<p>Generated on " + EmuApi.GetMesenBuildDate() + " for Mesen " + EmuApi.GetMesenVersion().ToString() + ".</p>");
+			sb.AppendLine("<p>Generated on " + EmuApi.GetMesenBuildDate() + " for Mesen Orion " + EmuApi.GetMesenVersion().ToString() + ".</p>");
 
 			foreach(DocEntryViewModel entry in _documentation.Values.OrderBy(x => (int)x.Category).ThenBy(x => (int?)x.Subcategory)) {
 				if(entry.Category != category) {

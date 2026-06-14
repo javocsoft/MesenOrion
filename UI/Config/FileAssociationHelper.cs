@@ -148,7 +148,7 @@ namespace Mesen.Config
 			string content = 
 				"[Desktop Entry]" + Environment.NewLine +
 				"Type=Application" + Environment.NewLine +
-				"Name=Mesen" + Environment.NewLine +
+				"Name=Mesen Orion" + Environment.NewLine +
 				"Comment=Emulator" + Environment.NewLine +
 				"Keywords=game;emulator;emu" + Environment.NewLine +
 				"Categories=GNOME;GTK;Game;Emulator;" + Environment.NewLine +

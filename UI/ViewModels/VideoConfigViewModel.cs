@@ -301,7 +301,7 @@ namespace Mesen.ViewModels
 
 		private async System.Threading.Tasks.Task ExportCustomizationsAsync()
 		{
-			string? path = await FileDialogHelper.SaveFile(null, "MesenVideoCustomizations.json", ApplicationHelper.GetMainWindow(), "json");
+			string? path = await FileDialogHelper.SaveFile(null, "MesenOrionVideoCustomizations.json", ApplicationHelper.GetMainWindow(), "json");
 			if(path == null) {
 				return;
 			}
