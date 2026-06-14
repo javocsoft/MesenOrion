@@ -20,6 +20,15 @@ vector<string> ShaderManager::GetCandidateFolders()
 	//"Shaders" or "shaders" (the Linux filesystem is case-sensitive).
 	vector<string> folders;
 
+	try {
+		string shaderFolder = FolderUtilities::GetShaderFolder();
+		if(!shaderFolder.empty()) {
+			folders.push_back(shaderFolder);
+		}
+	} catch(...) {
+		//Shader folder not accessible - ignore
+	}
+
 #ifndef _WIN32
 	char buf[4096];
 	ssize_t n = readlink("/proc/self/exe", buf, sizeof(buf) - 1);

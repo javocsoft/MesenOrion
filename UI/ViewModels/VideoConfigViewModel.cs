@@ -75,7 +75,7 @@ namespace Mesen.ViewModels
 			//Sync the selected shader from the actually-running shader before snapshotting
 			//OriginalConfig. Otherwise an in-game shader change (hotkey) wouldn't be reflected
 			//here, and clicking Cancel would revert to a stale value and drop the active shader.
-			if(OperatingSystem.IsLinux()) {
+			if(OperatingSystem.IsLinux() || OperatingSystem.IsWindows()) {
 				string runningShader = EmuApi.GetCurrentShader();
 				if(!string.IsNullOrEmpty(runningShader) && runningShader != Config.Shader) {
 					Config.Shader = runningShader;
@@ -127,9 +127,10 @@ namespace Mesen.ViewModels
 			//MacOS only supports the software renderer
 			IsMacOs = OperatingSystem.IsMacOS();
 
-			//GLSL shaders are only supported by the Linux/OpenGL renderer
+			//GLSL shaders support
 			IsLinux = OperatingSystem.IsLinux();
-			if(IsLinux) {
+			bool loadShaders = IsLinux || IsWindows;
+			if(loadShaders) {
 				EmuApi.RefreshShaderList();
 				List<string> shaders = new List<string>() { "None" };
 				shaders.AddRange(EmuApi.GetShaderList());
@@ -351,7 +352,7 @@ namespace Mesen.ViewModels
 		private void RefreshShaderParams()
 		{
 			ShaderParams.Clear();
-			if(!IsLinux) {
+			if(!IsLinux && !IsWindows) {
 				return;
 			}
 
@@ -384,7 +385,7 @@ namespace Mesen.ViewModels
 
 		private void ResetShaderParams()
 		{
-			if(!IsLinux) {
+			if(!IsLinux && !IsWindows) {
 				return;
 			}
 			//Drop every override (core + saved config) so the shader uses its own defaults.

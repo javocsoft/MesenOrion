@@ -98,6 +98,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>Cdecl</CallingConvention>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -120,6 +121,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,6 +141,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,6 +161,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -184,6 +188,8 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="WindowsMouseManager.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="WglFunctions.h" />
+    <ClInclude Include="WglRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectInputManager.cpp" />
@@ -198,6 +204,9 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="WindowsMouseManager.cpp" />
+    <ClCompile Include="WglFunctions.cpp" />
+    <ClCompile Include="WglRenderer.cpp" />
+    <ClCompile Include="..\Sdl\GlShaderChain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectXTK\SpriteEffect_SpritePixelShader.inc" />

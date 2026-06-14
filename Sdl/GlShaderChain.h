@@ -3,7 +3,11 @@
 #include <vector>
 #include <utility>
 #include <map>
+#ifdef _WIN32
+#include "../Windows/WglFunctions.h"
+#else
 #include "SdlGl.h"
+#endif
 #include "Core/Shared/Video/ShaderManager.h"
 
 // Loads and runs a libretro-style GLSL shader preset (.glslp) or a single .glsl

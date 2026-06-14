@@ -83,7 +83,7 @@ namespace Mesen.ViewModels
 
 			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarFilter") + ": " + ResourceHelper.GetEnumText(video.VideoFilter));
 
-			if(OperatingSystem.IsLinux()) {
+			if(OperatingSystem.IsLinux() || OperatingSystem.IsWindows()) {
 				string shader = EmuApi.GetCurrentShader();
 				sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarShader") + ": " + (string.IsNullOrEmpty(shader) ? "None" : shader));
 			}

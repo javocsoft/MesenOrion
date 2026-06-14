@@ -306,7 +306,7 @@ namespace Mesen.ViewModels
 		{
 			_shaderMenu = new MainMenuAction() {
 				ActionType = ActionType.FavoriteShader,
-				IsVisible = () => OperatingSystem.IsLinux(),
+				IsVisible = () => OperatingSystem.IsLinux() || OperatingSystem.IsWindows(),
 				SubActions = GetShaderMenuItems()
 			};
 
@@ -735,7 +735,7 @@ namespace Mesen.ViewModels
 		public void UpdateShaderMenu()
 		{
 			if(_shaderMenu != null) {
-				if(OperatingSystem.IsLinux()) {
+				if(OperatingSystem.IsLinux() || OperatingSystem.IsWindows()) {
 					//Keep the core's shader list current so applying a favorite resolves correctly.
 					EmuApi.RefreshShaderList();
 

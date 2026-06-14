@@ -56,7 +56,7 @@ namespace Mesen.Config
 		[Reactive] public ScreenRotation ScreenRotation { get; set; } = ScreenRotation.None;
 
 		//Selected GLSL shader (filename in the Shaders folder), "None" or empty = no shader.
-		//Only used by the Linux/OpenGL renderer. Persisted in the config but applied via
+		//Used by the OpenGL renderer (Linux and Windows). Persisted in the config but applied via
 		//a separate interop call (not part of the marshalled struct).
 		[Reactive] public string Shader { get; set; } = "None";
 
@@ -135,7 +135,7 @@ namespace Mesen.Config
 				ScreenRotation = (uint)ScreenRotation
 			});
 
-			//Apply the selected GLSL shader + favorites (Linux/OpenGL renderer). Harmless on other platforms.
+			//Apply the selected GLSL shader + favorites (OpenGL renderer: Linux and Windows). Harmless on other platforms.
 			EmuApi.SetFavoriteShaders(string.Join("[!|!]", FavoriteShaders ?? new List<string>()));
 			EmuApi.SetShader(this.Shader ?? "None");
 		}
@@ -154,7 +154,7 @@ namespace Mesen.Config
 			//A picture preset must not change the active shader. Sync Shader from the
 			//actually-running shader first, otherwise ApplyConfig() (which re-pushes
 			//SetShader) would clobber a shader that was selected via the in-game hotkeys.
-			if(OperatingSystem.IsLinux()) {
+			if(OperatingSystem.IsLinux() || OperatingSystem.IsWindows()) {
 				string running = EmuApi.GetCurrentShader();
 				if(!string.IsNullOrEmpty(running) && running != Shader) {
 					Shader = running;

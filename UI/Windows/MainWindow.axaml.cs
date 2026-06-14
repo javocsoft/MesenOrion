@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using ReactiveUI;
 using Mesen.Utilities;
 using Mesen.Interop;
 using Mesen.Views;
@@ -37,6 +39,7 @@ namespace Mesen.Windows
 		private ShortcutHandler _shortcutHandler;
 
 		private MouseManager? _mouseManager = null;
+		private IDisposable? _softwareRendererSubscription;
 		private ContentControl _audioPlayer;
 		private MainMenuView _mainMenu;
 		private CommandLineHelper? _cmdLine;
@@ -183,6 +186,7 @@ namespace Mesen.Windows
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
+			_softwareRendererSubscription?.Dispose();
 			_mouseManager?.Dispose();
 		}
 
@@ -268,6 +272,22 @@ namespace Mesen.Windows
 
 				ConfigManager.Config.Preferences.UpdateFileAssociations();
 				SingleInstance.Instance.ArgumentsReceived += Instance_ArgumentsReceived;
+
+				Dispatcher.UIThread.Post(() => {
+					//Subscribe to software renderer toggle so it applies without restarting
+					_softwareRendererSubscription = ConfigManager.Config.Video
+						.WhenAnyValue(v => v.UseSoftwareRenderer)
+						.Skip(1)
+						.Subscribe(useSoftware => {
+							bool wasSoftware = _usesSoftwareRenderer;
+							_usesSoftwareRenderer = useSoftware || OperatingSystem.IsMacOS();
+							if(_usesSoftwareRenderer != wasSoftware) {
+								EmuApi.SetSoftwareRendererMode(_usesSoftwareRenderer);
+								_mouseManager?.Dispose();
+								_mouseManager = new MouseManager(this, _usesSoftwareRenderer ? _softwareRenderer : _renderer, _mainMenu, _usesSoftwareRenderer);
+							}
+						});
+				});
 
 				Dispatcher.UIThread.Post(() => {
 					cmdLine.LoadFiles();

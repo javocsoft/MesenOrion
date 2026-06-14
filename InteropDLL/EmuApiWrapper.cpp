@@ -22,6 +22,7 @@
 
 #ifdef _WIN32
 	#include "Windows/Renderer.h"
+	#include "Windows/WglRenderer.h"
 	#include "Windows/SoundManager.h"
 	#include "Windows/WindowsKeyManager.h"
 	#include "Windows/WindowsMouseManager.h"
@@ -94,7 +95,8 @@ extern "C" {
 					_renderer.reset(new SoftwareRenderer(_emu.get()));
 				} else {
 					#ifdef _WIN32
-						_renderer.reset(new Renderer(_emu.get(), (HWND)_viewerHandle));
+						ShaderManager::RefreshShaderList();
+						_renderer.reset(new WglRenderer(_emu.get(), (HWND)_viewerHandle));
 					#elif __APPLE__
 						_renderer.reset(new SoftwareRenderer(_emu.get()));
 					#else
@@ -108,7 +110,7 @@ extern "C" {
 						ShaderManager::RefreshShaderList();
 					#endif
 				}
-			} 
+			}
 
 			if(!noAudio) {
 				#ifdef _WIN32
@@ -263,6 +265,31 @@ extern "C" {
 	{
 		if(_emu->GetVideoRenderer()) {
 			_emu->GetVideoRenderer()->SetRendererSize(width, height);
+		}
+	}
+
+	DllExport void __stdcall SetSoftwareRendererMode(bool softwareRenderer)
+	{
+		if(_viewerHandle == nullptr) {
+			return;
+		}
+		_softwareRenderer = softwareRenderer;
+		if(softwareRenderer) {
+			_renderer.reset(new SoftwareRenderer(_emu.get()));
+		} else {
+			#ifdef _WIN32
+				ShaderManager::RefreshShaderList();
+				_renderer.reset(new WglRenderer(_emu.get(), (HWND)_viewerHandle));
+			#elif __APPLE__
+				_renderer.reset(new SoftwareRenderer(_emu.get()));
+			#else
+				if(getenv("MESEN_NO_GL") != nullptr) {
+					_renderer.reset(new SdlRenderer(_emu.get(), _viewerHandle));
+				} else {
+					_renderer.reset(new SdlGlRenderer(_emu.get(), _viewerHandle));
+				}
+				ShaderManager::RefreshShaderList();
+			#endif
 		}
 	}
 

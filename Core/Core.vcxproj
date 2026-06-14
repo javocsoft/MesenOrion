@@ -568,6 +568,7 @@
     <ClInclude Include="Shared\TimingInfo.h" />
     <ClInclude Include="Shared\Video\RotateFilter.h" />
     <ClInclude Include="Shared\Video\ScanlineFilter.h" />
+    <ClInclude Include="Shared\Video\ShaderManager.h" />
     <ClInclude Include="Shared\Video\SystemHud.h" />
     <ClInclude Include="SNES\Debugger\SnesCodeDataLogger.h" />
     <ClInclude Include="SNES\AluMulDiv.h" />
@@ -933,6 +934,7 @@
     <ClCompile Include="Shared\HistoryViewer.cpp" />
     <ClCompile Include="Shared\Video\DrawStringCommand.cpp" />
     <ClCompile Include="Shared\Video\RotateFilter.cpp" />
+    <ClCompile Include="Shared\Video\ShaderManager.cpp" />
     <ClCompile Include="Shared\Video\SoftwareRenderer.cpp" />
     <ClCompile Include="Shared\Video\SystemHud.cpp" />
     <ClCompile Include="SMS\Carts\SmsCart.cpp" />
