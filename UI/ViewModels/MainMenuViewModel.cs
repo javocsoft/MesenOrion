@@ -332,6 +332,13 @@ namespace Mesen.ViewModels
 						new MainMenuAction(EmulatorShortcut.ToggleFps) {
 							ActionType = ActionType.ShowFps,
 							IsSelected = () => ConfigManager.Config.Preferences.ShowFps
+						},
+						new MainMenuAction() {
+							ActionType = ActionType.ShowStatusBar,
+							IsSelected = () => ConfigManager.Config.Preferences.ShowStatusBar,
+							OnClick = () => {
+								ConfigManager.Config.Preferences.ShowStatusBar = !ConfigManager.Config.Preferences.ShowStatusBar;
+							}
 						}
 					}
 				},

@@ -726,6 +726,8 @@ namespace Mesen.Windows
 
 		private void timerUpdateBackgroundFlag(object? sender, EventArgs e)
 		{
+			_model.UpdateStatusBar();
+
 			Window? activeWindow = ApplicationHelper.GetActiveWindow();
 
 			PreferencesConfig cfg = ConfigManager.Config.Preferences;

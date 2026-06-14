@@ -39,6 +39,8 @@
 					<c:OptionSection Header="{l:Translate lblMiscSettings}">
 						<CheckBox Content="{l:Translate chkAutoLoadIps}" IsChecked="{Binding Config.AutoLoadPatches}" />
 						<CheckBox Content="{l:Translate chkAutoHideMenu}" IsChecked="{Binding Config.AutoHideMenu}" />
+						<CheckBox Content="{l:Translate chkShowStatusBar}" IsChecked="{Binding Config.ShowStatusBar}" />
+						<CheckBox Content="{l:Translate chkAutoHideStatusBar}" IsChecked="{Binding Config.AutoHideStatusBar}" IsEnabled="{Binding Config.ShowStatusBar}" Margin="15 0 0 0" />
 						<CheckBox Content="{l:Translate chkShowMovieIcons}" IsChecked="{Binding Config.ShowMovieIcons}" />
 						<CheckBox Content="{l:Translate chkShowTurboRewindIcons}" IsChecked="{Binding Config.ShowTurboRewindIcons}" />
 						<CheckBox Content="{l:Translate chkPauseOnMovieEnd}" IsChecked="{Binding Config.PauseOnMovieEnd}" />

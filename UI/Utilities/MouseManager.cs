@@ -178,6 +178,12 @@ namespace Mesen.Utilities
 			} else {
 				MainWindowViewModel.Instance.IsMenuVisible = true;
 			}
+
+			//Status bar: shown when enabled; if set to auto-hide, it follows the menu bar's
+			//visibility (shows only when the menu bar shows, hides together with it).
+			PreferencesConfig prefs = ConfigManager.Config.Preferences;
+			MainWindowViewModel.Instance.IsStatusBarVisible =
+				prefs.ShowStatusBar && (!prefs.AutoHideStatusBar || MainWindowViewModel.Instance.IsMenuVisible);
 		}
 
 		private static void SetMouseOffScreen()

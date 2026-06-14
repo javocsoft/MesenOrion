@@ -31,7 +31,10 @@ namespace Mesen.ViewModels
 		[Reactive] public Size RendererSize { get; set; }
 
 		[Reactive] public bool IsMenuVisible { get; set; }
-		
+
+		[Reactive] public bool IsStatusBarVisible { get; set; }
+		[Reactive] public string StatusBarText { get; private set; } = "";
+
 		[Reactive] public bool IsNativeRendererVisible { get; set; }
 		[Reactive] public bool IsSoftwareRendererVisible { get; set; }
 
@@ -49,6 +52,46 @@ namespace Mesen.ViewModels
 			RecentGames = new RecentGamesViewModel();
 
 			IsMenuVisible = !Config.Preferences.AutoHideMenu;
+			IsStatusBarVisible = Config.Preferences.ShowStatusBar && !Config.Preferences.AutoHideStatusBar;
+		}
+
+		//Rebuilds the status bar text. Called periodically so it reflects live changes
+		//(speed, video size, in-game shader changes, etc.).
+		public void UpdateStatusBar()
+		{
+			if(!Config.Preferences.ShowStatusBar) {
+				return;
+			}
+
+			VideoConfig video = Config.Video;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			if(EmuApi.IsRunning()) {
+				sb.Append(ResourceHelper.GetEnumText(RomInfo.ConsoleType));
+			} else {
+				sb.Append(ResourceHelper.GetMessage("StatusBarNoGame"));
+			}
+
+			uint speed = Config.Emulation.EmulationSpeed;
+			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarSpeed") + ": " + (speed == 0 ? ResourceHelper.GetMessage("StatusBarMaxSpeed") : speed + "%"));
+
+			FrameInfo baseSize = EmuApi.GetBaseScreenSize();
+			if(baseSize.Height > 0 && RendererSize.Height > 0) {
+				double scale = RendererSize.Height / baseSize.Height;
+				sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarSize") + ": " + scale.ToString("0.##") + "x");
+			}
+
+			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarFilter") + ": " + ResourceHelper.GetEnumText(video.VideoFilter));
+
+			if(OperatingSystem.IsLinux()) {
+				string shader = EmuApi.GetCurrentShader();
+				sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarShader") + ": " + (string.IsNullOrEmpty(shader) ? "None" : shader));
+			}
+
+			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarAspect") + ": " + ResourceHelper.GetEnumText(video.AspectRatio));
+			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarVsync") + ": " + ResourceHelper.GetMessage(video.VerticalSync ? "StatusBarOn" : "StatusBarOff"));
+
+			StatusBarText = sb.ToString();
 		}
 
 		public void Init(MainWindow wnd)

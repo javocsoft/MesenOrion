@@ -722,6 +722,8 @@
 			<Control ID="lblPauseBackgroundSettings">Pause/Background Settings</Control>
 			<Control ID="lblMiscSettings">Miscellaneous Settings</Control>
 			<Control ID="chkAutoHideMenu">Automatically hide menu bar</Control>
+			<Control ID="chkShowStatusBar">Show status bar</Control>
+			<Control ID="chkAutoHideStatusBar">Automatically hide status bar (with menu bar)</Control>
 			<Control ID="chkDisplayTitleBarInfo">Display additional information in title bar</Control>
 
 			<Control ID="chkConfirmExitResetPower">Display confirmation dialog before reset / power cycle / power off / exit</Control>
@@ -1773,6 +1775,16 @@
 		<Message ID="RecentGameRemove">Remove from list</Message>
 		<Message ID="GifRecordingStarted">Recording GIF…</Message>
 		<Message ID="GifRecordingSaved">GIF saved: {0}</Message>
+		<Message ID="StatusBarNoGame">No game</Message>
+		<Message ID="StatusBarSpeed">Speed</Message>
+		<Message ID="StatusBarMaxSpeed">Max</Message>
+		<Message ID="StatusBarSize">Size</Message>
+		<Message ID="StatusBarFilter">Filter</Message>
+		<Message ID="StatusBarShader">Shader</Message>
+		<Message ID="StatusBarAspect">Aspect</Message>
+		<Message ID="StatusBarVsync">VSync</Message>
+		<Message ID="StatusBarOn">On</Message>
+		<Message ID="StatusBarOff">Off</Message>
 		<Message ID="TestingConnection">Testing…</Message>
 		<Message ID="ConnectionReachable">Server reachable ✓</Message>
 		<Message ID="ConnectionUnreachable">Could not reach server ✗</Message>
@@ -3605,6 +3617,7 @@ E
 			<Value ID="HalfSpeed">Half (50%)</Value>
 			<Value ID="QuarterSpeed">Quarter (25%)</Value>
 			<Value ID="ShowFps">Show FPS</Value>
+			<Value ID="ShowStatusBar">Show Status Bar</Value>
 
 			<Value ID="VideoScale">Video Size</Value>
 			<Value ID="AspectRatio">Aspect Ratio</Value>

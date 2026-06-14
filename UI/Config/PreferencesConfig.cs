@@ -59,6 +59,9 @@ namespace Mesen.Config
 
 		[Reactive] public bool AutoHideMenu { get; set; } = false;
 
+		[Reactive] public bool ShowStatusBar { get; set; } = true;
+		[Reactive] public bool AutoHideStatusBar { get; set; } = false;
+
 		[Reactive] public bool ShowFps { get; set; } = false;
 		[Reactive] public bool ShowFrameCounter { get; set; } = false;
 		[Reactive] public bool ShowGameTimer { get; set; } = false;

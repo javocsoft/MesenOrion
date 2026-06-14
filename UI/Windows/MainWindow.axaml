@@ -39,6 +39,17 @@
 		
 		<ContentControl Name="AudioPlayer" DockPanel.Dock="Bottom" Content="{Binding AudioPlayer}" />
 
+		<Border
+			DockPanel.Dock="Bottom"
+			IsVisible="{Binding IsStatusBarVisible}"
+			Background="#202020"
+			BorderBrush="#404040"
+			BorderThickness="0 1 0 0"
+			Padding="6 2"
+		>
+			<TextBlock Text="{Binding StatusBarText}" Foreground="#D0D0D0" FontSize="11" TextTrimming="CharacterEllipsis" />
+		</Border>
+
 		<Panel Name="RendererPanel" Background="Black" Focusable="True">
 			<ContentControl Background="#181818" Content="{Binding RecentGames}" IsVisible="{Binding RecentGames.Visible}" />
 

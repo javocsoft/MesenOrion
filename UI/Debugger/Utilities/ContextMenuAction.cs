@@ -641,6 +641,7 @@ namespace Mesen.Debugger.Utilities
 		IncreaseSpeed,
 		DecreaseSpeed,
 		ShowFps,
+		ShowStatusBar,
 
 		[IconFile("Fullscreen")]
 		VideoScale,
