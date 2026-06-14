@@ -1,7 +1,13 @@
-# GLSL Shaders (Linux / OpenGL renderer)
+# GLSL Shaders (Windows & Linux / OpenGL renderer)
 
-Mesen's Linux build renders through OpenGL and can apply **libretro-style GLSL
+Mesen Orion's Windows and Linux builds render through OpenGL and can apply **libretro-style GLSL
 shader presets** on top of the emulated video output.
+
+- **Windows** uses a native WGL/OpenGL renderer that supports the same shader pipeline.
+- **Linux** uses an SDL/OpenGL renderer.
+
+> On Windows, make sure *Use Software Renderer* is **disabled** in Options → Video to use the
+> OpenGL path (required for shaders).
 
 ## Where to put shaders
 
@@ -82,14 +88,14 @@ its `initial` (or the preset override) is applied to the matching
 - No LUT `textures = …` entries.
 - No history / previous-frame samplers (`PassPrev*`, `OrigTexture`, …).
 - No float / sRGB intermediate framebuffers.
-- No runtime parameter editor (defaults / preset overrides only).
 - The final pass always fills the screen viewport.
 
 These cover most single- and multi-pass CRT / scanline / LCD shaders. The
 `.slang` (Vulkan) format is **not** supported — convert to GLSL first.
 
-## Falling back to the old renderer
+## Falling back to the software renderer
 
-If OpenGL context creation fails on your system, set the environment variable
-`MESEN_NO_GL=1` before launching Mesen to use the classic SDL renderer (no shader
-support).
+If OpenGL context creation fails, you can disable the OpenGL renderer:
+
+- **Windows:** enable *Use Software Renderer* in Options → Video. The change applies immediately without restarting.
+- **Linux:** set the environment variable `MESEN_NO_GL=1` before launching Mesen to use the classic SDL renderer (no shader support).

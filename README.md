@@ -12,8 +12,10 @@ Repository: <https://github.com/javocsoft/MesenOrion>
 
 Building on Mesen 2.1.1, this fork adds:
 
-#### Rendering (Linux / OpenGL)
-- **GLSL shader support** via an OpenGL rendering path. Drop libretro-style shaders (`.glslp` multi-pass presets or single `.glsl` files) into a **`Shaders`** folder (next to the binary or in the Mesen data folder) and select them from the UI.
+#### Rendering (Windows & Linux / OpenGL)
+- **GLSL shader support** via an OpenGL rendering path on both **Windows and Linux**. Drop libretro-style shaders (`.glslp` multi-pass presets or single `.glsl` files) into a **`Shaders`** folder (next to the binary or in the Mesen data folder) and select them from the UI.
+- On Windows, a native **WGL/OpenGL renderer** is used in place of DirectX, enabling the same GLSL pipeline available on Linux.
+- Switching between the OpenGL renderer and the **Software renderer** no longer requires a restart — the change applies immediately from the settings.
 - A dedicated **Shaders** tab in *Options → Video* with shader selection, **favorites** management, and live, adjustable **shader parameters** (`#pragma parameter`) with a *Reset to defaults* option.
 - A **Favorite Shader** entry in the main menu for quick switching.
 - In-game shader switching:
@@ -38,13 +40,17 @@ Building on Mesen 2.1.1, this fork adds:
 
 ## Releases
 
-Build from source for now (see **Compiling** below). Pre-built releases for this fork, when available, will be published on the [fork's releases page](https://github.com/javocsoft/MesenOrion/releases).
+Pre-built releases for Windows (x64) are published on the [fork's releases page](https://github.com/javocsoft/MesenOrion/releases) as a ready-to-run ZIP that includes the emulator, all required libraries, and the full **Shaders** collection.
+
+For Linux and macOS, build from source (see **Compiling** below).
 
 ## Compiling
 
 See [COMPILING.md](COMPILING.md).
 
-On Linux, building with GCC is recommended:
+**Windows:** open `Mesen.sln` in Visual Studio, build `Release`/`x64`, and set `UI` as the startup project.
+
+**Linux:** building with GCC is recommended:
 
 ```sh
 USE_GCC=true make -j$(nproc)
@@ -52,7 +58,7 @@ USE_GCC=true make -j$(nproc)
 USE_GCC=true NATIVE=true make -j$(nproc)
 ```
 
-GLSL shaders require the OpenGL renderer (default on Linux). Set `MESEN_NO_GL=1` to fall back to the classic SDL renderer if needed.
+GLSL shaders require the OpenGL renderer. On Linux this is the default; on Windows it is used automatically (requires OpenGL 2.0). Set `MESEN_NO_GL=1` (Linux) or enable *Use Software Renderer* in settings (Windows) to fall back to the non-GL renderer.
 
 ## Credits
 
