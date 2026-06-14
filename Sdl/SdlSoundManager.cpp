@@ -75,8 +75,8 @@ bool SdlSoundManager::InitializeAudio(uint32_t sampleRate, bool isStereo)
 		_audioDeviceID = SDL_OpenAudioDevice(nullptr, isCapture, &audioSpec, &obtainedSpec, 0);
 	}
 
-	_writePosition = 0;
-	_readPosition = 0;
+	_writePosition.store(0, std::memory_order_relaxed);
+	_readPosition.store(0, std::memory_order_relaxed);
 
 	_needReset = false;
 
@@ -119,32 +119,43 @@ void SdlSoundManager::SetAudioDevice(string deviceName)
 
 void SdlSoundManager::ReadFromBuffer(uint8_t* output, uint32_t len)
 {
-	if(_readPosition + len < _bufferSize) {
-		memcpy(output, _buffer+_readPosition, len);
-		_readPosition += len;
+	//Consumer side (SDL audio callback thread)
+	uint32_t readPos = _readPosition.load(std::memory_order_relaxed);
+	uint32_t writePos = _writePosition.load(std::memory_order_acquire);
+
+	if(readPos + len < _bufferSize) {
+		memcpy(output, _buffer+readPos, len);
+		readPos += len;
 	} else {
-		int remainingBytes = (_bufferSize - _readPosition);
-		memcpy(output, _buffer+_readPosition, remainingBytes);
+		uint32_t remainingBytes = _bufferSize - readPos;
+		memcpy(output, _buffer+readPos, remainingBytes);
 		memcpy(output+remainingBytes, _buffer, len - remainingBytes);
-		_readPosition = len - remainingBytes;
+		readPos = len - remainingBytes;
 	}
 
-	if(_readPosition >= _writePosition && _readPosition - _writePosition < _bufferSize / 2) {
+	_readPosition.store(readPos, std::memory_order_release);
+
+	if(readPos >= writePos && readPos - writePos < _bufferSize / 2) {
 		_bufferUnderrunEventCount++;
 	}
 }
 
 void SdlSoundManager::WriteToBuffer(uint8_t* input, uint32_t len)
 {
-	if(_writePosition + len < _bufferSize) {
-		memcpy(_buffer+_writePosition, input, len);
-		_writePosition += len;
+	//Producer side (emulation thread)
+	uint32_t writePos = _writePosition.load(std::memory_order_relaxed);
+
+	if(writePos + len < _bufferSize) {
+		memcpy(_buffer+writePos, input, len);
+		writePos += len;
 	} else {
-		int remainingBytes = _bufferSize - _writePosition;
-		memcpy(_buffer+_writePosition, input, remainingBytes);
-		memcpy(_buffer, ((uint8_t*)input)+remainingBytes, len - remainingBytes);
-		_writePosition = len - remainingBytes;
+		uint32_t remainingBytes = _bufferSize - writePos;
+		memcpy(_buffer+writePos, input, remainingBytes);
+		memcpy(_buffer, input+remainingBytes, len - remainingBytes);
+		writePos = len - remainingBytes;
 	}
+
+	_writePosition.store(writePos, std::memory_order_release);
 }
 void SdlSoundManager::PlayBuffer(int16_t *soundBuffer, uint32_t sampleCount, uint32_t sampleRate, bool isStereo)
 {
@@ -158,9 +169,11 @@ void SdlSoundManager::PlayBuffer(int16_t *soundBuffer, uint32_t sampleCount, uin
 	WriteToBuffer((uint8_t*)soundBuffer, sampleCount * bytesPerSample);
 
 	int32_t byteLatency = (int32_t)((float)(sampleRate * latency) / 1000.0f * bytesPerSample);
-	int32_t playWriteByteLatency = _writePosition - _readPosition;
+	uint32_t writePos = _writePosition.load(std::memory_order_acquire);
+	uint32_t readPos = _readPosition.load(std::memory_order_acquire);
+	int32_t playWriteByteLatency = (int32_t)writePos - (int32_t)readPos;
 	if(playWriteByteLatency < 0) {
-		playWriteByteLatency = _bufferSize - _readPosition + _writePosition;
+		playWriteByteLatency = _bufferSize - readPos + writePos;
 	}
 
 	if(playWriteByteLatency > byteLatency) {
@@ -178,14 +191,14 @@ void SdlSoundManager::Stop()
 {
 	Pause();
 
-	_readPosition = 0;
-	_writePosition = 0;
+	_readPosition.store(0, std::memory_order_relaxed);
+	_writePosition.store(0, std::memory_order_relaxed);
 	ResetStats();
 }
 
 void SdlSoundManager::ProcessEndOfFrame()
 {
-	ProcessLatency(_readPosition, _writePosition);
+	ProcessLatency(_readPosition.load(std::memory_order_acquire), _writePosition.load(std::memory_order_acquire));
 
 	uint32_t emulationSpeed = _emu->GetSettings()->GetEmulationSpeed();
 	if(_averageLatency > 0 && emulationSpeed <= 100 && emulationSpeed > 0 && std::abs(_averageLatency - _emu->GetSettings()->GetAudioConfig().AudioLatency) > 50) {

@@ -35,6 +35,9 @@ namespace Mesen.ViewModels
 		[Reactive] public List<object> GameMenuItems { get; set; } = new();
 		[Reactive] public List<object> OptionsMenuItems { get; set; } = new();
 		[Reactive] public List<object> ToolsMenuItems { get; set; } = new();
+
+		//The "Favorite Shader" submenu - rebuilt from the favorites list when the Options menu opens.
+		private MainMenuAction? _shaderMenu;
 		[Reactive] public List<object> DebugMenuItems { get; set; } = new();
 		[Reactive] public List<object> HelpMenuItems { get; set; } = new();
 		
@@ -301,6 +304,12 @@ namespace Mesen.ViewModels
 
 		private void InitOptionsMenu(MainWindow wnd)
 		{
+			_shaderMenu = new MainMenuAction() {
+				ActionType = ActionType.FavoriteShader,
+				IsVisible = () => OperatingSystem.IsLinux(),
+				SubActions = GetShaderMenuItems()
+			};
+
 			OptionsMenuItems = new List<object>() {
 				new MainMenuAction() {
 					ActionType = ActionType.Speed,
@@ -392,6 +401,8 @@ namespace Mesen.ViewModels
 						}
 					}
 				},
+
+				_shaderMenu!,
 
 				new MainMenuAction() {
 					ActionType = ActionType.AspectRatio,
@@ -671,6 +682,65 @@ namespace Mesen.ViewModels
 					ConfigManager.Config.Video.ApplyConfig();
 				}
 			};
+		}
+
+		private MainMenuAction GetShaderMenuItem(string name, bool alwaysVisible = false)
+		{
+			MainMenuAction item = new MainMenuAction() {
+				ActionType = ActionType.Custom,
+				CustomText = name,
+				IsSelected = () => (string.IsNullOrEmpty(ConfigManager.Config.Video.Shader) ? "None" : ConfigManager.Config.Video.Shader) == name,
+				OnClick = () => {
+					ConfigManager.Config.Video.Shader = name;
+					ConfigManager.Config.Video.ApplyConfig();
+				}
+			};
+			if(!alwaysVisible) {
+				item.IsVisible = () => ConfigManager.Config.Video.FavoriteShaders.Contains(name);
+			}
+			return item;
+		}
+
+		private List<object> GetShaderMenuItems()
+		{
+			//Only the user's favorite shaders are listed here (plus "None").
+			List<object> items = new List<object>();
+			items.Add(GetShaderMenuItem("None", true));
+			items.Add(new ContextMenuSeparator());
+
+			List<string> favorites = ConfigManager.Config.Video.FavoriteShaders ?? new List<string>();
+			if(favorites.Count == 0) {
+				items.Add(new MainMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("NoFavoriteShaders"),
+					IsEnabled = () => false
+				});
+			} else {
+				foreach(string name in favorites) {
+					items.Add(GetShaderMenuItem(name, true));
+				}
+			}
+			return items;
+		}
+
+		//Rebuilds the Favorite Shader submenu from the current favorites list. Called
+		//when the Options menu opens so it always reflects the latest favorites.
+		public void UpdateShaderMenu()
+		{
+			if(_shaderMenu != null) {
+				if(OperatingSystem.IsLinux()) {
+					//Keep the core's shader list current so applying a favorite resolves correctly.
+					EmuApi.RefreshShaderList();
+
+					//Sync the selected shader with the core so the menu's checkmark reflects
+					//changes made in-game via the shader shortcuts (which only touch the core).
+					string current = EmuApi.GetCurrentShader();
+					if(!string.IsNullOrEmpty(current) && current != ConfigManager.Config.Video.Shader) {
+						ConfigManager.Config.Video.Shader = current;
+					}
+				}
+				_shaderMenu.SubActions = GetShaderMenuItems();
+			}
 		}
 
 		private MainMenuAction GetScaleMenuItem(int scale, EmulatorShortcut shortcut)

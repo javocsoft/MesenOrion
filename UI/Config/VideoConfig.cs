@@ -55,6 +55,22 @@ namespace Mesen.Config
 
 		[Reactive] public ScreenRotation ScreenRotation { get; set; } = ScreenRotation.None;
 
+		//Selected GLSL shader (filename in the Shaders folder), "None" or empty = no shader.
+		//Only used by the Linux/OpenGL renderer. Persisted in the config but applied via
+		//a separate interop call (not part of the marshalled struct).
+		[Reactive] public string Shader { get; set; } = "None";
+
+		//Shaders the user marked as favorite (by filename). Cycled in-game with
+		//Shift+Page Down / Shift+Page Up.
+		[Reactive] public List<string> FavoriteShaders { get; set; } = new List<string>();
+
+		//User-saved picture presets (brightness/contrast/hue/saturation/scanlines/bilinear).
+		//Cycled in-game with Shift+P.
+		[Reactive] public List<PicturePreset> PicturePresets { get; set; } = new List<PicturePreset>();
+
+		//Per-shader parameter values the user has tweaked (Shaders tab).
+		[Reactive] public List<ShaderParamValue> ShaderParameterValues { get; set; } = new List<ShaderParamValue>();
+
 		public VideoConfig()
 		{
 		}
@@ -118,7 +134,52 @@ namespace Mesen.Config
 
 				ScreenRotation = (uint)ScreenRotation
 			});
+
+			//Apply the selected GLSL shader + favorites (Linux/OpenGL renderer). Harmless on other platforms.
+			EmuApi.SetFavoriteShaders(string.Join("[!|!]", FavoriteShaders ?? new List<string>()));
+			EmuApi.SetShader(this.Shader ?? "None");
 		}
+
+		//Applies a saved picture preset (brightness/contrast/hue/saturation/scanlines/bilinear)
+		//to the live config and pushes it to the core immediately.
+		public void ApplyPicturePreset(PicturePreset preset)
+		{
+			Brightness = preset.Brightness;
+			Contrast = preset.Contrast;
+			Hue = preset.Hue;
+			Saturation = preset.Saturation;
+			ScanlineIntensity = preset.ScanlineIntensity;
+			UseBilinearInterpolation = preset.UseBilinearInterpolation;
+			ApplyConfig();
+		}
+	}
+
+	//Container used to export/import the user's picture presets and shader favorites.
+	public class VideoCustomizationExport
+	{
+		public List<PicturePreset> PicturePresets { get; set; } = new List<PicturePreset>();
+		public List<string> FavoriteShaders { get; set; } = new List<string>();
+		public List<ShaderParamValue> ShaderParameterValues { get; set; } = new List<ShaderParamValue>();
+	}
+
+	public class ShaderParamValue
+	{
+		public string Shader { get; set; } = "";
+		public string Name { get; set; } = "";
+		public double Value { get; set; } = 0;
+	}
+
+	public class PicturePreset
+	{
+		public string Name { get; set; } = "";
+		public int Brightness { get; set; } = 0;
+		public int Contrast { get; set; } = 0;
+		public int Hue { get; set; } = 0;
+		public int Saturation { get; set; } = 0;
+		public int ScanlineIntensity { get; set; } = 0;
+		public bool UseBilinearInterpolation { get; set; } = false;
+
+		public override string ToString() => Name;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

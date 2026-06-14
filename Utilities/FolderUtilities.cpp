@@ -97,6 +97,13 @@ string FolderUtilities::GetHdPackFolder()
 	return folder;
 }
 
+string FolderUtilities::GetShaderFolder()
+{
+	string folder = CombinePath(GetHomeFolder(), "Shaders");
+	CreateFolder(folder);
+	return folder;
+}
+
 string FolderUtilities::GetDebuggerFolder()
 {
 	string folder = CombinePath(GetHomeFolder(), "Debugger");

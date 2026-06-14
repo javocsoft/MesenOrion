@@ -11,7 +11,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	x:Class="Mesen.Windows.AboutWindow"
-	Width="350" Height="525"
+	Width="480" Height="575"
 	Title="{l:Translate wndTitle}"
 	CanResize="False"
 	Name="root"
@@ -50,7 +50,7 @@
 		<DockPanel DockPanel.Dock="Top">
 			<Image
 				DockPanel.Dock="Left"
-				Source="/Assets/Icon.ico"
+				Source="/Assets/mesenorion.webp"
 				Height="64"
 				Width="64"
 				Margin="10"
@@ -73,14 +73,22 @@
 					<TextBlock Text="{l:Translate lblRuntimeVersion}" Margin="0 0 5 0" />
 					<TextBlock Text="{Binding RuntimeVersion, ElementName=root}" />
 				</StackPanel>
-				<TextBlock Name="lblCopyright" Margin="3" />
+				<TextBlock Name="lblCopyright" Margin="3" TextWrapping="Wrap" />
 				<StackPanel Orientation="Horizontal" Margin="3">
 					<TextBlock Text="{l:Translate lblWebsite}" Margin="0 0 5 0" />
 					<TextBlock Text="{l:Translate lblLink}" Foreground="{DynamicResource SystemAccentColor}" TextDecorations="Underline" Cursor="Hand" Tapped="OnMesenLinkTapped" />
 				</StackPanel>
 			</StackPanel>
 		</DockPanel>
-		
+
+		<TextBlock
+			DockPanel.Dock="Top"
+			Text="{l:Translate lblProvenance}"
+			TextWrapping="Wrap"
+			Foreground="Gray"
+			Margin="10 0 10 5"
+		/>
+
 		<StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="5 3">
 			<Button
 				MinWidth="70"

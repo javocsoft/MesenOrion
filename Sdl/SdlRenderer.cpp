@@ -35,7 +35,52 @@ void SdlRenderer::LogSdlError(const char* msg)
 
 void SdlRenderer::SetExclusiveFullscreenMode(bool fullscreen, void* windowHandle)
 {
-	//TODO: Implement exclusive fullscreen for Linux
+	//SDL is not thread-safe and the window lives on the render thread, so only record
+	//the request here - it is applied from Render() via UpdateFullscreenState().
+	_newFullscreen.store(fullscreen, std::memory_order_release);
+}
+
+void SdlRenderer::UpdateFullscreenState()
+{
+	bool fullscreen = _newFullscreen.load(std::memory_order_acquire);
+	if(fullscreen == _fullscreen || !_sdlWindow) {
+		return;
+	}
+
+	if(fullscreen) {
+		VideoConfig cfg = _emu->GetSettings()->GetVideoConfig();
+		uint32_t flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+		if(cfg.FullscreenResWidth > 0 && cfg.FullscreenResHeight > 0) {
+			//Request a real video mode change (closest match to the configured resolution/refresh rate)
+			uint32_t refreshRate = _emu->GetFps() < 55 ? cfg.ExclusiveFullscreenRefreshRatePal : cfg.ExclusiveFullscreenRefreshRateNtsc;
+			int displayIndex = SDL_GetWindowDisplayIndex(_sdlWindow);
+
+			SDL_DisplayMode desired = {};
+			desired.w = (int)cfg.FullscreenResWidth;
+			desired.h = (int)cfg.FullscreenResHeight;
+			desired.refresh_rate = (int)refreshRate;
+
+			SDL_DisplayMode closest;
+			if(SDL_GetClosestDisplayMode(displayIndex < 0 ? 0 : displayIndex, &desired, &closest) && SDL_SetWindowDisplayMode(_sdlWindow, &closest) == 0) {
+				flags = SDL_WINDOW_FULLSCREEN;
+			} else {
+				LogSdlError("[SDL] Could not set requested fullscreen mode, using desktop fullscreen.");
+			}
+		}
+
+		if(SDL_SetWindowFullscreen(_sdlWindow, flags) != 0) {
+			LogSdlError("[SDL] Failed to enter fullscreen mode.");
+			return;
+		}
+	} else {
+		if(SDL_SetWindowFullscreen(_sdlWindow, 0) != 0) {
+			LogSdlError("[SDL] Failed to leave fullscreen mode.");
+			return;
+		}
+	}
+
+	_fullscreen = fullscreen;
 }
 
 bool SdlRenderer::Init()
@@ -120,6 +165,9 @@ void SdlRenderer::Cleanup()
 		SDL_DestroyRenderer(_sdlRenderer);
 		_sdlRenderer = nullptr;
 	}
+
+	//The window is recreated on reset, so force fullscreen state to be re-applied
+	_fullscreen = false;
 }
 
 void SdlRenderer::OnRendererThreadStarted()
@@ -227,6 +275,8 @@ void SdlRenderer::Render(RenderSurfaceInfo& emuHud, RenderSurfaceInfo& scriptHud
 		return;
 	}
 
+	UpdateFullscreenState();
+
 	bool needUpdate = false;
 	needUpdate |= UpdateHudSize(_emuHud, emuHud.Width, emuHud.Height);
 	needUpdate |= UpdateHudSize(_scriptHud, scriptHud.Width, scriptHud.Height);
@@ -241,7 +291,7 @@ void SdlRenderer::Render(RenderSurfaceInfo& emuHud, RenderSurfaceInfo& scriptHud
 		auto frameLock = _frameLock.AcquireSafe();
 		if(_frameBuffer && _frameWidth == _requiredWidth && _frameHeight == _requiredHeight) {
 			uint32_t* ppuFrameBuffer = _frameBuffer;
-			if(rowPitch != _frameWidth) {
+			if(rowPitch != (int)(_frameWidth * _bytesPerPixel)) {
 				for(uint32_t i = 0, iMax = _frameHeight; i < iMax; i++) {
 					memcpy(textureBuffer, ppuFrameBuffer, _frameWidth*_bytesPerPixel);
 					ppuFrameBuffer += _frameWidth;

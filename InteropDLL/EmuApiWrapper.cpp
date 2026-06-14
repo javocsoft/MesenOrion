@@ -1,4 +1,5 @@
 #include "Common.h"
+#include <cstdlib>
 #include "Core/Shared/Emulator.h"
 #include "Core/Shared/EmuSettings.h"
 #include "Core/Shared/Video/VideoDecoder.h"
@@ -30,12 +31,14 @@
 	#include "MacOS/MacOSMouseManager.h"
 #else
 	#include "Sdl/SdlRenderer.h"
+	#include "Sdl/SdlGlRenderer.h"
 	#include "Sdl/SdlSoundManager.h"
 	#include "Linux/LinuxKeyManager.h"
 	#include "Linux/LinuxMouseManager.h"
 #endif
 
 #include "Shared/Video/SoftwareRenderer.h"
+#include "Shared/Video/ShaderManager.h"
 
 unique_ptr<IRenderingDevice> _renderer;
 unique_ptr<IAudioDevice> _soundManager;
@@ -95,7 +98,14 @@ extern "C" {
 					#elif __APPLE__
 						_renderer.reset(new SoftwareRenderer(_emu.get()));
 					#else
-						_renderer.reset(new SdlRenderer(_emu.get(), _viewerHandle));
+						//Use the OpenGL renderer (supports GLSL shaders) unless the
+						//MESEN_NO_GL escape hatch falls back to the classic SDL_Renderer.
+						if(getenv("MESEN_NO_GL") != nullptr) {
+							_renderer.reset(new SdlRenderer(_emu.get(), _viewerHandle));
+						} else {
+							_renderer.reset(new SdlGlRenderer(_emu.get(), _viewerHandle));
+						}
+						ShaderManager::RefreshShaderList();
 					#endif
 				}
 			} 
@@ -278,6 +288,41 @@ extern "C" {
 	DllExport void __stdcall GetRomHash(HashType hashType, char* outBuffer, uint32_t maxLength)
 	{
 		StringUtilities::CopyToBuffer(_emu->GetHash(hashType), outBuffer, maxLength);
+	}
+
+	//GLSL shader management (Linux/OpenGL renderer)
+	DllExport void __stdcall RefreshShaderList() { ShaderManager::RefreshShaderList(); }
+
+	DllExport void __stdcall GetShaderList(char* outBuffer, uint32_t maxLength)
+	{
+		std::ostringstream out;
+		for(string& name : ShaderManager::GetShaderNames()) {
+			out << name << "[!|!]";
+		}
+		StringUtilities::CopyToBuffer(out.str(), outBuffer, maxLength);
+	}
+
+	DllExport void __stdcall SetShader(char* name) { ShaderManager::SelectShaderByName(name ? name : ""); }
+	DllExport void __stdcall SetFavoriteShaders(char* joinedNames) { ShaderManager::SetFavoritesFromString(joinedNames ? joinedNames : ""); }
+
+	DllExport void __stdcall GetCurrentShader(char* outBuffer, uint32_t maxLength)
+	{
+		StringUtilities::CopyToBuffer(ShaderManager::GetCurrentShaderName(), outBuffer, maxLength);
+	}
+
+	DllExport void __stdcall GetCurrentShaderPath(char* outBuffer, uint32_t maxLength)
+	{
+		StringUtilities::CopyToBuffer(ShaderManager::GetCurrentShaderPath(), outBuffer, maxLength);
+	}
+
+	DllExport void __stdcall SetShaderParameter(char* name, double value)
+	{
+		ShaderManager::SetShaderParamValue(name ? name : "", (float)value);
+	}
+
+	DllExport void __stdcall ClearShaderParameters()
+	{
+		ShaderManager::ClearShaderParamOverrides();
 	}
 
 	DllExport void __stdcall InputBarcode(uint64_t barcode, uint32_t digitCount) { _emu->InputBarcode(barcode, digitCount); }

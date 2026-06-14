@@ -17,6 +17,7 @@ namespace Mesen.Utilities
 	public class ShortcutHandler
 	{
 		private MainWindow _mainWindow;
+		private int _currentPicturePresetIndex = -1;
 
 		private List<uint> _speedValues = new List<uint> { 1, 3, 6, 12, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000, 2000, 4000 };
 
@@ -54,7 +55,9 @@ namespace Mesen.Utilities
 				case EmulatorShortcut.ToggleFrameCounter: ToggleFrameCounter(); break;
 				case EmulatorShortcut.ToggleLagCounter: ToggleLagCounter(); break;
 				case EmulatorShortcut.ToggleOsd: ToggleOsd(); break;
-				
+
+				case EmulatorShortcut.ApplyPicturePreset: ApplyNextPicturePreset(); break;
+
 				case EmulatorShortcut.ToggleAlwaysOnTop: ToggleAlwaysOnTop(); break;
 
 				case EmulatorShortcut.ToggleDebugInfo: ToggleDebugInfo(); break;
@@ -443,6 +446,21 @@ namespace Mesen.Utilities
 		{
 			ConfigManager.Config.Preferences.DisableOsd = !ConfigManager.Config.Preferences.DisableOsd;
 			ConfigManager.Config.Preferences.ApplyConfig();
+		}
+
+		private void ApplyNextPicturePreset()
+		{
+			List<PicturePreset> presets = ConfigManager.Config.Video.PicturePresets;
+			if(presets == null || presets.Count == 0) {
+				DisplayMessageHelper.DisplayMessage("Video", ResourceHelper.GetMessage("NoPicturePresets"));
+				return;
+			}
+
+			_currentPicturePresetIndex = (_currentPicturePresetIndex + 1) % presets.Count;
+			PicturePreset preset = presets[_currentPicturePresetIndex];
+			ConfigManager.Config.Video.ApplyPicturePreset(preset);
+			ConfigManager.Config.Save();
+			DisplayMessageHelper.DisplayMessage("Video", preset.Name);
 		}
 
 		private void ToggleFps()

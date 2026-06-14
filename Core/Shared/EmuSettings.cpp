@@ -134,10 +134,10 @@ void EmuSettings::Serialize(Serializer& s)
 
 uint32_t EmuSettings::GetVersion()
 {
-	//Version 2.1.1
-	uint16_t major = 2;
-	uint8_t minor = 1;
-	uint8_t revision = 1;
+	//Mesen Orion - initial fork version 3.0.0
+	uint16_t major = 3;
+	uint8_t minor = 0;
+	uint8_t revision = 0;
 	return (major << 16) | (minor << 8) | revision;
 }
 

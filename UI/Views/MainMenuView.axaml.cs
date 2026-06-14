@@ -50,5 +50,13 @@ namespace Mesen.Views
 				}
 			}
 		}
+
+		private void mnuOptions_Opened(object sender, RoutedEventArgs e)
+		{
+			if(DataContext is MainMenuViewModel model) {
+				//Rebuild the "Favorite Shader" submenu from the current favorites list.
+				model.UpdateShaderMenu();
+			}
+		}
 	}
 }

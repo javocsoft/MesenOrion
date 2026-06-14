@@ -1034,6 +1034,12 @@ enum class EmulatorShortcut
 	StartRecordHdPack,
 	StopRecordHdPack,
 
+	NextShader,
+	PreviousShader,
+	NextFavoriteShader,
+	PreviousFavoriteShader,
+	ApplyPicturePreset,
+
 	ShortcutCount,
 };
 

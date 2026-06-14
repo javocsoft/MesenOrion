@@ -649,6 +649,8 @@ namespace Mesen.Debugger.Utilities
 
 		[IconFile("VideoFilter")]
 		VideoFilter,
+		[IconFile("VideoFilter")]
+		FavoriteShader,
 		[IconFile("WebBrowser")]
 		Region,
 

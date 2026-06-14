@@ -141,6 +141,12 @@ namespace Mesen.Config.Shortcuts
 		StartRecordHdPack,
 		StopRecordHdPack,
 
+		NextShader,
+		PreviousShader,
+		NextFavoriteShader,
+		PreviousFavoriteShader,
+		ApplyPicturePreset,
+
 		LastValidValue,
 		[Obsolete] LoadRandomGame,
 	}

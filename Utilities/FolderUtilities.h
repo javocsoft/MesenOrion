@@ -27,6 +27,7 @@ public:
 	static string GetSaveStateFolder();
 	static string GetScreenshotFolder();
 	static string GetHdPackFolder();
+	static string GetShaderFolder();
 	static string GetDebuggerFolder();
 	static string GetRecentGamesFolder();
 

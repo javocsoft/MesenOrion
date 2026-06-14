@@ -62,6 +62,12 @@ namespace Mesen.ViewModels
 				EmulatorShortcut.SetScale10x,
 				EmulatorShortcut.ToggleFullscreen,
 
+				EmulatorShortcut.NextShader,
+				EmulatorShortcut.PreviousShader,
+				EmulatorShortcut.NextFavoriteShader,
+				EmulatorShortcut.PreviousFavoriteShader,
+				EmulatorShortcut.ApplyPicturePreset,
+
 				EmulatorShortcut.ToggleDebugInfo,
 				EmulatorShortcut.ToggleFps,
 				EmulatorShortcut.ToggleGameTimer,

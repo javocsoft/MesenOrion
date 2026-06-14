@@ -99,6 +99,25 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern IntPtr GetArchiveRomList([MarshalAs(UnmanagedType.LPUTF8Str)]string filename, IntPtr outFileList, Int32 maxLength);
 
+		//GLSL shader management (Linux/OpenGL renderer)
+		[DllImport(DllPath)] public static extern void RefreshShaderList();
+		[DllImport(DllPath, EntryPoint = "GetShaderList")] private static extern void GetShaderListWrapper(IntPtr outBuffer, Int32 maxLength);
+		public static string[] GetShaderList()
+		{
+			string raw = Utf8Utilities.CallStringApi(GetShaderListWrapper, 100000);
+			return raw.Split(new string[] { "[!|!]" }, StringSplitOptions.RemoveEmptyEntries);
+		}
+		[DllImport(DllPath)] public static extern void SetShader([MarshalAs(UnmanagedType.LPUTF8Str)]string name);
+		[DllImport(DllPath)] public static extern void SetFavoriteShaders([MarshalAs(UnmanagedType.LPUTF8Str)]string joinedNames);
+		[DllImport(DllPath, EntryPoint = "GetCurrentShader")] private static extern void GetCurrentShaderWrapper(IntPtr outBuffer, Int32 maxLength);
+		public static string GetCurrentShader() { return Utf8Utilities.CallStringApi(GetCurrentShaderWrapper, 1000); }
+
+		[DllImport(DllPath, EntryPoint = "GetCurrentShaderPath")] private static extern void GetCurrentShaderPathWrapper(IntPtr outBuffer, Int32 maxLength);
+		public static string GetCurrentShaderPath() { return Utf8Utilities.CallStringApi(GetCurrentShaderPathWrapper, 4000); }
+
+		[DllImport(DllPath)] public static extern void SetShaderParameter([MarshalAs(UnmanagedType.LPUTF8Str)]string name, double value);
+		[DllImport(DllPath)] public static extern void ClearShaderParameters();
+
 		[DllImport(DllPath)] public static extern void SaveState(UInt32 stateIndex);
 		[DllImport(DllPath)] public static extern void LoadState(UInt32 stateIndex);
 		[DllImport(DllPath)] public static extern void SaveStateFile([MarshalAs(UnmanagedType.LPUTF8Str)]string filepath);

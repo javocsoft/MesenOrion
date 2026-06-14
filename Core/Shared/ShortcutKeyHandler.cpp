@@ -7,6 +7,8 @@
 #include "Shared/Emulator.h"
 #include "Shared/RewindManager.h"
 #include "Shared/NotificationManager.h"
+#include "Shared/MessageManager.h"
+#include "Shared/Video/ShaderManager.h"
 #include "Shared/SaveStateManager.h"
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/BaseControlManager.h"
@@ -209,6 +211,13 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 
 			return false;
 		}
+
+		case EmulatorShortcut::NextShader:
+		case EmulatorShortcut::PreviousShader:
+		case EmulatorShortcut::NextFavoriteShader:
+		case EmulatorShortcut::PreviousFavoriteShader:
+		case EmulatorShortcut::ApplyPicturePreset:
+			return true;
 	}
 
 	ShortcutState state = _emu->IsShortcutAllowed(shortcut, shortcutParam);
@@ -248,6 +257,27 @@ void ShortcutKeyHandler::ProcessShortcutPressed(EmulatorShortcut shortcut, uint3
 			} else {
 				settings->SetFlag(EmulationFlags::Turbo);
 			}
+			break;
+
+		case EmulatorShortcut::NextShader:
+			ShaderManager::RefreshShaderList();
+			ShaderManager::NextShader();
+			MessageManager::DisplayMessage("Shader", ShaderManager::GetCurrentShaderName());
+			break;
+		case EmulatorShortcut::PreviousShader:
+			ShaderManager::RefreshShaderList();
+			ShaderManager::PreviousShader();
+			MessageManager::DisplayMessage("Shader", ShaderManager::GetCurrentShaderName());
+			break;
+		case EmulatorShortcut::NextFavoriteShader:
+			ShaderManager::RefreshShaderList();
+			ShaderManager::NextFavoriteShader();
+			MessageManager::DisplayMessage("Shader", ShaderManager::GetCurrentShaderName());
+			break;
+		case EmulatorShortcut::PreviousFavoriteShader:
+			ShaderManager::RefreshShaderList();
+			ShaderManager::PreviousFavoriteShader();
+			MessageManager::DisplayMessage("Shader", ShaderManager::GetCurrentShaderName());
 			break;
 
 		case EmulatorShortcut::SelectSaveSlot1: case EmulatorShortcut::SelectSaveSlot2: case EmulatorShortcut::SelectSaveSlot3: case EmulatorShortcut::SelectSaveSlot4: case EmulatorShortcut::SelectSaveSlot5:

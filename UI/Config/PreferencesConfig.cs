@@ -140,6 +140,13 @@ namespace Mesen.Config
 
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.OpenFile, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = InputApi.GetKeyCode("O") } });
 
+			//GLSL shader cycling (Linux/OpenGL renderer). Also bindable to a gamepad button.
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.NextShader, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Page Down") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.PreviousShader, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Page Up") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.NextFavoriteShader, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("Page Down") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.PreviousFavoriteShader, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("Page Up") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ApplyPicturePreset, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("P") } });
+
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot1, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F1") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot2, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F2") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot3, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F3") } });

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <atomic>
 #include "SDL.h"
 #include "Core/Shared/Interfaces/IRenderingDevice.h"
 #include "Utilities/SimpleLock.h"
@@ -49,11 +50,17 @@ private:
 
 	bool _vsyncEnabled = false;
 
+	//Exclusive/real fullscreen state. The request comes from the UI thread but the
+	//actual SDL calls must run on the render thread, so it is applied from Render().
+	std::atomic<bool> _newFullscreen{ false };
+	bool _fullscreen = false;
+
 	bool Init();
 	bool InitTexture();
 	void Cleanup();
 	void LogSdlError(const char* msg);
 	void SetScreenSize(uint32_t width, uint32_t height);
+	void UpdateFullscreenState();
 	
 	bool UpdateHudSize(HudRenderInfo& hud, uint32_t width, uint32_t height);
 	void UpdateHudTexture(HudRenderInfo& hud, uint32_t* src);

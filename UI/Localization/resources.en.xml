@@ -150,7 +150,32 @@
 			<Control ID="tpgPicture">Picture</Control>
 			<Control ID="btnSelectPreset">Select Preset...</Control>
 			<Control ID="btnReset">Reset</Control>
-			
+
+			<Control ID="lblCustomPresets">My presets</Control>
+			<Control ID="lblPresetName">Preset name</Control>
+			<Control ID="btnSavePreset">Save current</Control>
+			<Control ID="btnRenamePreset">Rename</Control>
+			<Control ID="btnApplyPreset">Apply selected</Control>
+			<Control ID="btnDeletePreset">Delete selected</Control>
+			<Control ID="btnMoveUp">Move up</Control>
+			<Control ID="btnMoveDown">Move down</Control>
+			<Control ID="btnExport">Export…</Control>
+			<Control ID="btnImport">Import…</Control>
+			<Control ID="lblPicturePresetShortcut">In-game: Shift+P cycles through your presets.</Control>
+
+			<Control ID="tpgShaders">Shaders</Control>
+			<Control ID="lblShaderSelection">Shader (GLSL):</Control>
+			<Control ID="btnAddFavorite">Add to favorites</Control>
+			<Control ID="lblFavoriteShaders">Favorite shaders</Control>
+			<Control ID="lblNoFavorites">(no favorites yet)</Control>
+			<Control ID="btnApplyFavorite">Apply selected</Control>
+			<Control ID="btnRemoveFavorite">Remove selected</Control>
+			<Control ID="lblShaderParameters">Shader parameters</Control>
+			<Control ID="btnRefreshParams">Refresh</Control>
+			<Control ID="btnResetParams">Reset to defaults</Control>
+			<Control ID="lblShaderParamsHint">Select a shader, then click Refresh to load its adjustable parameters. Changes apply and save instantly.</Control>
+			<Control ID="lblShaderShortcuts">Keyboard shortcuts</Control>
+
 			<Control ID="lblPictureSettings">General settings</Control>
 			<Control ID="trkBrightness">Brightness</Control>
 			<Control ID="trkContrast">Contrast</Control>
@@ -159,6 +184,7 @@
 			
 			<Control ID="lblFilterSettings">Filter settings</Control>
 			<Control ID="lblVideoFilter">Filter:</Control>
+			<Control ID="lblVideoShader">Shader (GLSL):</Control>
 			
 			<Control ID="lblNtscBlarggSettings">NTSC settings (blargg)</Control>
 			<Control ID="trkArtifacts">Artifacts</Control>
@@ -675,7 +701,7 @@
 			<Control ID="tabOtherConsoles">Other systems</Control>
 			<Control ID="tabPreferences">Preferences</Control>
 
-			<Control ID="btnOpenMesenFolder">Open Mesen folder</Control>
+			<Control ID="btnOpenMesenFolder">Open Mesen Orion folder</Control>
 			<Control ID="btnResetSettings">Reset all settings</Control>
 
 			<Control ID="btnOK">OK</Control>
@@ -688,7 +714,7 @@
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 			
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
-			<Control ID="chkSingleInstance">Only allow one instance of Mesen at a time</Control>
+			<Control ID="chkSingleInstance">Only allow one instance of Mesen Orion at a time</Control>
 			<Control ID="chkAutomaticallyCheckForUpdates">Automatically check for updates</Control>
 
 			<Control ID="chkDeveloperMode">Enable developer mode</Control>
@@ -786,7 +812,7 @@
 		</Form>
 		<Form ID="SelectStorageFolderWindow">
 			<Control ID="wndTitle">Select Data Storage Folder</Control>
-			<Control ID="lblStorageHint">Select where you want to store Mesen's data:</Control>
+			<Control ID="lblStorageHint">Select where you want to store Mesen Orion's data:</Control>
 			<Control ID="radStorageDocuments">Store data in my user profile</Control>
 			<Control ID="radStoragePortable">Store data in the same folder as the application</Control>
 			<Control ID="lblFolder">Destination folder: </Control>
@@ -798,6 +824,12 @@
 			<Control ID="wndTitle">Start server...</Control>
 			<Control ID="lblPort">Port:</Control>
 			<Control ID="lblPassword">Password:</Control>
+			<Control ID="lblYourIp">Local IP:</Control>
+			<Control ID="lblPublicIp">Public IP:</Control>
+			<Control ID="btnGetPublicIp">Get</Control>
+			<Control ID="lblShowHidePassword">Show/hide password</Control>
+			<Control ID="lblCopy">Copy</Control>
+			<Control ID="lblOpenPortHint">For Internet play, forward this port on your router.</Control>
 			<Control ID="btnOK">OK</Control>
 			<Control ID="btnCancel">Cancel</Control>
 		</Form>
@@ -806,6 +838,9 @@
 			<Control ID="lblHost">Host:</Control>
 			<Control ID="lblPort">Port:</Control>
 			<Control ID="lblPassword">Password:</Control>
+			<Control ID="lblShowHidePassword">Show/hide password</Control>
+			<Control ID="lblCopy">Copy</Control>
+			<Control ID="btnTestConnection">Test connection</Control>
 			<Control ID="btnOK">OK</Control>
 			<Control ID="btnCancel">Cancel</Control>
 		</Form>
@@ -838,18 +873,19 @@
 			<Control ID="btnCancel">Cancel</Control>
 		</Form>
 		<Form ID="AboutWindow">
-			<Control ID="wndTitle">About - Mesen</Control>
-			<Control ID="lblName">Mesen</Control>
+			<Control ID="wndTitle">About - Mesen Orion</Control>
+			<Control ID="lblName">Mesen Orion</Control>
 			<Control ID="lblWebsite">Website:</Control>
-			<Control ID="lblLink">www.mesen.ca</Control>
+			<Control ID="lblLink">github.com/javocsoft/MesenOrion</Control>
+			<Control ID="lblProvenance">Mesen Orion is based on Mesen2 and continues development with a renewed UI and rendering pipeline improvements.</Control>
 			<Control ID="lblVersion">Version:</Control>
 			<Control ID="lblBuildDate">Build Date:</Control>
 			<Control ID="lblCommitId">Commit ID:</Control>
 			<Control ID="lblRuntimeVersion">Runtime:</Control>
 
 			<Control ID="grpAcknowledgements">Acknowledgements</Control>
-			<Control ID="lblAcknowledgeList">Thank you to the following people/projects for their direct and indirect help in making Mesen possible:</Control>
-			<Control ID="lblUsedSoftware">Mesen uses the following open-source software:</Control>
+			<Control ID="lblAcknowledgeList">Thank you to the following people/projects for their direct and indirect help in making Mesen Orion possible:</Control>
+			<Control ID="lblUsedSoftware">Mesen Orion uses the following open-source software:</Control>
 			<Control ID="lblSpecialThanks">And thank you to everybody who has contributed in any way! (bug reports, testing, research, etc.)</Control>
 
 			<Control ID="btnOk">OK</Control>
@@ -877,21 +913,21 @@
 			<Control ID="btnCancel">Cancel</Control>
 		</Form>
 		<Form ID="UpdatePromptWindow">
-			<Control ID="wndTitle">Mesen Updater</Control>
+			<Control ID="wndTitle">Mesen Orion Updater</Control>
 			<Control ID="lblLatestVersion">Latest version:</Control>
 			<Control ID="lblInstalledVersion">Installed version:</Control>
-			<Control ID="lblNewVersionAvailable">A new version of Mesen is available</Control>
+			<Control ID="lblNewVersionAvailable">A new version of Mesen Orion is available</Control>
 			<Control ID="lblReleaseNotes">Release notes</Control>
 			<Control ID="btnUpdate">Update</Control>
 			<Control ID="btnCancel">Cancel</Control>
 		</Form>
 		<Form ID="SetupWizardWindow">
-			<Control ID="wndTitle">Mesen</Control>
-			<Control ID="lblMesen">Mesen - Emulator</Control>
+			<Control ID="wndTitle">Mesen Orion</Control>
+			<Control ID="lblMesen">Mesen Orion - Emulator</Control>
 			<Control ID="lblConfigWizard">Configuration</Control>
-			<Control ID="lblInitialSetup">Please take a moment to perform Mesen's initial setup.</Control>
+			<Control ID="lblInitialSetup">Please take a moment to perform Mesen Orion's initial setup.</Control>
 			<Control ID="lblStorageLocation">Data Storage Location</Control>
-			<Control ID="lblStorageHint">Select where you want to store Mesen's data:</Control>
+			<Control ID="lblStorageHint">Select where you want to store Mesen Orion's data:</Control>
 			<Control ID="radStorageDocuments">Store the data in my user profile</Control>
 			<Control ID="radStoragePortable">Store the data in the same folder as the application</Control>
 			<Control ID="lblDataLocation">Folder:</Control>
@@ -1730,6 +1766,11 @@
 		</Form>
 	</Forms>
 	<Messages>
+		<Message ID="NoFavoriteShaders">No favorite shaders</Message>
+		<Message ID="NoPicturePresets">No picture presets</Message>
+		<Message ID="TestingConnection">Testing…</Message>
+		<Message ID="ConnectionReachable">Server reachable ✓</Message>
+		<Message ID="ConnectionUnreachable">Could not reach server ✗</Message>
 		<Message ID="LastSession">Last Session</Message>
 		<Message ID="AutoSave">Auto-save</Message>
 		<Message ID="SlotNumber">Slot #{0}</Message>
@@ -1774,7 +1815,7 @@ E
 		<Message ID="BandaiMicrophone">Bandai Microphone</Message>
 		<Message ID="DatachBarcodeReader">Datach Barcode Reader</Message>
 
-		<Message ID="HelpFullscreen">/fullscreen - Start Mesen in fullscreen mode</Message>
+		<Message ID="HelpFullscreen">/fullscreen - Start Mesen Orion in fullscreen mode</Message>
 		<Message ID="HelpDoNotSaveSettings">/DoNotSaveSettings - Prevent settings from being saved to the disk (useful to prevent command line options from becoming the default settings)</Message>
 		<Message ID="HelpRecordMovie">/RecordMovie="filename.mmo" - Start recording a movie after the specified game is loaded.</Message>
 		<Message ID="HelpLoadLastSession">/LoadLastSession - Resumes the game in the state it was left in when it was last played.</Message>
@@ -1802,13 +1843,13 @@ E
 		<Message ID="ImportLabelsWithErrors">Import completed: {0} labels imported (and {1} errors.)</Message>
 		<Message ID="ImportLabelsWithMissingFiles">Import completed: {0} labels imported.&#xA;&#xA;The following files could not be found:&#xA;{1}</Message>
 		<Message ID="ImportLabelsWithErrorsAndMissingFiles">Import completed: {0} labels imported (and {1} errors.)&#xA;&#xA;The following files could not be found:&#xA;{2}</Message>
-		<Message ID="RandomGameNoGameFound">Mesen could not find any games to load.</Message>
+		<Message ID="RandomGameNoGameFound">Mesen Orion could not find any games to load.</Message>
 
 		<Message ID="InvalidPaletteFile">Invalid palette file (too small or too large.)</Message>
 
 		<Message ID="CannotWriteToFolder">The selected folder cannot be written to - please select another folder and try again.&#xA;&#xA;Details:&#xA;{0}</Message>
 		<Message ID="InvalidPaths">The following path overrides are invalid:&#xA;&#xA;{0}&#xA;&#xA;Please use valid and writable folders and try again.</Message>
-		<Message ID="CopyMesenDataPrompt">All files will be copied from:&#xA;&#xA;{0}&#xA;to&#xA;{1}&#xA;&#xA;Once the copy is completed, Mesen will restart.&#xA;Continue?</Message>
+		<Message ID="CopyMesenDataPrompt">All files will be copied from:&#xA;&#xA;{0}&#xA;to&#xA;{1}&#xA;&#xA;Once the copy is completed, Mesen Orion will restart.&#xA;Continue?</Message>
 
 		<Message ID="CheatsFound">{0} games in database</Message>
 		<Message ID="CheatsImported">{0} cheats imported for {1}.</Message>
@@ -1819,21 +1860,21 @@ E
 
 		<Message ID="CouldNotInstallRuntime">The Visual Studio Runtime could not be installed properly.</Message>
 		<Message ID="EmptyState">&lt;empty&gt;</Message>
-		<Message ID="AutoUpdateNotSupported">The version of Mesen you're using does not support automatic updates. Please visit the website and manually download the latest release.</Message>
+		<Message ID="AutoUpdateNotSupported">The version of Mesen Orion you're using does not support automatic updates. Please visit the website and manually download the latest release.</Message>
 		<Message ID="ErrorWhileCheckingUpdates">An error has occurred while trying to check for updates. Check your internet connection and try again.&#xA;&#xA;Error details:&#xA;{0}</Message>
 		<Message ID="AutoUpdateInvalidFile">The downloaded file did not match the expected file.&#xA;&#xA;   Expected SHA256 signature: {0}&#xA;&#xA;   File SHA256 signature: {1}&#xA;&#xA;Please visit the website and manually download the latest release.</Message>
 		<Message ID="FileNotFound">File not found: {0}</Message>
 		<Message ID="InvalidArgument">Invalid argument: {0}</Message>
 
-		<Message ID="MesenUpToDate">You are running the latest version of Mesen.</Message>
+		<Message ID="MesenUpToDate">You are running the latest version of Mesen Orion.</Message>
 		<Message ID="PatchAndReset">Patch and reset the current game?</Message>
 		<Message ID="SelectRomIps">Please select a ROM for this patch file.</Message>
 		<Message ID="UnableToDownload">Unable to download file. Check your internet connection and try again.&#xA;&#xA;Details:&#xA;{0}</Message>
-		<Message ID="UnableToStartMissingSdl">Mesen could not launch because SDL2 could not be found. Install SDL2 using your package manager and try again.&#xA;&#xA;Error details:&#xA;{0}</Message>
-		<Message ID="UnableToStartMissingDependencies">Mesen could not launch because of missing dependencies.&#xA;&#xA;Error details:&#xA;{0}</Message>
-		<Message ID="UnableToStartMissingFiles">Mesen was unable to start due to missing files.&#xA;&#xA;Error: MesenCore.dll is missing.</Message>
+		<Message ID="UnableToStartMissingSdl">Mesen Orion could not launch because SDL2 could not be found. Install SDL2 using your package manager and try again.&#xA;&#xA;Error details:&#xA;{0}</Message>
+		<Message ID="UnableToStartMissingDependencies">Mesen Orion could not launch because of missing dependencies.&#xA;&#xA;Error details:&#xA;{0}</Message>
+		<Message ID="UnableToStartMissingFiles">Mesen Orion was unable to start due to missing files.&#xA;&#xA;Error: MesenCore.dll is missing.</Message>
 		<Message ID="UnexpectedError">An unexpected error has occurred.&#xA;&#xA;Error details:&#xA;{0}</Message>
-		<Message ID="UpdateDownloadFailed">Download failed - the file appears to be corrupted. Please visit the Mesen website to download the latest version manually.</Message>
+		<Message ID="UpdateDownloadFailed">Download failed - the file appears to be corrupted. Please visit the Mesen Orion website to download the latest version manually.</Message>
 		<Message ID="UpgradeSuccess">Upgrade completed successfully.</Message>
 		<Message ID="UpdaterNotFound">The update process could not be started due to missing files.</Message>
 		<Message ID="Net45NotFound">The Microsoft .NET Framework 4.5 could not be found. Please download and install the latest version of the .NET Framework from Microsoft's website and try again.</Message>
@@ -1983,6 +2024,12 @@ E
 			<Value ID="SelectSaveSlot10">Select Save Slot 10</Value>
 
 			<Value ID="OpenFile">Open File</Value>
+
+			<Value ID="NextShader">Next Shader</Value>
+			<Value ID="PreviousShader">Previous Shader</Value>
+			<Value ID="NextFavoriteShader">Next Favorite Shader</Value>
+			<Value ID="PreviousFavoriteShader">Previous Favorite Shader</Value>
+			<Value ID="ApplyPicturePreset">Apply Picture Preset (cycle)</Value>
 
 			<Value ID="FdsSwitchDiskSide">FDS - Switch Disk Side</Value>
 			<Value ID="FdsEjectDisk">FDS - Eject Disk</Value>
@@ -3556,6 +3603,7 @@ E
 			<Value ID="AspectRatio">Aspect Ratio</Value>
 			<Value ID="Fullscreen">Fullscreen</Value>
 			<Value ID="VideoFilter">Video Filter</Value>
+			<Value ID="FavoriteShader">Favorite Shader</Value>
 			<Value ID="Region">Region / Model</Value>
 
 			<Value ID="Audio">Audio</Value>

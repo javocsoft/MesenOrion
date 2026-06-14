@@ -8,9 +8,11 @@
     <AssemblyName>Mesen</AssemblyName>
     <RootNamespace>Mesen</RootNamespace>
     <StartupObject>Mesen.Program</StartupObject>
-    <Version>2.1.1</Version>
-    <FileVersion>2.1.1</FileVersion>
-    <Copyright>(C) 2014-2025 Sour</Copyright>
+    <Product>Mesen Orion</Product>
+    <AssemblyTitle>Mesen Orion</AssemblyTitle>
+    <Version>3.0.0</Version>
+    <FileVersion>3.0.0</FileVersion>
+    <Copyright>(C) 2014-2026 Sour; (C) 2026 JavocSoft and Mesen Orion contributors</Copyright>
   </PropertyGroup>
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

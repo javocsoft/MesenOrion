@@ -5,6 +5,6 @@ Exec=Mesen %f
 Terminal=false
 Type=Application
 Categories=Game;Emulator;
-Name=Mesen
+Name=Mesen Orion
 GenericName=Multi-system emulator
 Comment=Multi-system emulator (NES, SNES, GB, PCE)

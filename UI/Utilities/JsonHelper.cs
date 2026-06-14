@@ -31,6 +31,7 @@ namespace Mesen.Utilities
 }
 
 [JsonSerializable(typeof(Configuration))]
+[JsonSerializable(typeof(VideoCustomizationExport))]
 [JsonSerializable(typeof(Breakpoint))]
 [JsonSerializable(typeof(CodeLabel))]
 [JsonSerializable(typeof(GameDipSwitches))]
