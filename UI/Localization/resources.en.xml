@@ -1768,6 +1768,8 @@
 	<Messages>
 		<Message ID="NoFavoriteShaders">No favorite shaders</Message>
 		<Message ID="NoPicturePresets">No picture presets</Message>
+		<Message ID="RecentGameLaunch">Launch</Message>
+		<Message ID="RecentGameRemove">Remove from list</Message>
 		<Message ID="TestingConnection">Testing…</Message>
 		<Message ID="ConnectionReachable">Server reachable ✓</Message>
 		<Message ID="ConnectionUnreachable">Could not reach server ✗</Message>

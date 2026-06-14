@@ -273,9 +273,11 @@ namespace Mesen.Windows
 					cmdLine.LoadFiles();
 					cmdLine.OnAfterInit(this);
 
-					if(ConfigManager.Config.Preferences.AutomaticallyCheckForUpdates) {
-						_model.MainMenu.CheckForUpdate(this, true);
-					}
+					//Update check disabled in Mesen Orion - it points at the upstream Mesen
+					//server (mesen.ca), not this fork. Re-enable once a fork release feed exists.
+					//if(ConfigManager.Config.Preferences.AutomaticallyCheckForUpdates) {
+					//	_model.MainMenu.CheckForUpdate(this, true);
+					//}
 				});
 			});
 		}

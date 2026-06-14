@@ -88,6 +88,25 @@ namespace Mesen.ViewModels
 			GameEntries = entries;
 		}
 
+		//Removes a recent game from the list: deletes its .rgd file and refreshes the grid.
+		public void RemoveGame(RecentGameInfo? info)
+		{
+			if(info == null) {
+				return;
+			}
+			try {
+				if(File.Exists(info.FileName)) {
+					File.Delete(info.FileName);
+				}
+			} catch {
+				//Ignore deletion errors
+			}
+
+			//Reassign the list so the grid rebinds and rebuilds.
+			GameEntries = GameEntries.Where(e => e != info).ToList();
+			Visible = GameEntries.Count > 0;
+		}
+
 		private bool Pause()
 		{
 			if(!EmuApi.IsPaused()) {

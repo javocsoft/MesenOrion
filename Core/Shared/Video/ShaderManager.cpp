@@ -28,7 +28,15 @@ vector<string> ShaderManager::GetCandidateFolders()
 		string exeDir = FolderUtilities::GetFolderName(string(buf));
 		folders.push_back(FolderUtilities::CombinePath(exeDir, "Shaders"));
 		folders.push_back(FolderUtilities::CombinePath(exeDir, "shaders"));
+
+		//When installed via the .deb, the binary lives in <prefix>/bin and the shaders
+		//in <prefix>/share/mesen-orion/shaders (e.g. /usr or /usr/local). Derive it.
+		folders.push_back(FolderUtilities::CombinePath(exeDir, "../share/mesen-orion/shaders"));
 	}
+
+	//Standard install location used by the .deb package.
+	folders.push_back("/usr/share/mesen-orion/shaders");
+	folders.push_back("/usr/local/share/mesen-orion/shaders");
 #endif
 
 	try {

@@ -150,6 +150,17 @@ namespace Mesen.Config
 			Saturation = preset.Saturation;
 			ScanlineIntensity = preset.ScanlineIntensity;
 			UseBilinearInterpolation = preset.UseBilinearInterpolation;
+
+			//A picture preset must not change the active shader. Sync Shader from the
+			//actually-running shader first, otherwise ApplyConfig() (which re-pushes
+			//SetShader) would clobber a shader that was selected via the in-game hotkeys.
+			if(OperatingSystem.IsLinux()) {
+				string running = EmuApi.GetCurrentShader();
+				if(!string.IsNullOrEmpty(running) && running != Shader) {
+					Shader = running;
+				}
+			}
+
 			ApplyConfig();
 		}
 	}

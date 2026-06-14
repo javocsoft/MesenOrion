@@ -4,11 +4,13 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Mesen.Interop;
 using Mesen.Localization;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -27,6 +29,7 @@ namespace Mesen.Controls
 		public static readonly StyledProperty<bool> EnabledProperty = AvaloniaProperty.Register<StateGridEntry, bool>(nameof(Enabled));
 		public static readonly StyledProperty<bool> IsActiveEntryProperty = AvaloniaProperty.Register<StateGridEntry, bool>(nameof(IsActiveEntry));
 		public static readonly StyledProperty<double> AspectRatioProperty = AvaloniaProperty.Register<StateGridEntry, double>(nameof(AspectRatio));
+		public static readonly StyledProperty<bool> ShowContextMenuProperty = AvaloniaProperty.Register<StateGridEntry, bool>(nameof(ShowContextMenu));
 
 		public RecentGameInfo Entry
 		{
@@ -44,6 +47,12 @@ namespace Mesen.Controls
 		{
 			get { return GetValue(AspectRatioProperty); }
 			set { SetValue(AspectRatioProperty, value); }
+		}
+
+		public bool ShowContextMenu
+		{
+			get { return GetValue(ShowContextMenuProperty); }
+			set { SetValue(ShowContextMenuProperty, value); }
 		}
 
 		public bool Enabled
@@ -101,12 +110,37 @@ namespace Mesen.Controls
 			Entry.Load();
 		}
 
+		private void BuildContextMenu()
+		{
+			if(!ShowContextMenu) {
+				ContextMenu = null;
+				return;
+			}
+
+			MenuItem launch = new MenuItem() { Header = ResourceHelper.GetMessage("RecentGameLaunch") };
+			launch.Click += (s, e) => {
+				if(Entry != null && Entry.IsEnabled()) {
+					Entry.Load();
+				}
+			};
+
+			MenuItem remove = new MenuItem() { Header = ResourceHelper.GetMessage("RecentGameRemove") };
+			remove.Click += (s, e) => {
+				RecentGamesViewModel? model = this.FindAncestorOfType<StateGrid>()?.DataContext as RecentGamesViewModel;
+				model?.RemoveGame(Entry);
+			};
+
+			ContextMenu = new ContextMenu() { ItemsSource = new List<object>() { launch, remove } };
+		}
+
 		public void Init()
 		{
 			RecentGameInfo game = Entry;
 			if(game == null) {
 				return;
 			}
+
+			BuildContextMenu();
 
 			Title = game.Name;
 

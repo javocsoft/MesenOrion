@@ -235,6 +235,7 @@ namespace Mesen.Controls
 					ctrl.SetValue(Grid.RowProperty, row);
 					ctrl.Entry = Entries[index];
 					ctrl.IsActiveEntry = index == SelectedIndex;
+					ctrl.ShowContextMenu = Mode == GameScreenMode.RecentGames;
 					ctrl.Init();
 
 					entries.Add(ctrl);

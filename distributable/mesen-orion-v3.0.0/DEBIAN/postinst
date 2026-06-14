@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+  configure)
+    # Asegurar permisos ejecutable
+    if [ -f /usr/bin/mesen-orion ]; then
+      chmod 755 /usr/bin/mesen-orion || true
+    fi
+    ;;
+esac
+
+exit 0

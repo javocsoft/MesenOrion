@@ -1192,10 +1192,7 @@ namespace Mesen.ViewModels
 					ActionType = ActionType.CommandLineHelp,
 					OnClick = () => { new CommandLineHelpWindow().ShowCenteredDialog((Control)wnd); }
 				},
-				new MainMenuAction() {
-					ActionType = ActionType.CheckForUpdates,
-					OnClick = () => CheckForUpdate(wnd, false)
-				},
+				//Update check disabled in Mesen Orion (points at upstream mesen.ca, not this fork).
 				new MainMenuAction() {
 					ActionType = ActionType.ReportBug,
 					IsVisible = () => false,

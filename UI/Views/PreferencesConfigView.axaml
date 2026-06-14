@@ -26,7 +26,8 @@
 						<TextBlock Text="{l:Translate lblTheme}" Margin="3 0 5 0" />
 						<c:EnumComboBox SelectedItem="{Binding Config.Theme}" Width="75" />
 					</StackPanel>
-					<CheckBox Content="{l:Translate chkAutomaticallyCheckForUpdates}" IsChecked="{Binding Config.AutomaticallyCheckForUpdates}" />
+					<!-- Update check disabled in Mesen Orion (points at upstream mesen.ca) - hidden for now.
+						<CheckBox Content="{l:Translate chkAutomaticallyCheckForUpdates}" IsChecked="{Binding Config.AutomaticallyCheckForUpdates}" /> -->
 					<CheckBox Content="{l:Translate chkSingleInstance}" IsChecked="{Binding Config.SingleInstance}" />
 
 					<c:OptionSection Header="{l:Translate lblPauseBackgroundSettings}">
