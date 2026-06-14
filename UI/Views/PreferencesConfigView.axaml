@@ -83,7 +83,7 @@
 					</c:OptionSection>
 
 					<c:OptionSection Header="{l:Translate grpPathOverrides}">
-						<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+						<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
 							<CheckBox Grid.Row="0" Content="{l:Translate chkGameOverride}" IsChecked="{Binding Config.OverrideGameFolder}" />
 							<c:PathSelector
 								Grid.Row="0"
@@ -145,6 +145,15 @@
 								Editable="{Binding Config.OverrideWaveFolder}"
 								Path="{Binding Config.WaveFolder}"
 								DisabledPath="{x:Static cfg:ConfigManager.DefaultWaveFolder}"
+							/>
+
+							<CheckBox Grid.Row="7" Content="{l:Translate chkGifOverride}" IsChecked="{Binding Config.OverrideGifFolder}" />
+							<c:PathSelector
+								Grid.Row="7"
+								Grid.Column="1"
+								Editable="{Binding Config.OverrideGifFolder}"
+								Path="{Binding Config.GifFolder}"
+								DisabledPath="{x:Static cfg:ConfigManager.DefaultGifFolder}"
 							/>
 						</Grid>
 					</c:OptionSection>

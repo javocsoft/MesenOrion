@@ -603,6 +603,8 @@ namespace Mesen.Debugger.Utilities
 		SoundRecorder,
 		[IconFile("VideoRecorder")]
 		VideoRecorder,
+		[IconFile("VideoRecorder")]
+		GifRecorder,
 
 		[IconFile("HdPack")]
 		HdPacks,

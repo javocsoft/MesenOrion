@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Shared/Video/SystemHud.h"
 #include "Shared/Video/DebugHud.h"
+#include "Shared/Video/VideoRenderer.h"
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/MessageManager.h"
 #include "Shared/BaseControlManager.h"
@@ -32,7 +33,9 @@ void SystemHud::Draw(DebugHud* hud, uint32_t width, uint32_t height) const
 		} else if(showMovieIcons && _emu->GetMovieManager()->Playing()) {
 			DrawPlayIcon(hud);
 			xOffset += 12;
-		} else if(showMovieIcons && _emu->GetMovieManager()->Recording()) {
+		} else if((showMovieIcons && _emu->GetMovieManager()->Recording()) || _emu->GetVideoRenderer()->IsRecording()) {
+			//Show the record icon while a movie is recording (if movie icons are enabled)
+			//or whenever a video/GIF recording is active (always visible).
 			DrawRecordIcon(hud);
 			xOffset += 12;
 		}

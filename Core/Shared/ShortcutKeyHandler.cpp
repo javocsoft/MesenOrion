@@ -218,6 +218,9 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 		case EmulatorShortcut::PreviousFavoriteShader:
 		case EmulatorShortcut::ApplyPicturePreset:
 			return true;
+
+		case EmulatorShortcut::ToggleGifRecorder:
+			return isRunning;
 	}
 
 	ShortcutState state = _emu->IsShortcutAllowed(shortcut, shortcutParam);

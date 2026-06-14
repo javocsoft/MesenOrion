@@ -82,6 +82,7 @@ namespace Mesen.Config
 		[Reactive] public bool OverrideSaveStateFolder { get; set; } = false;
 		[Reactive] public bool OverrideScreenshotFolder { get; set; } = false;
 		[Reactive] public bool OverrideWaveFolder { get; set; } = false;
+		[Reactive] public bool OverrideGifFolder { get; set; } = false;
 
 		[Reactive] public string GameFolder { get; set; } = "";
 		[Reactive] public string AviFolder { get; set; } = "";
@@ -90,6 +91,7 @@ namespace Mesen.Config
 		[Reactive] public string SaveStateFolder { get; set; } = "";
 		[Reactive] public string ScreenshotFolder { get; set; } = "";
 		[Reactive] public string WaveFolder { get; set; } = "";
+		[Reactive] public string GifFolder { get; set; } = "";
 
 		public PreferencesConfig()
 		{
@@ -146,6 +148,7 @@ namespace Mesen.Config
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.NextFavoriteShader, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("Page Down") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.PreviousFavoriteShader, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("Page Up") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ApplyPicturePreset, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("P") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ToggleGifRecorder, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("G") } });
 
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot1, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F1") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot2, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F2") } });

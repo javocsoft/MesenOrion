@@ -44,6 +44,7 @@ namespace Mesen.ViewModels
 				EmulatorShortcut.Exit,
 
 				EmulatorShortcut.ToggleRecordVideo,
+				EmulatorShortcut.ToggleGifRecorder,
 				EmulatorShortcut.ToggleRecordAudio,
 				EmulatorShortcut.ToggleRecordMovie,
 

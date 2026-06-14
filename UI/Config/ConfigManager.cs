@@ -35,6 +35,7 @@ namespace Mesen.Config
 		public static string DefaultSaveStateFolder { get { return Path.Combine(HomeFolder, "SaveStates"); } }
 		public static string DefaultScreenshotFolder { get { return Path.Combine(HomeFolder, "Screenshots"); } }
 		public static string DefaultWaveFolder { get { return Path.Combine(HomeFolder, "Wave"); } }
+		public static string DefaultGifFolder { get { return Path.Combine(HomeFolder, "Gif"); } }
 
 		public static bool DisableSaveSettings { get; internal set; }
 
@@ -222,6 +223,7 @@ namespace Mesen.Config
 		public static string SaveStateFolder { get { return GetFolder(DefaultSaveStateFolder, Config.Preferences.SaveStateFolder, Config.Preferences.OverrideSaveStateFolder); } }
 		public static string ScreenshotFolder { get { return GetFolder(DefaultScreenshotFolder, Config.Preferences.ScreenshotFolder, Config.Preferences.OverrideScreenshotFolder); } }
 		public static string WaveFolder { get { return GetFolder(DefaultWaveFolder, Config.Preferences.WaveFolder, Config.Preferences.OverrideWaveFolder); } }
+		public static string GifFolder { get { return GetFolder(DefaultGifFolder, Config.Preferences.GifFolder, Config.Preferences.OverrideGifFolder); } }
 
 		public static string CheatFolder { get { return GetFolder(Path.Combine(ConfigManager.HomeFolder, "Cheats"), null, false); } }
 		public static string GameConfigFolder { get { return GetFolder(Path.Combine(ConfigManager.HomeFolder, "GameConfig"), null, false); } }

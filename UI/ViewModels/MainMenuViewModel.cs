@@ -830,6 +830,7 @@ namespace Mesen.ViewModels
 
 				GetSoundRecorderMenu(wnd),
 				GetVideoRecorderMenu(wnd),
+				GetGifRecorderMenu(wnd),
 
 				new ContextMenuSeparator() {
 					IsVisible = () => MainWindow.RomInfo.ConsoleType == ConsoleType.Nes
@@ -887,6 +888,25 @@ namespace Mesen.ViewModels
 						OnClick = () => {
 							RecordApi.AviStop();
 						}
+					}
+				}
+			};
+		}
+
+		private MainMenuAction GetGifRecorderMenu(MainWindow wnd)
+		{
+			return new MainMenuAction() {
+				ActionType = ActionType.GifRecorder,
+				SubActions = new List<object> {
+					new MainMenuAction() {
+						ActionType = ActionType.Record,
+						IsEnabled = () => IsGameRunning && !RecordApi.AviIsRecording(),
+						OnClick = () => ShortcutHandler.StartGifRecording()
+					},
+					new MainMenuAction() {
+						ActionType = ActionType.Stop,
+						IsEnabled = () => IsGameRunning && RecordApi.AviIsRecording(),
+						OnClick = () => ShortcutHandler.StopGifRecording()
 					}
 				}
 			};

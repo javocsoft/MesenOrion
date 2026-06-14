@@ -765,6 +765,7 @@
 			<Control ID="chkScreenshotsOverride">Screenshots:</Control>
 			<Control ID="chkSaveDataOverride">Save Data:</Control>
 			<Control ID="chkWaveOverride">Audio:</Control>
+			<Control ID="chkGifOverride">GIFs:</Control>
 			<Control ID="chkSaveStatesOverride">Save States:</Control>
 			<Control ID="chkMoviesOverride">Movies:</Control>
 
@@ -1770,6 +1771,8 @@
 		<Message ID="NoPicturePresets">No picture presets</Message>
 		<Message ID="RecentGameLaunch">Launch</Message>
 		<Message ID="RecentGameRemove">Remove from list</Message>
+		<Message ID="GifRecordingStarted">Recording GIF…</Message>
+		<Message ID="GifRecordingSaved">GIF saved: {0}</Message>
 		<Message ID="TestingConnection">Testing…</Message>
 		<Message ID="ConnectionReachable">Server reachable ✓</Message>
 		<Message ID="ConnectionUnreachable">Could not reach server ✗</Message>
@@ -2032,6 +2035,7 @@ E
 			<Value ID="NextFavoriteShader">Next Favorite Shader</Value>
 			<Value ID="PreviousFavoriteShader">Previous Favorite Shader</Value>
 			<Value ID="ApplyPicturePreset">Apply Picture Preset (cycle)</Value>
+			<Value ID="ToggleGifRecorder">Toggle GIF Recorder</Value>
 
 			<Value ID="FdsSwitchDiskSide">FDS - Switch Disk Side</Value>
 			<Value ID="FdsEjectDisk">FDS - Eject Disk</Value>
@@ -3577,6 +3581,7 @@ E
 			<Value ID="Stop">Stop</Value>
 			<Value ID="SoundRecorder">Sound Recorder</Value>
 			<Value ID="VideoRecorder">Video Recorder</Value>
+			<Value ID="GifRecorder">GIF Recorder</Value>
 			<Value ID="Cheats">Cheats</Value>
 			<Value ID="LogWindow">Log Window</Value>
 			<Value ID="HdPacks">HD Packs (NES)</Value>

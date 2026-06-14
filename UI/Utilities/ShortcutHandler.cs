@@ -57,6 +57,7 @@ namespace Mesen.Utilities
 				case EmulatorShortcut.ToggleOsd: ToggleOsd(); break;
 
 				case EmulatorShortcut.ApplyPicturePreset: ApplyNextPicturePreset(); break;
+				case EmulatorShortcut.ToggleGifRecorder: ToggleGifRecorder(); break;
 
 				case EmulatorShortcut.ToggleAlwaysOnTop: ToggleAlwaysOnTop(); break;
 
@@ -182,6 +183,45 @@ namespace Mesen.Utilities
 					RecordSystemHud = ConfigManager.Config.VideoRecord.RecordSystemHud,
 					RecordInputHud = ConfigManager.Config.VideoRecord.RecordInputHud
 				});
+			}
+		}
+
+		private static string _lastGifPath = "";
+
+		private static void ToggleGifRecorder()
+		{
+			if(RecordApi.AviIsRecording()) {
+				StopGifRecording();
+			} else {
+				StartGifRecording();
+			}
+		}
+
+		//Starts a GIF recording (always GIF codec) to the configured Gif folder, auto-named.
+		public static void StartGifRecording()
+		{
+			if(!EmuApi.IsRunning() || RecordApi.AviIsRecording()) {
+				return;
+			}
+			_lastGifPath = GetOutputFilename(ConfigManager.GifFolder, ".gif");
+			RecordApi.AviRecord(_lastGifPath, new RecordAviOptions() {
+				Codec = VideoCodec.GIF,
+				CompressionLevel = ConfigManager.Config.VideoRecord.CompressionLevel,
+				//Keep the on-screen recording indicator and HUD out of the GIF itself.
+				RecordSystemHud = false,
+				RecordInputHud = false
+			});
+			DisplayMessageHelper.DisplayMessage("GIF", ResourceHelper.GetMessage("GifRecordingStarted"));
+		}
+
+		public static void StopGifRecording()
+		{
+			if(!RecordApi.AviIsRecording()) {
+				return;
+			}
+			RecordApi.AviStop();
+			if(_lastGifPath.Length > 0) {
+				DisplayMessageHelper.DisplayMessage("GIF", ResourceHelper.GetMessage("GifRecordingSaved", _lastGifPath));
 			}
 		}
 

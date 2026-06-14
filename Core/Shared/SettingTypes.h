@@ -1039,6 +1039,7 @@ enum class EmulatorShortcut
 	NextFavoriteShader,
 	PreviousFavoriteShader,
 	ApplyPicturePreset,
+	ToggleGifRecorder,
 
 	ShortcutCount,
 };
