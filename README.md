@@ -52,9 +52,14 @@ Building on Mesen 2.1.1, this fork adds:
 
 ## Releases
 
-Pre-built releases for Windows (x64) are published on the [fork's releases page](https://github.com/javocsoft/MesenOrion/releases) as a ready-to-run ZIP that includes the emulator, all required libraries, and the full **Shaders** collection.
+Pre-built releases are published on the [fork's releases page](https://github.com/javocsoft/MesenOrion/releases). All of them bundle the emulator, the required libraries and the full **Shaders** collection:
 
-For Linux and macOS, build from source (see **Compiling** below).
+- **Windows (x64):** a ready-to-run ZIP.
+- **Linux (x64):**
+  - `mesen-orion_<version>_amd64.deb` — Debian/Ubuntu package. Install with `sudo dpkg -i mesen-orion_<version>_amd64.deb` (or `sudo apt install ./mesen-orion_<version>_amd64.deb`).
+  - `MesenOrion-<version>-x86_64.AppImage` — portable, no installation needed. Just `chmod +x` it and run.
+
+Prefer to build it yourself? You can — see **Compiling** below. (macOS is build-from-source only for now.)
 
 ## Compiling
 
