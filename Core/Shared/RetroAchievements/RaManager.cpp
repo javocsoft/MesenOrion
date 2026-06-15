@@ -233,9 +233,15 @@ void RaManager::OnAchievementTriggered(const rc_client_achievement_t* ach)
 	if(!ach) {
 		return;
 	}
-	MessageManager::DisplayMessage("RetroAchievements", string(ach->title) + " (" + std::to_string(ach->points) + ")");
-	//Notify the UI so an open achievement list refreshes and the unlock sound can play
-	NotifyState(RaUiEvent::RaAchievementUnlocked, ach->title ? ach->title : "");
+	//Notify the UI (it shows a toast with the badge, refreshes an open list, and plays the sound).
+	//Payload: title <0x1F> points <0x1F> badge URL
+	const char sep = '\x1f';
+	string payload = string(ach->title ? ach->title : "");
+	payload += sep;
+	payload += std::to_string((int)ach->points);
+	payload += sep;
+	payload += (ach->badge_url ? ach->badge_url : "");
+	NotifyState(RaUiEvent::RaAchievementUnlocked, payload);
 }
 
 void RaManager::LogCallback(const char* message, const rc_client_t* client)

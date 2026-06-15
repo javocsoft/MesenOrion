@@ -38,7 +38,7 @@ Building on Mesen 2.1.1, this fork adds:
 #### RetroAchievements
 - Built-in **[RetroAchievements](https://retroachievements.org/)** support (powered by the official **rcheevos** library) for **NES, SNES, Game Boy / Game Boy Color and Game Boy Advance**.
 - Log in from *Tools → RetroAchievements…*; only the session **token is stored** (not your password) so you're logged in automatically on the next launch.
-- Achievements unlock as you play, with an **on-screen notification** and an optional **unlock sound** (toggleable, on by default).
+- Achievements unlock as you play, with an animated **on-screen toast** (badge image + name + points that fades in/out over the game) and an optional **unlock sound** — both toggleable, on by default.
 - An **achievements window** lists the current game's achievements — badge image, points, progress and locked/unlocked state — and updates **live** as you earn them.
 - The **status bar** shows whether RA is active (`RA: On` / `RA: Off`).
 - **Softcore** is fully supported. **Hardcore** mode is shown but disabled: it requires the emulator to be officially approved by retroachievements.org, which is still pending for Mesen Orion.

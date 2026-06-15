@@ -35,6 +35,13 @@ namespace Mesen.ViewModels
 		[Reactive] public bool IsStatusBarVisible { get; set; }
 		[Reactive] public string StatusBarText { get; private set; } = "";
 
+		//RetroAchievements unlock toast
+		[Reactive] public bool AchievementToastVisible { get; set; }
+		[Reactive] public double AchievementToastOpacity { get; set; } = 0;
+		[Reactive] public Avalonia.Media.Imaging.Bitmap? AchievementToastBadge { get; set; }
+		[Reactive] public string AchievementToastTitle { get; set; } = "";
+		[Reactive] public string AchievementToastPoints { get; set; } = "";
+
 		[Reactive] public bool IsNativeRendererVisible { get; set; }
 		[Reactive] public bool IsSoftwareRendererVisible { get; set; }
 

@@ -33,6 +33,7 @@ namespace Mesen.Windows
 	public class MainWindow : MesenWindow
 	{
 		private DispatcherTimer _timerBackgroundFlag = new DispatcherTimer();
+		private DispatcherTimer _achievementToastTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(2.5) };
 		private MainWindowViewModel _model = null!;
 
 		private NotificationListener? _listener = null;
@@ -259,6 +260,26 @@ namespace Mesen.Windows
 					if(ev == RaEvent.AchievementUnlocked && ConfigManager.Config.RetroAchievements.EnableSound) {
 						RetroAchievementsApi.PlaySound();
 					}
+				};
+				_achievementToastTimer.Tick += (s, e) => {
+					_achievementToastTimer.Stop();
+					//Fade out, then close the popup once the fade has finished
+					_model.AchievementToastOpacity = 0;
+					DispatcherTimer.RunOnce(() => _model.AchievementToastVisible = false, TimeSpan.FromMilliseconds(400));
+				};
+				RetroAchievementsApi.AchievementUnlocked += (ach) => {
+					if(!ConfigManager.Config.RetroAchievements.EnableNotifications) {
+						return;
+					}
+					_model.AchievementToastBadge = ach.Badge;
+					_model.AchievementToastTitle = ach.Title;
+					_model.AchievementToastPoints = ach.Points > 0 ? (ach.Points + " points") : "";
+					_model.AchievementToastOpacity = 0;
+					_model.AchievementToastVisible = true;
+					//Fade in shortly after the popup opens, then auto-hide
+					DispatcherTimer.RunOnce(() => _model.AchievementToastOpacity = 1, TimeSpan.FromMilliseconds(30));
+					_achievementToastTimer.Stop();
+					_achievementToastTimer.Start();
 				};
 				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
 				//Hardcore is not yet approved for this emulator by retroachievements.org, so it stays off

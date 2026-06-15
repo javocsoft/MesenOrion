@@ -196,3 +196,8 @@ AppDir/
 appimagetool
 *.AppImage
 *.deb
+
+# Native core build output (produced by the makefile, then moved into InteropDLL/obj.*)
+/MesenCore.so
+/bin/pgohelperlib.so
+rcheevos/src/**/*.o

@@ -59,6 +59,9 @@ namespace Mesen.Interop
 		//Raised (on the UI thread) when the RA login/game state changes
 		public static event Action<RaEvent, string>? StateChanged;
 
+		//Raised (on the UI thread) when an achievement is unlocked, with its badge already loaded
+		public static event Action<RaAchievement>? AchievementUnlocked;
+
 		public static void Init()
 		{
 			if(_initialized) {
@@ -82,6 +85,26 @@ namespace Mesen.Interop
 			RaEvent ev = (RaEvent)eventType;
 			//Marshal back to the UI thread before raising the event
 			Dispatcher.UIThread.Post(() => StateChanged?.Invoke(ev, message));
+
+			if(ev == RaEvent.AchievementUnlocked) {
+				//message = "title \x1f points \x1f badgeUrl" - load the badge then raise the detailed event
+				_ = RaiseAchievementToastAsync(message);
+			}
+		}
+
+		private static async Task RaiseAchievementToastAsync(string packed)
+		{
+			string[] f = packed.Split('\x1f');
+			RaAchievement ach = new RaAchievement() {
+				Title = f.Length > 0 ? f[0] : "",
+				Points = f.Length > 1 && int.TryParse(f[1], out int pts) ? pts : 0,
+				BadgeUrl = f.Length > 2 ? f[2] : "",
+				State = 2 //unlocked
+			};
+			if(ach.BadgeUrl.Length > 0) {
+				ach.Badge = await GetBadgeAsync(ach.BadgeUrl).ConfigureAwait(false);
+			}
+			Dispatcher.UIThread.Post(() => AchievementUnlocked?.Invoke(ach));
 		}
 
 		public static List<RaAchievement> GetAchievementList()
@@ -123,26 +146,36 @@ namespace Mesen.Interop
 
 		private static async Task LoadBadgeAsync(RaAchievement ach)
 		{
-			string url = ach.BadgeUrl;
+			Bitmap? bmp = await GetBadgeAsync(ach.BadgeUrl).ConfigureAwait(false);
+			if(bmp != null) {
+				Dispatcher.UIThread.Post(() => ach.Badge = bmp);
+			}
+		}
+
+		//Downloads (and caches) a badge image. Returns null on error.
+		private static async Task<Bitmap?> GetBadgeAsync(string url)
+		{
+			if(string.IsNullOrEmpty(url)) {
+				return null;
+			}
 			try {
-				Bitmap? cached;
 				lock(_badgeLock) {
-					_badgeCache.TryGetValue(url, out cached);
-				}
-				if(cached == null) {
-					byte[] bytes = await _http.GetByteArrayAsync(url).ConfigureAwait(false);
-					Bitmap bmp = new Bitmap(new MemoryStream(bytes));
-					lock(_badgeLock) {
-						if(!_badgeCache.TryGetValue(url, out cached)) {
-							_badgeCache[url] = bmp;
-							cached = bmp;
-						}
+					if(_badgeCache.TryGetValue(url, out Bitmap? cached)) {
+						return cached;
 					}
 				}
-				Bitmap result = cached;
-				Dispatcher.UIThread.Post(() => ach.Badge = result);
+				byte[] bytes = await _http.GetByteArrayAsync(url).ConfigureAwait(false);
+				Bitmap bmp = new Bitmap(new MemoryStream(bytes));
+				lock(_badgeLock) {
+					if(_badgeCache.TryGetValue(url, out Bitmap? existing)) {
+						return existing;
+					}
+					_badgeCache[url] = bmp;
+					return bmp;
+				}
 			} catch {
-				//Ignore badge download errors - the achievement just shows without an image
+				//Ignore badge download errors
+				return null;
 			}
 		}
 
