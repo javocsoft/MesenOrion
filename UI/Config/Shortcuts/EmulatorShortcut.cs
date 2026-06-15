@@ -147,6 +147,7 @@ namespace Mesen.Config.Shortcuts
 		PreviousFavoriteShader,
 		ApplyPicturePreset,
 		ToggleGifRecorder,
+		SetRecentGameScreenshot,
 
 		LastValidValue,
 		[Obsolete] LoadRandomGame,

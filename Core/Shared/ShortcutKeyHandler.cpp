@@ -157,6 +157,7 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 			return isRunning && !isNetplayClient;
 
 		case EmulatorShortcut::TakeScreenshot:
+		case EmulatorShortcut::SetRecentGameScreenshot:
 			return isRunning;
 
 		case EmulatorShortcut::ToggleCheats:
@@ -298,6 +299,8 @@ void ShortcutKeyHandler::ProcessShortcutPressed(EmulatorShortcut shortcut, uint3
 		case EmulatorShortcut::LoadStateSlotAuto:
 			_emu->GetSaveStateManager()->LoadState((int)shortcut - (int)EmulatorShortcut::LoadStateSlot1 + 1);
 			break;
+
+		case EmulatorShortcut::SetRecentGameScreenshot: _emu->GetSaveStateManager()->SetRecentGameScreenshot(); break;
 
 		case EmulatorShortcut::MoveToNextStateSlot: _emu->GetSaveStateManager()->MoveToNextSlot(); break;
 		case EmulatorShortcut::MoveToPreviousStateSlot: _emu->GetSaveStateManager()->MoveToPreviousSlot(); break;

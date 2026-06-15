@@ -12,6 +12,12 @@ private:
 	atomic<uint32_t> _lastIndex;
 	Emulator* _emu;
 
+	//User-captured screenshot (via the SetRecentGameScreenshot shortcut) to use for the
+	//recent-games thumbnail instead of the automatic one. Kept per ROM so a different game
+	//never reuses it.
+	string _customScreenshotData;
+	string _customScreenshotRom;
+
 	string GetStateFilepath(int stateIndex);
 	void SaveVideoData(ostream& stream);
 	bool GetVideoData(vector<uint8_t>& out, RenderedFrame& frame, istream& stream);
@@ -40,6 +46,9 @@ public:
 
 	void SaveRecentGame(string romName, string romPath, string patchPath);
 	void LoadRecentGame(string filename, bool resetGame);
+
+	//Captures the current frame and uses it as the recent-games thumbnail for the running game.
+	void SetRecentGameScreenshot();
 
 	int32_t GetSaveStatePreview(string saveStatePath, uint8_t* pngData);
 

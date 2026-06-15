@@ -190,3 +190,9 @@ packages/*
 
 TestHelper/*
 UI/Dependencies.zip
+
+# Linux packaging / AppImage build artifacts
+AppDir/
+appimagetool
+*.AppImage
+*.deb

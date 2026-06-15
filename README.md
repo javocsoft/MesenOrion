@@ -10,7 +10,7 @@ Repository: <https://github.com/javocsoft/MesenOrion>
 
 > Mesen Orion is based on Mesen2 and continues its development. It is **not** affiliated with the original Mesen project or with MesenCE.
 
-## What's new in Mesen Orion 3.0.0
+## What's new in Mesen Orion
 
 Building on Mesen 2.1.1, this fork adds:
 
@@ -43,6 +43,8 @@ Building on Mesen 2.1.1, this fork adds:
 #### Interface & usability
 - An optional, auto-hiding **status bar** (toggle from the menu or settings) showing the running **core**, emulation **speed**, **video size**, active **video filter**, current **shader**, **aspect ratio** and **vsync** state. It auto-hides together with the menu bar.
 - **Right-click context menu** on the recent-games list to **launch** a game or **remove** it from the list.
+- **Custom recent-game cover:** press `Ctrl + Shift + F12` while playing to capture the current frame and use it as that game's thumbnail on the recent-games screen (instead of the automatic one taken when the game stops). The chosen frame is kept per game.
+- **Take Screenshot** moved to `Shift + F12` (plain `F12` is left free for the developer tools). Both keys are rebindable in *Preferences → Shortcut Keys*.
 - The online **auto-update** check has been disabled and the *Check for updates* entry hidden (this fork is distributed independently).
 
 #### Quality, performance & accessibility
@@ -96,7 +98,7 @@ Or build a portable **AppImage** (bundles the Shaders collection and AppStream m
 ./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-<version>-aarch64.AppImage
 ```
 
-The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.0-x86_64.AppImage`);
+The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.1-x86_64.AppImage`);
 the version is read from `distributable/mesen-orion/DEBIAN/control`.
 
 For how to publish a GitHub Release and list the AppImage on AppImageHub, see

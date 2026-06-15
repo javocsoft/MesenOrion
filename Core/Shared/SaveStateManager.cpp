@@ -271,7 +271,12 @@ void SaveStateManager::SaveRecentGame(string romName, string romPath, string pat
 	writer.Initialize(FolderUtilities::CombinePath(FolderUtilities::GetRecentGamesFolder(), filename));
 
 	std::stringstream pngStream;
-	_emu->GetVideoDecoder()->TakeScreenshot(pngStream);
+	if(!_customScreenshotData.empty() && _customScreenshotRom == _emu->GetRomInfo().RomFile.GetFileName()) {
+		//Use the frame the user captured via the SetRecentGameScreenshot shortcut
+		pngStream << _customScreenshotData;
+	} else {
+		_emu->GetVideoDecoder()->TakeScreenshot(pngStream);
+	}
 	writer.AddFile(pngStream, "Screenshot.png");
 
 	std::stringstream stateStream;
@@ -291,6 +296,26 @@ void SaveStateManager::SaveRecentGame(string romName, string romPath, string pat
 
 	writer.AddFile(romInfoStream, "RomInfo.txt");
 	writer.Save();
+}
+
+void SaveStateManager::SetRecentGameScreenshot()
+{
+	if(_emu->GetSettings()->CheckFlag(EmulationFlags::ConsoleMode) || _emu->GetSettings()->CheckFlag(EmulationFlags::TestMode)) {
+		return;
+	}
+
+	//Capture the current frame and remember it for this ROM, so the automatic recent-game save
+	//on stop (and any save right now) uses it instead of a fresh screenshot.
+	std::stringstream pngStream;
+	_emu->GetVideoDecoder()->TakeScreenshot(pngStream);
+	_customScreenshotData = pngStream.str();
+	_customScreenshotRom = _emu->GetRomInfo().RomFile.GetFileName();
+
+	//Persist immediately so the recent-games thumbnail reflects the captured frame right away.
+	RomInfo romInfo = _emu->GetRomInfo();
+	SaveRecentGame(romInfo.RomFile.GetFileName(), romInfo.RomFile, romInfo.PatchFile);
+
+	MessageManager::DisplayMessage("ScreenshotSaved", "RecentGameScreenshotSet");
 }
 
 void SaveStateManager::LoadRecentGame(string filename, bool resetGame)

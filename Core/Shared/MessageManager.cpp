@@ -17,6 +17,7 @@ std::unordered_map<string, string> MessageManager::_enResources = {
 	{ "Region", u8"Region" },
 	{ "SaveStates", u8"Save States" },
 	{ "ScreenshotSaved", u8"Screenshot Saved" },
+	{ "RecentGameScreenshotSet", u8"Set as the recent game thumbnail" },
 	{ "SoundRecorder", u8"Sound Recorder" },
 	{ "Test", u8"Test" },
 	{ "VideoRecorder", u8"Video Recorder" },

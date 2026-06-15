@@ -49,6 +49,7 @@ namespace Mesen.ViewModels
 				EmulatorShortcut.ToggleRecordMovie,
 
 				EmulatorShortcut.TakeScreenshot,
+				EmulatorShortcut.SetRecentGameScreenshot,
 				EmulatorShortcut.RunSingleFrame,
 
 				EmulatorShortcut.SetScale1x,

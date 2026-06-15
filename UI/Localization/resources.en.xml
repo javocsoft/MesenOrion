@@ -2048,6 +2048,7 @@ E
 			<Value ID="PreviousFavoriteShader">Previous Favorite Shader</Value>
 			<Value ID="ApplyPicturePreset">Apply Picture Preset (cycle)</Value>
 			<Value ID="ToggleGifRecorder">Toggle GIF Recorder</Value>
+			<Value ID="SetRecentGameScreenshot">Set Recent Game Screenshot</Value>
 
 			<Value ID="FdsSwitchDiskSide">FDS - Switch Disk Side</Value>
 			<Value ID="FdsEjectDisk">FDS - Eject Disk</Value>
