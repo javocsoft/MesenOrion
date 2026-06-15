@@ -105,6 +105,16 @@ namespace Mesen
 						libraryName = libraryName + ".dylib";
 					}
 				}
+
+				// Try the executable's directory first so that the DLL shipped
+				// alongside Mesen.exe in the release ZIP is always preferred.
+				string exeDir = Path.GetDirectoryName(ExePath) ?? AppContext.BaseDirectory;
+				string exeDirPath = Path.Combine(exeDir, libraryName);
+				if(File.Exists(exeDirPath)) {
+					return NativeLibrary.Load(exeDirPath);
+				}
+
+				// Fall back to the home folder (populated by DependencyHelper).
 				return NativeLibrary.Load(Path.Combine(ConfigManager.HomeFolder, libraryName));
 			}
 			return IntPtr.Zero;
