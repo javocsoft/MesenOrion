@@ -1,10 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform;
 using Avalonia.VisualTree;
 using Mesen.Config;
-using Mesen.Utilities;
 using System;
 
 namespace Mesen;
@@ -25,12 +26,17 @@ public class MesenWindow : Window
 		base.OnInitialized();
 		Focusable = true;
 		SetTextRenderingMode(this);
+	}
+
+	protected override void OnLoaded(RoutedEventArgs e)
+	{
+		base.OnLoaded(e);
 
 		//Use the Mesen Orion icon for the window/taskbar icon, unless the window already
 		//set its own (e.g. the debugger windows use CPU-specific icons).
 		if(Icon is null) {
 			try {
-				Icon = new WindowIcon(ImageUtilities.BitmapFromAsset("Assets/mesenorion.webp"));
+				Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://Mesen/Assets/mesenorion.ico")));
 			} catch {
 				//Ignore - fall back to the default icon if the asset can't be loaded
 			}
