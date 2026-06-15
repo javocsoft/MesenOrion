@@ -15,7 +15,7 @@ Repository: <https://github.com/javocsoft/MesenOrion>
 Building on Mesen 2.1.1, this fork adds:
 
 #### Rendering (Windows & Linux / OpenGL)
-- **GLSL shader support** via an OpenGL rendering path on both **Windows and Linux**. Drop libretro-style shaders (`.glslp` multi-pass presets or single `.glsl` files) into a **`Shaders`** folder (next to the binary or in the Mesen data folder) and select them from the UI.
+- **GLSL shader support** via an OpenGL rendering path on both **Windows and Linux**. Drop libretro-style shaders (`.glslp` multi-pass presets or single `.glsl` files) into a **`Shaders`** folder and select them from the UI. The folder is searched next to the binary, in the Mesen data folder, and — on Linux — in `/usr/share/mesen-orion/shaders` (so packaged installs can ship a system-wide shader collection).
 - On Windows, a native **WGL/OpenGL renderer** is used in place of DirectX, enabling the same GLSL pipeline available on Linux.
 - Switching between the OpenGL renderer and the **Software renderer** no longer requires a restart — the change applies immediately from the settings.
 - A dedicated **Shaders** tab in *Options → Video* with shader selection, **favorites** management, and live, adjustable **shader parameters** (`#pragma parameter`) with a *Reset to defaults* option.
@@ -34,6 +34,16 @@ Building on Mesen 2.1.1, this fork adds:
 - The *Start Server* dialog shows your **local IP** and can fetch your **public IP** (on demand), each with a copy button, plus a port-forwarding hint.
 - Password fields now mask input with an **eye toggle** to reveal, and a copy button.
 - A **Test connection** button in the *Connect to server* dialog.
+
+#### Recording & capture
+- Built-in **GIF recorder** with `Shift + G` to toggle Record / Stop, plus *Tools → GIF Recorder* menu entries.
+- An **always-visible on-screen indicator** while recording, and a notification showing where each GIF was saved.
+- Automatic, timestamped filenames; the **output folder is configurable** (defaults to a dedicated `Gif` folder).
+
+#### Interface & usability
+- An optional, auto-hiding **status bar** (toggle from the menu or settings) showing the running **core**, emulation **speed**, **video size**, active **video filter**, current **shader**, **aspect ratio** and **vsync** state. It auto-hides together with the menu bar.
+- **Right-click context menu** on the recent-games list to **launch** a game or **remove** it from the list.
+- The online **auto-update** check has been disabled and the *Check for updates* entry hidden (this fork is distributed independently).
 
 #### Quality, performance & accessibility
 - Fixes and clean-ups in the SDL/Linux layer (video blit, audio ring-buffer thread-safety, deferred exclusive-fullscreen handling).
@@ -75,7 +85,7 @@ Mesen Orion is built on top of **Mesen / Mesen2 by Sour**. Huge thanks to Sour a
 
 Mesen Orion is available under the GPL V3 license. Full text here: <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
-Copyright (C) 2014-2025 Sour
+Copyright (C) 2014-2026 Sour
 Copyright (C) 2026 JavocSoft and Mesen Orion contributors
 
 This program is free software: you can redistribute it and/or modify

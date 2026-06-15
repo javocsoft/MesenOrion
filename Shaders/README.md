@@ -21,6 +21,10 @@ Drop your shader files in Mesen's **Shaders** folder:
 first launch). The example files next to this README (`crt-simple.glsl` /
 `crt-simple.glslp`) can be copied there as a starting point.
 
+Shaders are also picked up from a **`Shaders`** folder next to the executable and,
+on **Linux**, from `/usr/share/mesen-orion/shaders/` — so a packaged install (e.g.
+the `.deb`) can ship a system-wide shader collection.
+
 Both file types are listed in the UI:
 
 - `*.glslp` — a multi-pass **preset** (recommended)
