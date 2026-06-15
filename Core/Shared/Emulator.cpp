@@ -14,6 +14,7 @@
 #include "Shared/SaveStateManager.h"
 #include "Shared/Video/DebugStats.h"
 #include "Shared/RewindManager.h"
+#include "Shared/RetroAchievements/RaManager.h"
 #include "Shared/ShortcutKeyHandler.h"
 #include "Shared/EmulatorLock.h"
 #include "Shared/DebuggerRequest.h"
@@ -86,6 +87,7 @@ Emulator::~Emulator()
 void Emulator::Initialize(bool enableShortcuts)
 {
 	_systemActionManager.reset(new SystemActionManager(this));
+	_raManager.reset(new RaManager(this));
 	if(enableShortcuts) {
 		_shortcutKeyHandler.reset(new ShortcutKeyHandler(this));
 		_notificationManager->RegisterNotificationListener(_shortcutKeyHandler);
@@ -141,6 +143,10 @@ void Emulator::Run()
 			_rewindManager->ProcessEndOfFrame();
 			_historyViewer->ProcessEndOfFrame();
 			ProcessSystemActions();
+		}
+
+		if(_raManager) {
+			_raManager->ProcessFrame();
 		}
 
 		ProcessAutoSaveState();
@@ -276,6 +282,10 @@ void Emulator::Stop(bool sendNotification, bool preventRecentGameSave, bool save
 	_stopFlag = true;
 
 	_notificationManager->SendNotification(ConsoleNotificationType::BeforeGameUnload);
+
+	if(_raManager) {
+		_raManager->UnloadGame();
+	}
 
 	ResetDebugger();
 
@@ -522,6 +532,11 @@ bool Emulator::InternalLoadRom(VirtualFile romFile, VirtualFile patchFile, bool 
 	GameLoadedEventParams params = { needPause, forPowerCycle };
 	_notificationManager->SendNotification(ConsoleNotificationType::GameLoaded, &params);
 	_threadPaused = false;
+
+	if(_raManager) {
+		//Identify the game and load its achievements (no-op if RA is disabled or not logged in)
+		_raManager->LoadGame();
+	}
 
 	if(!forPowerCycle && !_audioPlayerHud) {
 		ConsoleRegion region = _console->GetRegion();

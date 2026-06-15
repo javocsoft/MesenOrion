@@ -251,7 +251,16 @@ namespace Mesen.Windows
 				);
 
 				ConfigManager.Config.RemoveObsoleteConfig();
-				
+
+				//Register the RetroAchievements HTTP transport (rcheevos in the core delegates
+				//its server requests to .NET's HttpClient), then auto-login with the saved token.
+				RetroAchievementsApi.Init();
+				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
+				if(raConfig.Enabled && raConfig.Username.Length > 0 && raConfig.Token.Length > 0) {
+					RetroAchievementsApi.SetHardcoreEnabled(raConfig.HardcoreMode);
+					RetroAchievementsApi.LoginWithToken(raConfig.Username, raConfig.Token);
+				}
+
 				//InitializeDefaults must be after InitializeEmu, otherwise keybindings will be empty
 				ConfigManager.Config.InitializeDefaults();
 				ConfigManager.Config.UpgradeConfig();

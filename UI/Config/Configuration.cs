@@ -36,6 +36,7 @@ namespace Mesen.Config
 		[Reactive] public GbaConfig Gba { get; set; } = new();
 		[Reactive] public WsConfig Ws { get; set; } = new();
 		[Reactive] public PreferencesConfig Preferences { get; set; } = new();
+		[Reactive] public RetroAchievementsConfig RetroAchievements { get; set; } = new();
 		[Reactive] public AudioPlayerConfig AudioPlayer { get; set; } = new();
 		[Reactive] public DebugConfig Debug { get; set; } = new();
 		[Reactive] public RecentItems RecentFiles { get; set; } = new();

@@ -879,6 +879,13 @@ namespace Mesen.ViewModels
 						ApplicationHelper.GetOrCreateUniqueWindow(null, () => new ShortcutsViewerWindow());
 					}
 				},
+
+				new MainMenuAction() {
+					ActionType = ActionType.RetroAchievements,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new RetroAchievementsWindow());
+					}
+				},
 			};
 		}
 

@@ -1,0 +1,48 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:cfg="using:Mesen.Config"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.RetroAchievementsWindow"
+	x:DataType="cfg:RetroAchievementsConfig"
+	Width="430"
+	SizeToContent="Height"
+	CanResize="False"
+	Title="RetroAchievements"
+	Name="root"
+>
+	<StackPanel Margin="16" Spacing="10">
+		<TextBlock Text="RetroAchievements" FontSize="17" FontWeight="Bold" />
+		<TextBlock Name="lblStatus" Opacity="0.8" TextWrapping="Wrap" />
+
+		<!-- Login panel (shown when not logged in) -->
+		<StackPanel Name="pnlLogin" Spacing="5">
+			<TextBlock Text="Username" />
+			<TextBox Name="txtUsername" />
+			<TextBlock Text="Password" Margin="0 4 0 0" />
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBox Name="txtPassword" PasswordChar="•" />
+				<CheckBox Name="chkShow" Grid.Column="1" Content="Show" Margin="6 0 0 0" VerticalAlignment="Center" />
+			</Grid>
+			<Button Name="btnLogin" Content="Log In" HorizontalAlignment="Right" Margin="0 4 0 0" />
+		</StackPanel>
+
+		<!-- Logged-in panel -->
+		<StackPanel Name="pnlLoggedIn" Spacing="5" IsVisible="False">
+			<Button Name="btnLogout" Content="Log Out" HorizontalAlignment="Right" />
+		</StackPanel>
+
+		<Separator Margin="0 4" />
+
+		<CheckBox Content="Enable RetroAchievements" IsChecked="{Binding Enabled}" />
+		<CheckBox Content="Hardcore mode (disables save states, rewind, cheats and speed changes)" IsChecked="{Binding HardcoreMode}" TextBlock.TextWrapping="Wrap" />
+		<CheckBox Content="Show achievement notifications" IsChecked="{Binding EnableNotifications}" />
+
+		<Grid ColumnDefinitions="Auto,*,Auto" Margin="0 6 0 0">
+			<Button Name="btnAchievements" Grid.Column="0" Content="View Achievements..." />
+			<Button Name="btnClose" Grid.Column="2" Content="Close" />
+		</Grid>
+	</StackPanel>
+</Window>

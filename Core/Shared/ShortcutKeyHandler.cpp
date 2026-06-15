@@ -9,6 +9,7 @@
 #include "Shared/NotificationManager.h"
 #include "Shared/MessageManager.h"
 #include "Shared/Video/ShaderManager.h"
+#include "Shared/RetroAchievements/RaManager.h"
 #include "Shared/SaveStateManager.h"
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/BaseControlManager.h"
@@ -128,6 +129,26 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 	bool isMoviePlaying = _emu->GetMovieManager()->Playing();
 	bool isMovieRecording = _emu->GetMovieManager()->Recording();
 	bool isMovieActive = isMoviePlaying || isMovieRecording;
+
+	//RetroAchievements hardcore mode disables save states, rewind, cheats and speed changes
+	if(_emu->GetRaManager() && _emu->GetRaManager()->AreRestrictionsActive()) {
+		switch(shortcut) {
+			case EmulatorShortcut::SaveState: case EmulatorShortcut::SaveStateToFile: case EmulatorShortcut::SaveStateDialog:
+			case EmulatorShortcut::SaveStateSlot1: case EmulatorShortcut::SaveStateSlot2: case EmulatorShortcut::SaveStateSlot3: case EmulatorShortcut::SaveStateSlot4: case EmulatorShortcut::SaveStateSlot5:
+			case EmulatorShortcut::SaveStateSlot6: case EmulatorShortcut::SaveStateSlot7: case EmulatorShortcut::SaveStateSlot8: case EmulatorShortcut::SaveStateSlot9: case EmulatorShortcut::SaveStateSlot10:
+			case EmulatorShortcut::LoadState: case EmulatorShortcut::LoadStateFromFile: case EmulatorShortcut::LoadStateDialog: case EmulatorShortcut::LoadLastSession: case EmulatorShortcut::LoadStateSlotAuto:
+			case EmulatorShortcut::LoadStateSlot1: case EmulatorShortcut::LoadStateSlot2: case EmulatorShortcut::LoadStateSlot3: case EmulatorShortcut::LoadStateSlot4: case EmulatorShortcut::LoadStateSlot5:
+			case EmulatorShortcut::LoadStateSlot6: case EmulatorShortcut::LoadStateSlot7: case EmulatorShortcut::LoadStateSlot8: case EmulatorShortcut::LoadStateSlot9: case EmulatorShortcut::LoadStateSlot10:
+			case EmulatorShortcut::MoveToNextStateSlot: case EmulatorShortcut::MoveToPreviousStateSlot:
+			case EmulatorShortcut::ToggleRewind: case EmulatorShortcut::Rewind: case EmulatorShortcut::RewindTenSecs: case EmulatorShortcut::RewindOneMin:
+			case EmulatorShortcut::FastForward: case EmulatorShortcut::ToggleFastForward:
+			case EmulatorShortcut::IncreaseSpeed: case EmulatorShortcut::DecreaseSpeed: case EmulatorShortcut::MaxSpeed:
+			case EmulatorShortcut::ToggleCheats:
+				return false;
+			default:
+				break;
+		}
+	}
 
 	switch(shortcut) {
 		case EmulatorShortcut::ToggleRewind:

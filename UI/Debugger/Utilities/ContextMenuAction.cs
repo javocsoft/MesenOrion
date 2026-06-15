@@ -622,6 +622,9 @@ namespace Mesen.Debugger.Utilities
 		[IconFile("Keyboard")]
 		ViewShortcuts,
 
+		[IconFile("Coins")]
+		RetroAchievements,
+
 		[IconFile("Help")]
 		OnlineHelp,
 		[IconFile("CommandLine")]

@@ -1,0 +1,57 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="using:Mesen.Interop"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.RaAchievementListWindow"
+	Width="500" Height="620"
+	Title="Achievements"
+	Name="root"
+>
+	<DockPanel Margin="12">
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0 0 0 10">
+			<StackPanel Grid.Column="0" Spacing="1">
+				<TextBlock Text="Achievements" FontSize="16" FontWeight="Bold" />
+				<TextBlock Name="lblSummary" Opacity="0.7" FontSize="12" />
+			</StackPanel>
+			<Button Name="btnRefresh" Grid.Column="1" Content="Refresh" VerticalAlignment="Center" />
+		</Grid>
+
+		<TextBlock Name="lblEmpty" Text="No achievements loaded. Log in and start a supported game."
+				   Opacity="0.6" TextWrapping="Wrap" IsVisible="False" />
+
+		<ScrollViewer>
+			<ItemsControl Name="lstAchievements">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="i:RaAchievement">
+						<Border CornerRadius="6" BorderThickness="1"
+								BorderBrush="{DynamicResource SystemAccentColor}"
+								Padding="10" Margin="0 0 0 8">
+							<Grid ColumnDefinitions="Auto,*,Auto">
+								<Border Grid.Column="0" Width="48" Height="48" Margin="0 0 10 0"
+										VerticalAlignment="Top" CornerRadius="4" ClipToBounds="True"
+										Background="{DynamicResource ButtonBackground}">
+									<Image Source="{Binding Badge}" Width="48" Height="48" Stretch="Uniform" />
+								</Border>
+								<StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+									<TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" />
+									<TextBlock Text="{Binding Description}" Opacity="0.8" TextWrapping="Wrap" />
+									<TextBlock Text="{Binding Progress}" FontSize="11" Opacity="0.6"
+											   IsVisible="{Binding Progress.Length}" />
+								</StackPanel>
+								<StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0 0 0">
+									<TextBlock Text="{Binding Points, StringFormat='{}{0} pts'}"
+											   HorizontalAlignment="Right" FontWeight="SemiBold" />
+									<TextBlock Text="✔ Unlocked" Foreground="{DynamicResource SystemAccentColor}"
+											   HorizontalAlignment="Right" FontSize="12" IsVisible="{Binding Unlocked}" />
+								</StackPanel>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</DockPanel>
+</Window>

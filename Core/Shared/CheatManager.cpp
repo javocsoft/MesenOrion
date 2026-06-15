@@ -4,6 +4,7 @@
 #include "Shared/MessageManager.h"
 #include "Shared/Emulator.h"
 #include "Shared/NotificationManager.h"
+#include "Shared/RetroAchievements/RaManager.h"
 #include "Utilities/HexUtilities.h"
 #include "Utilities/StringUtilities.h"
 
@@ -57,6 +58,12 @@ bool CheatManager::AddCheat(CheatCode code)
 
 void CheatManager::SetCheats(vector<CheatCode>& codes)
 {
+	if(!codes.empty() && _emu->GetRaManager() && _emu->GetRaManager()->AreRestrictionsActive()) {
+		//Cheats are not allowed while RetroAchievements hardcore mode is active
+		MessageManager::DisplayMessage("Cheats", "RaCheatsDisabled");
+		return;
+	}
+
 	auto lock = _emu->AcquireLock();
 
 	bool hasCheats = !_cheats.empty();

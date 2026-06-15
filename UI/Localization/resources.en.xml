@@ -3602,6 +3602,7 @@ E
 			<Value ID="HdPackBuilder">HD Pack Builder</Value>
 			<Value ID="TakeScreenshot">Take Screenshot</Value>
 			<Value ID="ViewShortcuts">View Shortcuts</Value>
+			<Value ID="RetroAchievements">RetroAchievements...</Value>
 
 			<Value ID="OnlineHelp">Online Help</Value>
 			<Value ID="CommandLineHelp">Command-line options</Value>

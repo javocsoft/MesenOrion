@@ -31,6 +31,7 @@ class VirtualFile;
 class BaseVideoFilter;
 class ShortcutKeyHandler;
 class SystemActionManager;
+class RaManager;
 class AudioPlayerHud;
 class GameServer;
 class GameClient;
@@ -68,6 +69,7 @@ private:
 	shared_ptr<ShortcutKeyHandler> _shortcutKeyHandler;
 	safe_ptr<Debugger> _debugger;
 	shared_ptr<SystemActionManager> _systemActionManager;
+	unique_ptr<RaManager> _raManager;
 
 	const unique_ptr<EmuSettings> _settings;
 	const unique_ptr<DebugHud> _debugHud;
@@ -191,6 +193,7 @@ public:
 	VideoRenderer* GetVideoRenderer() { return _videoRenderer.get(); }
 	VideoDecoder* GetVideoDecoder() { return _videoDecoder.get(); }
 	ShortcutKeyHandler* GetShortcutKeyHandler() { return _shortcutKeyHandler.get(); }
+	RaManager* GetRaManager() { return _raManager.get(); }
 	NotificationManager* GetNotificationManager() { return _notificationManager.get(); }
 	EmuSettings* GetSettings() { return _settings.get(); }
 	SaveStateManager* GetSaveStateManager() { return _saveStateManager.get(); }

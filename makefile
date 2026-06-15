@@ -115,7 +115,7 @@ ifeq ($(MESENOS),osx)
 	LINKOPTIONS += -framework Foundation -framework Cocoa -framework GameController -framework CoreHaptics -Wl,-rpath,/opt/local/lib
 endif
 
-CXXFLAGS = -fPIC -Wall --std=c++17 $(MESENFLAGS) $(SDL2INC) -I $(realpath ./) -I $(realpath ./Core) -I $(realpath ./Utilities) -I $(realpath ./Sdl) -I $(realpath ./Linux) -I $(realpath ./MacOS)
+CXXFLAGS = -fPIC -Wall --std=c++17 $(MESENFLAGS) $(SDL2INC) $(RCHEEVOSINC) -I $(realpath ./) -I $(realpath ./Core) -I $(realpath ./Utilities) -I $(realpath ./Sdl) -I $(realpath ./Linux) -I $(realpath ./MacOS)
 OBJCXXFLAGS = $(CXXFLAGS)
 CFLAGS = -fPIC -Wall $(MESENFLAGS)
 
@@ -154,6 +154,12 @@ SEVENZIPOBJ := $(SEVENZIPSRC:.c=.o)
 
 LUASRC := $(shell find Lua -name '*.c')
 LUAOBJ := $(LUASRC:.c=.o)
+
+# RetroAchievements (rcheevos) - vendored C library. The libretro/external/raintegration
+# helpers are excluded (we provide our own memory mapping and HTTP transport).
+RCHEEVOSINC := -DRC_CLIENT_SUPPORTS_HASH -Ircheevos/include -Ircheevos/src -Ircheevos/src/rcheevos -Ircheevos/src/rapi -Ircheevos/src/rhash
+RCHEEVOSSRC := $(filter-out %/rc_libretro.c %/rc_client_external.c %/rc_client_raintegration.c,$(shell find rcheevos/src -name '*.c'))
+RCHEEVOSOBJ := $(RCHEEVOSSRC:.c=.o)
 
 ifeq ($(MESENOS),linux)
 	LINUXSRC := $(shell find Linux -name '*.cpp')
@@ -219,19 +225,22 @@ core: InteropDLL/$(OBJFOLDER)/$(SHAREDLIB)
 pgohelper: InteropDLL/$(OBJFOLDER)/$(SHAREDLIB)
 	mkdir -p PGOHelper/$(OBJFOLDER) && cd PGOHelper/$(OBJFOLDER) && $(CXX) $(CXXFLAGS) $(LINKCHECKUNRESOLVED) -o pgohelper ../PGOHelper.cpp ../../bin/pgohelperlib.so -pthread $(FSLIB) $(SDL2LIB) $(LIBEVDEVLIB) $(X11LIB) $(GLLIB)
 
+rcheevos/%.o: rcheevos/%.c
+	$(CC) $(CFLAGS) $(RCHEEVOSINC) -c $< -o $@
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-	
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.o: %.mm
 	$(CXX) $(OBJCXXFLAGS) -c $< -o $@
 
-InteropDLL/$(OBJFOLDER)/$(SHAREDLIB): $(SEVENZIPOBJ) $(LUAOBJ) $(UTILOBJ) $(COREOBJ) $(SDLOBJ) $(LIBEVDEVOBJ) $(LINUXOBJ) $(DLLOBJ) $(MACOSOBJ)
+InteropDLL/$(OBJFOLDER)/$(SHAREDLIB): $(SEVENZIPOBJ) $(LUAOBJ) $(RCHEEVOSOBJ) $(UTILOBJ) $(COREOBJ) $(SDLOBJ) $(LIBEVDEVOBJ) $(LINUXOBJ) $(DLLOBJ) $(MACOSOBJ)
 	mkdir -p bin
 	mkdir -p InteropDLL/$(OBJFOLDER)
-	$(CXX) $(CXXFLAGS) $(LINKOPTIONS) $(LINKCHECKUNRESOLVED) -shared -o $(SHAREDLIB) $(DLLOBJ) $(SEVENZIPOBJ) $(LUAOBJ) $(LINUXOBJ) $(MACOSOBJ) $(LIBEVDEVOBJ) $(UTILOBJ) $(SDLOBJ) $(COREOBJ) $(SDL2INC) -pthread $(FSLIB) $(SDL2LIB) $(LIBEVDEVLIB) $(X11LIB) $(GLLIB)
+	$(CXX) $(CXXFLAGS) $(LINKOPTIONS) $(LINKCHECKUNRESOLVED) -shared -o $(SHAREDLIB) $(DLLOBJ) $(SEVENZIPOBJ) $(LUAOBJ) $(RCHEEVOSOBJ) $(LINUXOBJ) $(MACOSOBJ) $(LIBEVDEVOBJ) $(UTILOBJ) $(SDLOBJ) $(COREOBJ) $(SDL2INC) -pthread $(FSLIB) $(SDL2LIB) $(LIBEVDEVLIB) $(X11LIB) $(GLLIB)
 	cp $(SHAREDLIB) bin/pgohelperlib.so
 	mv $(SHAREDLIB) InteropDLL/$(OBJFOLDER)
 
@@ -248,5 +257,6 @@ clean:
 	rm -r -f $(SDLOBJ)
 	rm -r -f $(SEVENZIPOBJ)
 	rm -r -f $(LUAOBJ)
+	rm -r -f $(RCHEEVOSOBJ)
 	rm -r -f $(MACOSOBJ)
 	rm -r -f $(DLLOBJ)
