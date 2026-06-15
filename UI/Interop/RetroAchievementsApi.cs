@@ -98,12 +98,14 @@ namespace Mesen.Interop
 			RaAchievement ach = new RaAchievement() {
 				Title = f.Length > 0 ? f[0] : "",
 				Points = f.Length > 1 && int.TryParse(f[1], out int pts) ? pts : 0,
-				BadgeUrl = f.Length > 2 ? f[2] : "",
+				BadgeUrl = f.Length > 2 ? f[2].Trim() : "",
 				State = 2 //unlocked
 			};
+			EmuApi.WriteLogEntry("[RA] Toast for: " + ach.Title + " | BadgeUrl: '" + ach.BadgeUrl + "'");
 			if(ach.BadgeUrl.Length > 0) {
 				ach.Badge = await GetBadgeAsync(ach.BadgeUrl).ConfigureAwait(false);
 			}
+			EmuApi.WriteLogEntry("[RA] Badge loaded: " + (ach.Badge != null ? "YES" : "NO"));
 			Dispatcher.UIThread.Post(() => AchievementUnlocked?.Invoke(ach));
 		}
 
@@ -156,6 +158,7 @@ namespace Mesen.Interop
 		private static async Task<Bitmap?> GetBadgeAsync(string url)
 		{
 			if(string.IsNullOrEmpty(url)) {
+				EmuApi.WriteLogEntry("[RA] Badge URL is empty - no image will be shown");
 				return null;
 			}
 			try {
@@ -164,6 +167,7 @@ namespace Mesen.Interop
 						return cached;
 					}
 				}
+				EmuApi.WriteLogEntry("[RA] Downloading badge: " + url);
 				byte[] bytes = await _http.GetByteArrayAsync(url).ConfigureAwait(false);
 				Bitmap bmp = new Bitmap(new MemoryStream(bytes));
 				lock(_badgeLock) {
@@ -173,8 +177,8 @@ namespace Mesen.Interop
 					_badgeCache[url] = bmp;
 					return bmp;
 				}
-			} catch {
-				//Ignore badge download errors
+			} catch(Exception ex) {
+				EmuApi.WriteLogEntry("[RA] Badge download failed for " + url + " - " + ex.Message);
 				return null;
 			}
 		}

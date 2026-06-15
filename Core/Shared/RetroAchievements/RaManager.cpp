@@ -240,7 +240,14 @@ void RaManager::OnAchievementTriggered(const rc_client_achievement_t* ach)
 	payload += sep;
 	payload += std::to_string((int)ach->points);
 	payload += sep;
-	payload += (ach->badge_url ? ach->badge_url : "");
+	// Use the API to get the URL - this handles the case where badge_url is null
+	// and falls back to building the URL from badge_name.
+	char badgeUrlBuf[512] = {};
+	if(rc_client_achievement_get_image_url(ach, RC_CLIENT_ACHIEVEMENT_STATE_UNLOCKED, badgeUrlBuf, sizeof(badgeUrlBuf)) == RC_OK) {
+		payload += badgeUrlBuf;
+	} else {
+		payload += (ach->badge_url ? ach->badge_url : "");
+	}
 	NotifyState(RaUiEvent::RaAchievementUnlocked, payload);
 }
 

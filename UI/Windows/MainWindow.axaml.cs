@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -58,6 +59,10 @@ namespace Mesen.Windows
 		private Size _rendererSize;
 		private bool _usesSoftwareRenderer;
 
+		// On Windows, NativeControlHost HWNDs always paint above Avalonia Popups, so we use a
+		// separate Topmost Window for the achievement toast instead of the in-XAML Popup.
+		private AchievementToastWindow? _toastWindow;
+
 		private FrameInfo _prevScreenSize;
 
 		private Size _originalSize;
@@ -105,6 +110,17 @@ namespace Mesen.Windows
 
 			_rendererPanel = this.GetControl<Panel>("RendererPanel");
 			_rendererPanel.LayoutUpdated += RendererPanel_LayoutUpdated;
+
+			if(OperatingSystem.IsWindows()) {
+				// On Windows, NativeControlHost HWNDs always paint above Avalonia Popups, so
+				// we disconnect the Popup binding and use a separate Topmost Window instead.
+				var popup = this.GetControl<Popup>("AchievementToastPopup");
+				popup.ClearValue(Popup.IsOpenProperty);
+				popup.IsOpen = false;
+				_toastWindow = new AchievementToastWindow();
+				_toastWindow.DataContext = _model;
+				_toastWindow.ShowActivated = false;
+			}
 
 			_renderer = this.GetControl<NativeRenderer>("Renderer");
 			_softwareRenderer = this.GetControl<SoftwareRendererView>("SoftwareRenderer");
@@ -189,6 +205,7 @@ namespace Mesen.Windows
 			base.OnClosed(e);
 			_softwareRendererSubscription?.Dispose();
 			_mouseManager?.Dispose();
+			_toastWindow?.Close();
 		}
 
 		private void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
@@ -218,6 +235,15 @@ namespace Mesen.Windows
 
 			if(Design.IsDesignMode) {
 				return;
+			}
+
+			// Reposition the Windows toast window whenever the main window moves
+			if(_toastWindow != null) {
+				this.PositionChanged += (s, _) => {
+					if(_toastWindow.IsVisible) {
+						PositionToastWindow();
+					}
+				};
 			}
 
 			_mouseManager = new MouseManager(this, _usesSoftwareRenderer ? _softwareRenderer : _renderer, _mainMenu, _usesSoftwareRenderer);
@@ -263,9 +289,13 @@ namespace Mesen.Windows
 				};
 				_achievementToastTimer.Tick += (s, e) => {
 					_achievementToastTimer.Stop();
-					//Fade out, then close the popup once the fade has finished
+					//Fade out, then hide the popup/window once the fade has finished
 					_model.AchievementToastOpacity = 0;
-					DispatcherTimer.RunOnce(() => _model.AchievementToastVisible = false, TimeSpan.FromMilliseconds(400));
+					if(_toastWindow != null) {
+						DispatcherTimer.RunOnce(() => _toastWindow.Hide(), TimeSpan.FromMilliseconds(400));
+					} else {
+						DispatcherTimer.RunOnce(() => _model.AchievementToastVisible = false, TimeSpan.FromMilliseconds(400));
+					}
 				};
 				RetroAchievementsApi.AchievementUnlocked += (ach) => {
 					if(!ConfigManager.Config.RetroAchievements.EnableNotifications) {
@@ -275,8 +305,19 @@ namespace Mesen.Windows
 					_model.AchievementToastTitle = ach.Title;
 					_model.AchievementToastPoints = ach.Points > 0 ? (ach.Points + " points") : "";
 					_model.AchievementToastOpacity = 0;
-					_model.AchievementToastVisible = true;
-					//Fade in shortly after the popup opens, then auto-hide
+					if(_toastWindow != null) {
+						// Windows: show the separate Topmost window positioned over the bottom-right
+						// corner of the main window (above the native renderer HWND).
+						// Set the badge image directly (bypasses compiled-binding IImage coercion).
+						_toastWindow.SetBadge(ach.Badge);
+						PositionToastWindow();
+						if(!_toastWindow.IsVisible) {
+							_toastWindow.Show(this);
+						}
+					} else {
+						_model.AchievementToastVisible = true;
+					}
+					//Fade in shortly after the popup/window opens, then auto-hide
 					DispatcherTimer.RunOnce(() => _model.AchievementToastOpacity = 1, TimeSpan.FromMilliseconds(30));
 					_achievementToastTimer.Stop();
 					_achievementToastTimer.Start();
@@ -610,6 +651,33 @@ namespace Mesen.Windows
 			_renderer.Height = height;
 			_model.SoftwareRenderer.Width = width;
 			_model.SoftwareRenderer.Height = height;
+
+			if(_toastWindow != null && _toastWindow.IsVisible) {
+				PositionToastWindow();
+			}
+		}
+
+		private void PositionToastWindow()
+		{
+			if(_toastWindow == null) {
+				return;
+			}
+			double dpiScale = LayoutHelper.GetLayoutScale(this);
+			// Approximate toast content size in DIPs (matches the XAML layout)
+			const double toastWidth = 250;
+			const double toastHeight = 72;
+			const double margin = 16;
+
+			// TranslatePoint returns coordinates in DIPs relative to this window's client area.
+			// this.Position is in screen pixels. Multiply DIPs by dpiScale to get screen pixels.
+			var panelBounds = _rendererPanel.Bounds;
+			var panelBottomRight = _rendererPanel.TranslatePoint(new Point(panelBounds.Width, panelBounds.Height), this);
+			double rightDip = panelBottomRight.HasValue ? panelBottomRight.Value.X : panelBounds.Right;
+			double bottomDip = panelBottomRight.HasValue ? panelBottomRight.Value.Y : panelBounds.Bottom;
+
+			int x = (int)Math.Round(Position.X + (rightDip - toastWidth - margin) * dpiScale);
+			int y = (int)Math.Round(Position.Y + (bottomDip - toastHeight - margin) * dpiScale);
+			_toastWindow.Position = new PixelPoint(x, y);
 		}
 
 		private void OnWindowStateChanged()

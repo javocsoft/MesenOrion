@@ -70,8 +70,11 @@
 			  />
 			</Panel>
 
-			<!-- RetroAchievements unlock toast (a Popup, so it appears above the native renderer) -->
+			<!-- RetroAchievements unlock toast (Linux/macOS only: on Windows a separate Topmost
+				  window is used from code-behind because NativeControlHost HWNDs always paint
+				  above Avalonia Popups) -->
 			<Popup
+				Name="AchievementToastPopup"
 				PlacementTarget="{Binding #RendererPanel}"
 				Placement="AnchorAndGravity"
 				PlacementAnchor="BottomRight"
