@@ -1,5 +1,7 @@
 # Mesen Orion
 
+<img width="128" height="128" alt="mesenorion-128x128" src="https://github.com/user-attachments/assets/5afa6d43-7dac-4afc-970d-0be7028a099f" />
+
 **Mesen Orion** is a multi-system emulator (NES, SNES, Game Boy, Game Boy Advance, PC Engine, SMS/Game Gear, WonderSwan) for Windows, Linux and macOS.
 
 It is a fork of [Mesen2](https://github.com/SourMesen/Mesen2) by Sour (whose 2.x line is no longer maintained), continuing development with a renewed UI and rendering-pipeline improvements. The first release of this fork is **v3.0.0**.
