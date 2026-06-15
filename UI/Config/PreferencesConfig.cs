@@ -154,6 +154,7 @@ namespace Mesen.Config
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.PreviousFavoriteShader, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("Page Up") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ApplyPicturePreset, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("P") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ToggleGifRecorder, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("G") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ToggleRecordVideo, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = shift, Key3 = InputApi.GetKeyCode("V") } });
 
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot1, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F1") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SaveStateSlot2, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F2") } });

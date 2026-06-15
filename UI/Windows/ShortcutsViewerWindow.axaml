@@ -1,0 +1,64 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:w="using:Mesen.Windows"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.ShortcutsViewerWindow"
+	Width="360"
+	SizeToContent="Height"
+	CanResize="False"
+	ShowInTaskbar="True"
+	Title="Shortcuts"
+	Name="root"
+>
+	<Border Padding="16 14">
+		<DockPanel LastChildFill="True">
+			<StackPanel DockPanel.Dock="Top" Spacing="1" Margin="0 0 0 10">
+				<TextBlock Text="Game Shortcuts" FontSize="17" FontWeight="Bold" />
+				<TextBlock Text="Handy keys while a game is running" FontSize="11" Opacity="0.6" />
+			</StackPanel>
+
+			<TextBlock
+				DockPanel.Dock="Bottom"
+				Margin="0 12 0 0"
+				FontSize="11"
+				Opacity="0.55"
+				TextWrapping="Wrap"
+				Text="Tip: customize any of these in Preferences → Shortcut Keys."
+			/>
+
+			<ItemsControl ItemsSource="{Binding Shortcuts, ElementName=root}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="w:ShortcutEntry">
+						<Grid ColumnDefinitions="*,Auto" Margin="0 4" MinHeight="26" VerticalAlignment="Center">
+							<TextBlock
+								Grid.Column="0"
+								Text="{Binding Description}"
+								VerticalAlignment="Center"
+								TextWrapping="Wrap"
+								Margin="0 0 12 0"
+							/>
+							<Border
+								Grid.Column="1"
+								VerticalAlignment="Center"
+								BorderBrush="{DynamicResource SystemAccentColor}"
+								BorderThickness="1"
+								CornerRadius="4"
+								Padding="8 2"
+							>
+								<TextBlock
+									Text="{Binding Keys}"
+									FontWeight="SemiBold"
+									FontSize="12"
+									Foreground="{DynamicResource SystemAccentColor}"
+								/>
+							</Border>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</DockPanel>
+	</Border>
+</Window>

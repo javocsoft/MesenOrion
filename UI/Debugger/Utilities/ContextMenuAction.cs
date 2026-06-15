@@ -619,6 +619,9 @@ namespace Mesen.Debugger.Utilities
 		[IconFile("Camera")]
 		TakeScreenshot,
 
+		[IconFile("Keyboard")]
+		ViewShortcuts,
+
 		[IconFile("Help")]
 		OnlineHelp,
 		[IconFile("CommandLine")]

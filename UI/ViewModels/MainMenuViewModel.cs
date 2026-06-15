@@ -872,6 +872,13 @@ namespace Mesen.ViewModels
 				new MainMenuAction(EmulatorShortcut.TakeScreenshot) {
 					ActionType = ActionType.TakeScreenshot,
 				},
+
+				new MainMenuAction() {
+					ActionType = ActionType.ViewShortcuts,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(null, () => new ShortcutsViewerWindow());
+					}
+				},
 			};
 		}
 
