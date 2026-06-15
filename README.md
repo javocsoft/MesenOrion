@@ -87,9 +87,12 @@ Run `./build-linux.sh --help` for all options.
 Or build a portable **AppImage** (bundles the Shaders collection and AppStream metadata):
 
 ```sh
-./Linux/appimage/appimage.sh          # x86_64  -> MesenOrion-x86_64.AppImage
-./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-aarch64.AppImage
+./Linux/appimage/appimage.sh          # x86_64  -> MesenOrion-<version>-x86_64.AppImage
+./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-<version>-aarch64.AppImage
 ```
+
+The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.0-x86_64.AppImage`);
+the version is read from `distributable/mesen-orion/DEBIAN/control`.
 
 ### Publishing a release
 
@@ -97,15 +100,16 @@ The AppImage is distributed as a GitHub Release asset. Using the `gh` CLI:
 
 ```sh
 gh release create v3.0.0 \
-  MesenOrion-x86_64.AppImage \
+  MesenOrion-3.0.0-x86_64.AppImage \
   mesen-orion_3.0.0_amd64.deb \
   --title "Mesen Orion 3.0.0" --notes "Release notes here"
 ```
 
 To also list the AppImage on [AppImageHub](https://github.com/AppImage/appimage.github.io)
-(optional, public catalog), open a pull request there pointing to the release download URL.
-The AppImage already embeds the `.desktop` entry, icon and AppStream metainfo required by
-their automated checks.
+(optional, public catalog), add a file under `data/` whose single line is the repository URL
+(`https://github.com/javocsoft/MesenOrion/`) and open a pull request. Because the AppImage uses
+the standard `MesenOrion-<version>-x86_64.AppImage` naming and embeds the `.desktop` entry, icon
+and AppStream metainfo, their automated review picks up every release automatically.
 
 GLSL shaders require the OpenGL renderer. On Linux this is the default; on Windows it is used automatically (requires OpenGL 2.0). Set `MESEN_NO_GL=1` (Linux) or enable *Use Software Renderer* in settings (Windows) to fall back to the non-GL renderer.
 

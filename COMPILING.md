@@ -88,8 +88,10 @@ A self-contained, single-file **AppImage** can be built from the repository root
 ```
 
 These compile the app, download `appimagetool`, stage everything (including the bundled
-**Shaders** collection under `usr/share/mesen-orion/shaders/`) and produce
-`MesenOrion-x86_64.AppImage` / `MesenOrion-aarch64.AppImage`.
+**Shaders** collection under `usr/share/mesen-orion/shaders/` and the AppStream metainfo) and
+produce `MesenOrion-<version>-x86_64.AppImage` / `MesenOrion-<version>-aarch64.AppImage`
+(version read from `distributable/mesen-orion/DEBIAN/control`, following AppImageHub's
+standard naming).
 
 > The AppImage links SDL2 and OpenGL (libGL) dynamically, so the target machine must have
 > those libraries installed (they are not bundled).

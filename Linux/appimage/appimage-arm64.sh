@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Version is read from the Debian control file (single source of truth). The output
+# AppImage follows AppImageHub's standard nomenclature: <RepoName>-<version>-<arch>.AppImage
+VERSION="$(awk -F':[[:space:]]*' '/^Version:/{print $2; exit}' distributable/mesen-orion/DEBIAN/control | tr -d '[:space:]')"
+
 export PUBLISHFLAGS="-r linux-arm64 --no-self-contained false -p:PublishSingleFile=true -p:PublishReadyToRun=true"
 make -j$(nproc) -O LTO=true STATICLINK=true SYSTEM_LIBEVDEV=false
 
@@ -30,4 +34,4 @@ mkdir -p AppDir/usr/share/metainfo
 cp distributable/mesen-orion/usr/share/metainfo/io.github.javocsoft.MesenOrion.metainfo.xml AppDir/usr/share/metainfo/
 
 chmod a+x appimagetool
-./appimagetool AppDir/ MesenOrion-aarch64.AppImage
+./appimagetool AppDir/ "MesenOrion-${VERSION}-aarch64.AppImage"
