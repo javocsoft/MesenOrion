@@ -84,6 +84,13 @@ a helper script handles the whole workflow (clean, build, stage files, `dpkg-deb
 ```
 Run `./build-linux.sh --help` for all options.
 
+Or build a portable **AppImage** (bundles the Shaders collection):
+
+```sh
+./Linux/appimage/appimage.sh          # x86_64  -> MesenOrion-x86_64.AppImage
+./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-aarch64.AppImage
+```
+
 GLSL shaders require the OpenGL renderer. On Linux this is the default; on Windows it is used automatically (requires OpenGL 2.0). Set `MESEN_NO_GL=1` (Linux) or enable *Use Software Renderer* in settings (Windows) to fall back to the non-GL renderer.
 
 ## Credits

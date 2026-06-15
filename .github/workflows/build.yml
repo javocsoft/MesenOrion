@@ -149,7 +149,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Mesen (Linux ${{ matrix.platform.name }} - AppImage)
-          path: Mesen.AppImage
+          path: MesenOrion-*.AppImage
 
 
   macos:

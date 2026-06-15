@@ -78,6 +78,22 @@ and runs `dpkg-deb`, producing `mesen-orion_<version>_amd64.deb` (version taken 
 
 Requires `dpkg-deb` (from the `dpkg` package), plus `make`, a C++17 compiler and the .NET 8 SDK.
 
+### Building an AppImage
+
+A self-contained, single-file **AppImage** can be built from the repository root:
+
+```sh
+./Linux/appimage/appimage.sh          # x86_64
+./Linux/appimage/appimage-arm64.sh    # ARM64
+```
+
+These compile the app, download `appimagetool`, stage everything (including the bundled
+**Shaders** collection under `usr/share/mesen-orion/shaders/`) and produce
+`MesenOrion-x86_64.AppImage` / `MesenOrion-aarch64.AppImage`.
+
+> The AppImage links SDL2 and OpenGL (libGL) dynamically, so the target machine must have
+> those libraries installed (they are not bundled).
+
 ## macOS
 
 To build macOS, install SDL2 (i.e via Homebrew) and the [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).  
