@@ -105,9 +105,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;WIN32;_DEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CallingConvention>Cdecl</CallingConvention>
-      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;%(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -129,8 +129,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;%(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -154,8 +154,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>PGO;WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;PGO;WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;%(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -180,8 +180,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>PGO;WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;%(AdditionalIncludeDirectories)
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;PGO;WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEROPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Windows;$(SolutionDir)Windows\GL;$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;%(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -206,6 +206,7 @@
   <ItemGroup>
     <ClCompile Include="ConfigApiWrapper.cpp" />
     <ClCompile Include="EmuApiWrapper.cpp" />
+    <ClCompile Include="RetroAchievementsApiWrapper.cpp" />
     <ClCompile Include="DebugApiWrapper.cpp" />
     <ClCompile Include="HistoryApiWrapper.cpp" />
     <ClCompile Include="InputApiWrapper.cpp" />
@@ -219,6 +220,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Lua\Lua.vcxproj">
       <Project>{b609e0a0-5050-4871-91d6-e760633bcdd1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\rcheevos\Rcheevos.vcxproj">
+      <Project>{dd7ac02f-c333-4f96-bc78-c72420ac3744}</Project>
     </ProjectReference>
     <ProjectReference Include="..\SevenZip\SevenZip.vcxproj">
       <Project>{52c4ba3a-e699-4305-b23f-c9083fd07ab6}</Project>

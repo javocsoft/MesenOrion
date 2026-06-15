@@ -1,3 +1,9 @@
+> **RetroAchievements:** the [rcheevos](https://github.com/RetroAchievements/rcheevos) client library is
+> vendored under `rcheevos/` and built automatically — on Linux/macOS by the makefile, and on Windows by
+> the `Rcheevos` static-library project that is part of `Mesen.sln` (referenced by `InteropDLL`). No extra
+> setup is needed. Achievements require an internet connection and a free retroachievements.org account at
+> runtime. (The Visual Studio wiring is in place but has not yet been verified by a build on Windows.)
+
 ## Windows
 
 **Requirements:**

@@ -740,6 +740,7 @@
     <ClInclude Include="SNES\Coprocessors\SA1\Sa1Types.h" />
     <ClInclude Include="SNES\Coprocessors\SA1\Sa1VectorHandler.h" />
     <ClInclude Include="Shared\SaveStateManager.h" />
+    <ClInclude Include="Shared\RetroAchievements\RaManager.h" />
     <ClInclude Include="Netplay\SaveStateMessage.h" />
     <ClInclude Include="Shared\Video\ScaleFilter.h" />
     <ClInclude Include="Debugger\ScriptHost.h" />
@@ -1065,6 +1066,7 @@
     <ClCompile Include="SNES\Coprocessors\SA1\Sa1.cpp" />
     <ClCompile Include="SNES\Coprocessors\SA1\Sa1Cpu.cpp" />
     <ClCompile Include="Shared\SaveStateManager.cpp" />
+    <ClCompile Include="Shared\RetroAchievements\RaManager.cpp" />
     <ClCompile Include="Shared\Video\ScaleFilter.cpp" />
     <ClCompile Include="Debugger\ScriptHost.cpp" />
     <ClCompile Include="Debugger\ScriptingContext.cpp" />
@@ -1169,7 +1171,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(ProjectDir);$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\bin\win-$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
@@ -1181,7 +1183,7 @@
     <OutDir>$(SolutionDir)\bin\win-$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
-    <IncludePath>$(SolutionDir);$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(ProjectDir);$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>Core.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PGO Profile|x64'">
@@ -1189,7 +1191,7 @@
     <OutDir>$(SolutionDir)\bin\win-$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
-    <IncludePath>$(SolutionDir);$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(ProjectDir);$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>Core.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PGO Optimize|x64'">
@@ -1197,7 +1199,7 @@
     <OutDir>$(SolutionDir)\bin\win-$(PlatformTarget)\PGO Profile\</OutDir>
     <IntDir>obj\$(Platform)\PGO Profile\</IntDir>
     <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
-    <IncludePath>$(SolutionDir);$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(ProjectDir);$(SolutionDir)rcheevos\include;$(SolutionDir)rcheevos\src;$(SolutionDir)rcheevos\src\rcheevos;$(SolutionDir)rcheevos\src\rapi;$(SolutionDir)rcheevos\src\rhash;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>Core.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -1205,7 +1207,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>
       </InlineFunctionExpansion>
@@ -1240,7 +1242,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
@@ -1274,7 +1276,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>MESENOPTIMIZE;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;MESENOPTIMIZE;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
@@ -1306,7 +1308,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>MESENOPTIMIZE;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RC_CLIENT_SUPPORTS_HASH;MESENOPTIMIZE;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>

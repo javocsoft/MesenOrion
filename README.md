@@ -35,16 +35,26 @@ Building on Mesen 2.1.1, this fork adds:
 - Password fields now mask input with an **eye toggle** to reveal, and a copy button.
 - A **Test connection** button in the *Connect to server* dialog.
 
+#### RetroAchievements
+- Built-in **[RetroAchievements](https://retroachievements.org/)** support (powered by the official **rcheevos** library) for **NES, SNES, Game Boy / Game Boy Color and Game Boy Advance**.
+- Log in from *Tools → RetroAchievements…*; only the session **token is stored** (not your password) so you're logged in automatically on the next launch.
+- Achievements unlock as you play, with an **on-screen notification** and an optional **unlock sound** (toggleable, on by default).
+- An **achievements window** lists the current game's achievements — badge image, points, progress and locked/unlocked state — and updates **live** as you earn them.
+- The **status bar** shows whether RA is active (`RA: On` / `RA: Off`).
+- **Softcore** is fully supported. **Hardcore** mode is shown but disabled: it requires the emulator to be officially approved by retroachievements.org, which is still pending for Mesen Orion.
+
 #### Recording & capture
 - Built-in **GIF recorder** with `Shift + G` to toggle Record / Stop, plus *Tools → GIF Recorder* menu entries.
 - An **always-visible on-screen indicator** while recording, and a notification showing where each GIF was saved.
 - Automatic, timestamped filenames; the **output folder is configurable** (defaults to a dedicated `Gif` folder).
+- **Video recording** can be toggled with `Ctrl + Shift + V`.
 
 #### Interface & usability
 - An optional, auto-hiding **status bar** (toggle from the menu or settings) showing the running **core**, emulation **speed**, **video size**, active **video filter**, current **shader**, **aspect ratio** and **vsync** state. It auto-hides together with the menu bar.
 - **Right-click context menu** on the recent-games list to **launch** a game or **remove** it from the list.
 - **Custom recent-game cover:** press `Ctrl + Shift + F12` while playing to capture the current frame and use it as that game's thumbnail on the recent-games screen (instead of the automatic one taken when the game stops). The chosen frame is kept per game.
 - **Take Screenshot** moved to `Shift + F12` (plain `F12` is left free for the developer tools). Both keys are rebindable in *Preferences → Shortcut Keys*.
+- A **View Shortcuts** window (*Tools → View Shortcuts*) lists the main in-game shortcuts (screenshot, game cover, shader switching, picture presets, GIF/video recording) with their currently configured keys, in a window placed beside the emulator.
 - The online **auto-update** check has been disabled and the *Check for updates* entry hidden (this fork is distributed independently).
 
 #### Quality, performance & accessibility
