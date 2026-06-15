@@ -30,6 +30,7 @@ public:
 	static string GetShaderFolder();
 	static string GetDebuggerFolder();
 	static string GetRecentGamesFolder();
+	static string GetExeFolder();
 
 	static vector<string> GetFolders(string rootFolder);
 	static vector<string> GetFilesInFolder(string rootFolder, std::unordered_set<string> extensions, bool recursive);

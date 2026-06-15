@@ -20,6 +20,26 @@ vector<string> ShaderManager::GetCandidateFolders()
 	//"Shaders" or "shaders" (the Linux filesystem is case-sensitive).
 	vector<string> folders;
 
+	// Executable directory first so the Shaders/ folder shipped alongside Mesen.exe
+	// in the release ZIP is always found, even on a fresh installation.
+	string exeDir = FolderUtilities::GetExeFolder();
+	if(!exeDir.empty()) {
+		folders.push_back(FolderUtilities::CombinePath(exeDir, "Shaders"));
+		folders.push_back(FolderUtilities::CombinePath(exeDir, "shaders"));
+#ifndef _WIN32
+		//When installed via the .deb, the binary lives in <prefix>/bin and the shaders
+		//in <prefix>/share/mesen-orion/shaders (e.g. /usr or /usr/local). Derive it.
+		folders.push_back(FolderUtilities::CombinePath(exeDir, "../share/mesen-orion/shaders"));
+#endif
+	}
+
+#ifndef _WIN32
+	//Standard install locations used by the .deb package.
+	folders.push_back("/usr/share/mesen-orion/shaders");
+	folders.push_back("/usr/local/share/mesen-orion/shaders");
+#endif
+
+	// Mesen data folder (HomeFolder/Shaders) — fallback / user-installed shaders.
 	try {
 		string shaderFolder = FolderUtilities::GetShaderFolder();
 		if(!shaderFolder.empty()) {
@@ -28,25 +48,6 @@ vector<string> ShaderManager::GetCandidateFolders()
 	} catch(...) {
 		//Shader folder not accessible - ignore
 	}
-
-#ifndef _WIN32
-	char buf[4096];
-	ssize_t n = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
-	if(n > 0) {
-		buf[n] = '\0';
-		string exeDir = FolderUtilities::GetFolderName(string(buf));
-		folders.push_back(FolderUtilities::CombinePath(exeDir, "Shaders"));
-		folders.push_back(FolderUtilities::CombinePath(exeDir, "shaders"));
-
-		//When installed via the .deb, the binary lives in <prefix>/bin and the shaders
-		//in <prefix>/share/mesen-orion/shaders (e.g. /usr or /usr/local). Derive it.
-		folders.push_back(FolderUtilities::CombinePath(exeDir, "../share/mesen-orion/shaders"));
-	}
-
-	//Standard install location used by the .deb package.
-	folders.push_back("/usr/share/mesen-orion/shaders");
-	folders.push_back("/usr/local/share/mesen-orion/shaders");
-#endif
 
 	try {
 		string home = FolderUtilities::GetHomeFolder();

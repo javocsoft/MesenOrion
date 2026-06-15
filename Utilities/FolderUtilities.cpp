@@ -8,6 +8,14 @@
 	namespace fs = std::experimental::filesystem;
 #endif
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#else
+#include <unistd.h>
+#endif
+
 #include <unordered_set>
 #include <algorithm>
 #include "Utilities/FolderUtilities.h"
@@ -102,6 +110,27 @@ string FolderUtilities::GetShaderFolder()
 	string folder = CombinePath(GetHomeFolder(), "Shaders");
 	CreateFolder(folder);
 	return folder;
+}
+
+string FolderUtilities::GetExeFolder()
+{
+#ifdef _WIN32
+	wchar_t buf[32768];
+	DWORD n = GetModuleFileNameW(nullptr, buf, (DWORD)(sizeof(buf) / sizeof(buf[0])));
+	if(n > 0 && n < (DWORD)(sizeof(buf) / sizeof(buf[0]))) {
+		string exePath = utf8::utf8::encode(std::wstring(buf, n));
+		return GetFolderName(exePath);
+	}
+	return "";
+#else
+	char buf[4096];
+	ssize_t n = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+	if(n > 0) {
+		buf[n] = '\0';
+		return GetFolderName(string(buf));
+	}
+	return "";
+#endif
 }
 
 string FolderUtilities::GetDebuggerFolder()
