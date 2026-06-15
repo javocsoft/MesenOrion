@@ -84,12 +84,28 @@ a helper script handles the whole workflow (clean, build, stage files, `dpkg-deb
 ```
 Run `./build-linux.sh --help` for all options.
 
-Or build a portable **AppImage** (bundles the Shaders collection):
+Or build a portable **AppImage** (bundles the Shaders collection and AppStream metadata):
 
 ```sh
 ./Linux/appimage/appimage.sh          # x86_64  -> MesenOrion-x86_64.AppImage
 ./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-aarch64.AppImage
 ```
+
+### Publishing a release
+
+The AppImage is distributed as a GitHub Release asset. Using the `gh` CLI:
+
+```sh
+gh release create v3.0.0 \
+  MesenOrion-x86_64.AppImage \
+  mesen-orion_3.0.0_amd64.deb \
+  --title "Mesen Orion 3.0.0" --notes "Release notes here"
+```
+
+To also list the AppImage on [AppImageHub](https://github.com/AppImage/appimage.github.io)
+(optional, public catalog), open a pull request there pointing to the release download URL.
+The AppImage already embeds the `.desktop` entry, icon and AppStream metainfo required by
+their automated checks.
 
 GLSL shaders require the OpenGL renderer. On Linux this is the default; on Windows it is used automatically (requires OpenGL 2.0). Set `MESEN_NO_GL=1` (Linux) or enable *Use Software Renderer* in settings (Windows) to fall back to the non-GL renderer.
 

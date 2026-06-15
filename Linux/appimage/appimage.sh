@@ -25,5 +25,9 @@ mkdir -p AppDir/usr/share/applications && cp ./AppDir/mesen-orion.desktop ./AppD
 mkdir -p AppDir/usr/share/icons && cp ./AppDir/mesen-orion.png ./AppDir/usr/share/icons
 mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps && cp ./AppDir/mesen-orion.png ./AppDir/usr/share/icons/hicolor/128x128/apps
 
+# AppStream metadata (embedded so the AppImage can be listed on AppImageHub)
+mkdir -p AppDir/usr/share/metainfo
+cp distributable/mesen-orion/usr/share/metainfo/io.github.javocsoft.MesenOrion.metainfo.xml AppDir/usr/share/metainfo/
+
 chmod a+x appimagetool
 ./appimagetool AppDir/ MesenOrion-x86_64.AppImage
