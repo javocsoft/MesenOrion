@@ -75,6 +75,15 @@ USE_GCC=true make -j$(nproc)
 USE_GCC=true NATIVE=true make -j$(nproc)
 ```
 
+To build **and** produce a ready-to-install Debian package (`mesen-orion_<version>_amd64.deb`),
+a helper script handles the whole workflow (clean, build, stage files, `dpkg-deb`):
+
+```sh
+./build-linux.sh                # make clean + build (GCC) + package .deb
+./build-linux.sh --skip-build   # only repackage the existing build output
+```
+Run `./build-linux.sh --help` for all options.
+
 GLSL shaders require the OpenGL renderer. On Linux this is the default; on Windows it is used automatically (requires OpenGL 2.0). Set `MESEN_NO_GL=1` (Linux) or enable *Use Software Renderer* in settings (Windows) to fall back to the non-GL renderer.
 
 ## Credits

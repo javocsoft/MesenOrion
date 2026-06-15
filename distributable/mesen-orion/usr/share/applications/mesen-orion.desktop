@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Mesen Orion
+Comment=Multi-system emulator
+Exec=mesen-orion
+Icon=mesen-orion
+Terminal=false
+Type=Application
+Categories=Game;Emulator;

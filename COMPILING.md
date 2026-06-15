@@ -60,6 +60,24 @@ To compile with GCC instead, use `USE_GCC=true make`.
 
 GLSL shaders require the OpenGL renderer (default on Linux). Set `MESEN_NO_GL=1` to fall back to the classic SDL renderer if needed.
 
+### Building a Debian package (.deb)
+
+A helper script mirrors the Windows `build-windows.ps1` workflow: it cleans, builds
+(GCC by default), stages the published files into the `distributable/mesen-orion/`
+package tree (`usr/bin/mesen-orion`, `usr/lib/mesen-orion/`, `usr/share/mesen-orion/shaders/`)
+and runs `dpkg-deb`, producing `mesen-orion_<version>_amd64.deb` (version taken from
+`distributable/mesen-orion/DEBIAN/control`).
+
+```sh
+./build-linux.sh                # make clean + build (GCC) + package .deb
+./build-linux.sh --clang        # build with Clang instead of GCC
+./build-linux.sh --skip-build   # only repackage the existing build output
+./build-linux.sh --output /tmp  # place the .deb elsewhere
+./build-linux.sh --help         # all options
+```
+
+Requires `dpkg-deb` (from the `dpkg` package), plus `make`, a C++17 compiler and the .NET 8 SDK.
+
 ## macOS
 
 To build macOS, install SDL2 (i.e via Homebrew) and the [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).  
