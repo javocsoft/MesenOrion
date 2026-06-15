@@ -3,7 +3,67 @@
 #include "Core/Shared/Emulator.h"
 #include "Core/Shared/RetroAchievements/RaManager.h"
 
+#if !defined(_WIN32) || defined(USE_SDL_BACKEND)
+	#include <SDL.h>
+	#include <thread>
+	#include <vector>
+	#include <cmath>
+#elif defined(_WIN32)
+	#include <windows.h>
+#endif
+
 extern unique_ptr<Emulator> _emu;
+
+//Plays a short two-tone "achievement unlocked" chime. Uses SDL (already linked) on
+//Linux/macOS; falls back to a system beep on the native Windows build (no SDL).
+static void RaPlayChime()
+{
+#if !defined(_WIN32) || defined(USE_SDL_BACKEND)
+	std::thread([]() {
+		if(SDL_WasInit(SDL_INIT_AUDIO) == 0 && SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
+			return;
+		}
+
+		const double PI = 3.14159265358979323846;
+		const int freq = 48000;
+		const int durationMs = 300;
+		int sampleCount = freq * durationMs / 1000;
+		std::vector<int16_t> buffer(sampleCount);
+
+		const double splitPoint = 0.4; //first tone for 40% of the duration, second tone after
+		for(int i = 0; i < sampleCount; i++) {
+			double t = (double)i / freq;
+			double progress = (double)i / sampleCount;
+			double toneFreq = progress < splitPoint ? 987.77 : 1318.51; //B5 then E6
+			double localProgress = progress < splitPoint ? (progress / splitPoint) : ((progress - splitPoint) / (1.0 - splitPoint));
+			double envelope = exp(-3.5 * localProgress);
+			double sample = sin(2.0 * PI * toneFreq * t) * envelope * 0.28;
+			buffer[i] = (int16_t)(sample * 32767);
+		}
+
+		SDL_AudioSpec want;
+		SDL_zero(want);
+		want.freq = freq;
+		want.format = AUDIO_S16SYS;
+		want.channels = 1;
+		want.samples = 1024;
+
+		SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &want, nullptr, 0);
+		if(dev == 0) {
+			return;
+		}
+		SDL_QueueAudio(dev, buffer.data(), (Uint32)(buffer.size() * sizeof(int16_t)));
+		SDL_PauseAudioDevice(dev, 0);
+		while(SDL_GetQueuedAudioSize(dev) > 0) {
+			SDL_Delay(20);
+		}
+		SDL_Delay(50);
+		SDL_CloseAudioDevice(dev);
+	}).detach();
+#elif defined(_WIN32)
+	MessageBeep(MB_OK);
+#endif
+}
 
 extern "C"
 {
@@ -91,6 +151,12 @@ extern "C"
 		string token = ra ? ra->GetLoginToken() : "";
 		strncpy(outBuffer, token.c_str(), maxLength - 1);
 		outBuffer[maxLength - 1] = '\0';
+	}
+
+	//Plays the achievement-unlocked sound (gating by config is done on the C# side)
+	DllExport void __stdcall RaPlaySound()
+	{
+		RaPlayChime();
 	}
 
 	DllExport void __stdcall RaSetHardcoreEnabled(bool enabled)

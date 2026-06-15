@@ -110,7 +110,8 @@ namespace Mesen.Windows
 
 		private void OnClose(object? sender, RoutedEventArgs e)
 		{
-			RetroAchievementsApi.SetHardcoreEnabled(_cfg.HardcoreMode);
+			//Hardcore is disabled (pending RA approval for this emulator)
+			RetroAchievementsApi.SetHardcoreEnabled(false);
 			ConfigManager.Config.Save();
 			Close();
 		}

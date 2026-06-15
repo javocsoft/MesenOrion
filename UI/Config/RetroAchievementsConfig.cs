@@ -14,6 +14,7 @@ namespace Mesen.Config
 
 		[Reactive] public bool HardcoreMode { get; set; } = false;
 		[Reactive] public bool EnableNotifications { get; set; } = true;
+		[Reactive] public bool EnableSound { get; set; } = true;
 		[Reactive] public bool EnableRichPresence { get; set; } = true;
 	}
 }

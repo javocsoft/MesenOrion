@@ -255,9 +255,16 @@ namespace Mesen.Windows
 				//Register the RetroAchievements HTTP transport (rcheevos in the core delegates
 				//its server requests to .NET's HttpClient), then auto-login with the saved token.
 				RetroAchievementsApi.Init();
+				RetroAchievementsApi.StateChanged += (ev, msg) => {
+					if(ev == RaEvent.AchievementUnlocked && ConfigManager.Config.RetroAchievements.EnableSound) {
+						RetroAchievementsApi.PlaySound();
+					}
+				};
 				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
+				//Hardcore is not yet approved for this emulator by retroachievements.org, so it stays off
+				raConfig.HardcoreMode = false;
 				if(raConfig.Enabled && raConfig.Username.Length > 0 && raConfig.Token.Length > 0) {
-					RetroAchievementsApi.SetHardcoreEnabled(raConfig.HardcoreMode);
+					RetroAchievementsApi.SetHardcoreEnabled(false);
 					RetroAchievementsApi.LoginWithToken(raConfig.Username, raConfig.Token);
 				}
 

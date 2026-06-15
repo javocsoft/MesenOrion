@@ -18,7 +18,8 @@ enum RaUiEvent
 	RaLoginFailed = 2,
 	RaGameReady = 3,
 	RaGameFailed = 4,
-	RaLoggedOut = 5
+	RaLoggedOut = 5,
+	RaAchievementUnlocked = 6
 };
 typedef void (*RaStateChangedHandler)(int eventType, const char* message);
 

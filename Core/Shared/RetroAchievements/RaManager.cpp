@@ -208,6 +208,21 @@ void RaManager::HandleEvent(const rc_client_event_t* event)
 			}
 			break;
 
+		case RC_CLIENT_EVENT_SERVER_ERROR:
+			//An API request failed and will not be retried (e.g. an unlock could not be saved)
+			if(event->server_error && event->server_error->error_message) {
+				MessageManager::DisplayMessage("RetroAchievements", string("Server error: ") + event->server_error->error_message);
+			}
+			break;
+
+		case RC_CLIENT_EVENT_DISCONNECTED:
+			MessageManager::DisplayMessage("RetroAchievements", "Connection lost - unlocks are pending");
+			break;
+
+		case RC_CLIENT_EVENT_RECONNECTED:
+			MessageManager::DisplayMessage("RetroAchievements", "Reconnected - pending unlocks sent");
+			break;
+
 		default:
 			break;
 	}
@@ -219,6 +234,8 @@ void RaManager::OnAchievementTriggered(const rc_client_achievement_t* ach)
 		return;
 	}
 	MessageManager::DisplayMessage("RetroAchievements", string(ach->title) + " (" + std::to_string(ach->points) + ")");
+	//Notify the UI so an open achievement list refreshes and the unlock sound can play
+	NotifyState(RaUiEvent::RaAchievementUnlocked, ach->title ? ach->title : "");
 }
 
 void RaManager::LogCallback(const char* message, const rc_client_t* client)
@@ -246,6 +263,9 @@ void RaManager::LoginCallback(int result, const char* error_message, rc_client_t
 		MessageManager::DisplayMessage("RetroAchievements", string("Logged in as ") + name);
 		if(mgr) {
 			mgr->NotifyState(RaUiEvent::RaLoginSuccess, name);
+			//If a game is already running (e.g. logging in mid-session, or after re-login),
+			//(re)load its achievements now - they wouldn't load otherwise until the next ROM load.
+			mgr->LoadGame();
 		}
 	} else {
 		string err = error_message ? error_message : "";

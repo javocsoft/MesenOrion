@@ -19,7 +19,8 @@ namespace Mesen.Interop
 		LoginFailed = 2,
 		GameReady = 3,
 		GameFailed = 4,
-		LoggedOut = 5
+		LoggedOut = 5,
+		AchievementUnlocked = 6
 	}
 
 	public class RaAchievement : ReactiveObject
@@ -198,6 +199,7 @@ namespace Mesen.Interop
 		public static bool IsLoggedIn() => RaIsLoggedIn();
 		public static void SetHardcoreEnabled(bool enabled) => RaSetHardcoreEnabled(enabled);
 		public static bool IsHardcoreEnabled() => RaIsHardcoreEnabled();
+		public static void PlaySound() => RaPlaySound();
 
 		public static string GetToken()
 		{
@@ -220,6 +222,7 @@ namespace Mesen.Interop
 		[DllImport(EmuApi.DllName)] [return: MarshalAs(UnmanagedType.I1)] private static extern bool RaIsLoggedIn();
 		[DllImport(EmuApi.DllName)] private static extern void RaGetToken(byte[] outBuffer, int maxLength);
 		[DllImport(EmuApi.DllName)] private static extern void RaSetHardcoreEnabled([MarshalAs(UnmanagedType.I1)] bool enabled);
+		[DllImport(EmuApi.DllName)] private static extern void RaPlaySound();
 		[DllImport(EmuApi.DllName)] [return: MarshalAs(UnmanagedType.I1)] private static extern bool RaIsHardcoreEnabled();
 	}
 }

@@ -91,6 +91,9 @@ namespace Mesen.ViewModels
 			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarAspect") + ": " + ResourceHelper.GetEnumText(video.AspectRatio));
 			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarVsync") + ": " + ResourceHelper.GetMessage(video.VerticalSync ? "StatusBarOn" : "StatusBarOff"));
 
+			bool raActive = Config.RetroAchievements.Enabled && RetroAchievementsApi.IsLoggedIn();
+			sb.Append("  ·  RA: " + ResourceHelper.GetMessage(raActive ? "StatusBarOn" : "StatusBarOff"));
+
 			StatusBarText = sb.ToString();
 		}
 

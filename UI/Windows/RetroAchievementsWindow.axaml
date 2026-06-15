@@ -37,8 +37,14 @@
 		<Separator Margin="0 4" />
 
 		<CheckBox Content="Enable RetroAchievements" IsChecked="{Binding Enabled}" />
-		<CheckBox Content="Hardcore mode (disables save states, rewind, cheats and speed changes)" IsChecked="{Binding HardcoreMode}" TextBlock.TextWrapping="Wrap" />
+		<CheckBox IsChecked="False" IsEnabled="False"
+				  ToolTip.Tip="Hardcore mode is still pending approval for this emulator (Mesen Orion) by retroachievements.org.">
+			<TextBlock Text="Hardcore mode (disables save states, rewind, cheats and speed changes)" TextWrapping="Wrap" />
+		</CheckBox>
+		<TextBlock Margin="24 0 0 0" FontSize="11" Opacity="0.7" TextWrapping="Wrap"
+				   Text="Hardcore mode is still pending approval for this emulator (Mesen Orion) by retroachievements.org, so it is disabled for now." />
 		<CheckBox Content="Show achievement notifications" IsChecked="{Binding EnableNotifications}" />
+		<CheckBox Content="Play a sound when an achievement is unlocked" IsChecked="{Binding EnableSound}" />
 
 		<Grid ColumnDefinitions="Auto,*,Auto" Margin="0 6 0 0">
 			<Button Name="btnAchievements" Grid.Column="0" Content="View Achievements..." />

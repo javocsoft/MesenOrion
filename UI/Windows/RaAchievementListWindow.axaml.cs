@@ -33,7 +33,7 @@ namespace Mesen.Windows
 
 		private void OnStateChanged(RaEvent ev, string message)
 		{
-			if(ev == RaEvent.GameReady || ev == RaEvent.GameFailed || ev == RaEvent.LoggedOut) {
+			if(ev == RaEvent.GameReady || ev == RaEvent.GameFailed || ev == RaEvent.LoggedOut || ev == RaEvent.AchievementUnlocked) {
 				Refresh();
 			}
 		}
