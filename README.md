@@ -48,7 +48,12 @@ For Linux and macOS, build from source (see **Compiling** below).
 
 See [COMPILING.md](COMPILING.md).
 
-**Windows:** open `Mesen.sln` in Visual Studio, build `Release`/`x64`, and set `UI` as the startup project.
+**Windows:** a PowerShell script handles the full workflow — build, publish, and ZIP packaging:
+```powershell
+.\build-windows.ps1 -Package        # Release + distributable ZIP
+.\build-windows.ps1 -Configuration All  # Debug + Release
+```
+Run from a *Developer PowerShell for VS* prompt. See `COMPILING.md` for all options.
 
 **Linux:** building with GCC is recommended:
 
