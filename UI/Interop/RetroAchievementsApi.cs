@@ -20,7 +20,8 @@ namespace Mesen.Interop
 		GameReady = 3,
 		GameFailed = 4,
 		LoggedOut = 5,
-		AchievementUnlocked = 6
+		AchievementUnlocked = 6,
+		LeaderboardTracker = 7
 	}
 
 	public class RaAchievement : ReactiveObject

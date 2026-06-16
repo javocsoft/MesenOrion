@@ -19,7 +19,8 @@ enum RaUiEvent
 	RaGameReady = 3,
 	RaGameFailed = 4,
 	RaLoggedOut = 5,
-	RaAchievementUnlocked = 6
+	RaAchievementUnlocked = 6,
+	RaLeaderboardTracker = 7
 };
 typedef void (*RaStateChangedHandler)(int eventType, const char* message);
 
@@ -56,6 +57,10 @@ private:
 
 	void OnAchievementTriggered(const rc_client_achievement_t* ach);
 	void HandleEvent(const rc_client_event_t* event);
+
+	//Active leaderboard trackers (id -> on-screen display string)
+	std::unordered_map<uint32_t, string> _leaderboardTrackers;
+	void UpdateLeaderboardTrackerDisplay();
 
 	//Static C callbacks for rc_client
 	static uint32_t ReadMemoryCallback(uint32_t address, uint8_t* buffer, uint32_t num_bytes, rc_client_t* client);

@@ -111,6 +111,25 @@
 					</StackPanel>
 				</Border>
 			</Popup>
+
+			<!-- RetroAchievements leaderboard tracker (live value, bottom-left). On Windows a
+				  separate Topmost window is used instead (see code-behind), same as the toast. -->
+			<Popup
+				Name="LeaderboardTrackerPopup"
+				PlacementTarget="{Binding #RendererPanel}"
+				Placement="AnchorAndGravity"
+				PlacementAnchor="BottomLeft"
+				PlacementGravity="TopRight"
+				HorizontalOffset="16" VerticalOffset="-16"
+				IsLightDismissEnabled="False"
+				Topmost="True"
+				IsOpen="{Binding LeaderboardTrackerVisible}"
+			>
+				<Border Padding="8 5" CornerRadius="6" Background="#E61C1C1C"
+						BorderBrush="{DynamicResource SystemAccentColor}" BorderThickness="1" IsHitTestVisible="False">
+					<TextBlock Text="{Binding LeaderboardTrackerText}" Foreground="White" FontFamily="Consolas,Menlo,monospace" FontSize="13" />
+				</Border>
+			</Popup>
 		</Panel>
 	</DockPanel>
 </Window>

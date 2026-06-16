@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:Mesen.ViewModels"
+	x:Class="Mesen.Windows.LeaderboardTrackerWindow"
+	x:DataType="vm:MainWindowViewModel"
+	SystemDecorations="None"
+	Background="Transparent"
+	TransparencyLevelHint="Transparent"
+	CanResize="False"
+	ShowInTaskbar="False"
+	Topmost="True"
+	IsHitTestVisible="False"
+	SizeToContent="WidthAndHeight"
+>
+	<Border Padding="8 5" CornerRadius="6" Background="#E61C1C1C"
+			BorderBrush="{DynamicResource SystemAccentColor}" BorderThickness="1" IsHitTestVisible="False"
+			BoxShadow="0 2 14 0 #90000000">
+		<TextBlock Text="{Binding LeaderboardTrackerText}" Foreground="White" FontFamily="Consolas,Menlo,monospace" FontSize="13" />
+	</Border>
+</Window>

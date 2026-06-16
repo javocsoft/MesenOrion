@@ -110,8 +110,9 @@ namespace Mesen.Windows
 
 		private void OnClose(object? sender, RoutedEventArgs e)
 		{
-			//Hardcore is disabled (pending RA approval for this emulator)
-			RetroAchievementsApi.SetHardcoreEnabled(false);
+			//Apply the chosen hardcore setting. Note: until RA approves this emulator, hardcore
+			//unlocks won't be saved on the server, but the local restrictions are enforced.
+			RetroAchievementsApi.SetHardcoreEnabled(_cfg.HardcoreMode);
 			ConfigManager.Config.Save();
 			Close();
 		}

@@ -201,6 +201,40 @@ void RaManager::HandleEvent(const rc_client_event_t* event)
 			MessageManager::DisplayMessage("RetroAchievements", "RaGameCompleted");
 			break;
 
+		case RC_CLIENT_EVENT_LEADERBOARD_STARTED:
+			if(event->leaderboard && event->leaderboard->title) {
+				MessageManager::DisplayMessage("RetroAchievements", string("Leaderboard attempt started: ") + event->leaderboard->title);
+			}
+			break;
+
+		case RC_CLIENT_EVENT_LEADERBOARD_FAILED:
+			if(event->leaderboard && event->leaderboard->title) {
+				MessageManager::DisplayMessage("RetroAchievements", string("Leaderboard attempt failed: ") + event->leaderboard->title);
+			}
+			break;
+
+		case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED:
+			if(event->leaderboard && event->leaderboard->title) {
+				string value = event->leaderboard->tracker_value ? event->leaderboard->tracker_value : "";
+				MessageManager::DisplayMessage("RetroAchievements", string("Submitted ") + value + " to " + event->leaderboard->title);
+			}
+			break;
+
+		case RC_CLIENT_EVENT_LEADERBOARD_TRACKER_SHOW:
+		case RC_CLIENT_EVENT_LEADERBOARD_TRACKER_UPDATE:
+			if(event->leaderboard_tracker) {
+				_leaderboardTrackers[event->leaderboard_tracker->id] = event->leaderboard_tracker->display;
+				UpdateLeaderboardTrackerDisplay();
+			}
+			break;
+
+		case RC_CLIENT_EVENT_LEADERBOARD_TRACKER_HIDE:
+			if(event->leaderboard_tracker) {
+				_leaderboardTrackers.erase(event->leaderboard_tracker->id);
+				UpdateLeaderboardTrackerDisplay();
+			}
+			break;
+
 		case RC_CLIENT_EVENT_RESET:
 			//Raised when hardcore is enabled mid-session - reset the game to prevent cheating
 			if(_emu->GetSystemActionManager()) {
@@ -226,6 +260,19 @@ void RaManager::HandleEvent(const rc_client_event_t* event)
 		default:
 			break;
 	}
+}
+
+void RaManager::UpdateLeaderboardTrackerDisplay()
+{
+	//Combine all active leaderboard trackers into one string for the on-screen overlay (empty = hide)
+	string combined;
+	for(auto& kv : _leaderboardTrackers) {
+		if(!combined.empty()) {
+			combined += "\n";
+		}
+		combined += kv.second;
+	}
+	NotifyState(RaUiEvent::RaLeaderboardTracker, combined);
 }
 
 void RaManager::OnAchievementTriggered(const rc_client_achievement_t* ach)
@@ -441,6 +488,10 @@ void RaManager::UnloadGame()
 	if(_client && _gameLoaded) {
 		rc_client_unload_game(_client);
 		_gameLoaded = false;
+		if(!_leaderboardTrackers.empty()) {
+			_leaderboardTrackers.clear();
+			UpdateLeaderboardTrackerDisplay();
+		}
 	}
 }
 

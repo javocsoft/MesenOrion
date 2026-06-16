@@ -62,6 +62,7 @@ namespace Mesen.Windows
 		// On Windows, NativeControlHost HWNDs always paint above Avalonia Popups, so we use a
 		// separate Topmost Window for the achievement toast instead of the in-XAML Popup.
 		private AchievementToastWindow? _toastWindow;
+		private LeaderboardTrackerWindow? _trackerWindow;
 
 		private FrameInfo _prevScreenSize;
 
@@ -120,6 +121,13 @@ namespace Mesen.Windows
 				_toastWindow = new AchievementToastWindow();
 				_toastWindow.DataContext = _model;
 				_toastWindow.ShowActivated = false;
+
+				var trackerPopup = this.GetControl<Popup>("LeaderboardTrackerPopup");
+				trackerPopup.ClearValue(Popup.IsOpenProperty);
+				trackerPopup.IsOpen = false;
+				_trackerWindow = new LeaderboardTrackerWindow();
+				_trackerWindow.DataContext = _model;
+				_trackerWindow.ShowActivated = false;
 			}
 
 			_renderer = this.GetControl<NativeRenderer>("Renderer");
@@ -206,6 +214,7 @@ namespace Mesen.Windows
 			_softwareRendererSubscription?.Dispose();
 			_mouseManager?.Dispose();
 			_toastWindow?.Close();
+			_trackerWindow?.Close();
 		}
 
 		private void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
@@ -285,6 +294,23 @@ namespace Mesen.Windows
 				RetroAchievementsApi.StateChanged += (ev, msg) => {
 					if(ev == RaEvent.AchievementUnlocked && ConfigManager.Config.RetroAchievements.EnableSound) {
 						RetroAchievementsApi.PlaySound();
+					} else if(ev == RaEvent.LeaderboardTracker) {
+						//Live leaderboard value (empty = hide)
+						bool show = msg.Length > 0;
+						_model.LeaderboardTrackerText = msg;
+						if(_trackerWindow != null) {
+							//Windows: separate Topmost window (NativeControlHost paints above Popups)
+							if(show) {
+								PositionTrackerWindow();
+								if(!_trackerWindow.IsVisible) {
+									_trackerWindow.Show(this);
+								}
+							} else {
+								_trackerWindow.Hide();
+							}
+						} else {
+							_model.LeaderboardTrackerVisible = show;
+						}
 					}
 				};
 				_achievementToastTimer.Tick += (s, e) => {
@@ -323,10 +349,8 @@ namespace Mesen.Windows
 					_achievementToastTimer.Start();
 				};
 				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
-				//Hardcore is not yet approved for this emulator by retroachievements.org, so it stays off
-				raConfig.HardcoreMode = false;
 				if(raConfig.Enabled && raConfig.Username.Length > 0 && raConfig.Token.Length > 0) {
-					RetroAchievementsApi.SetHardcoreEnabled(false);
+					RetroAchievementsApi.SetHardcoreEnabled(raConfig.HardcoreMode);
 					RetroAchievementsApi.LoginWithToken(raConfig.Username, raConfig.Token);
 				}
 
@@ -655,6 +679,28 @@ namespace Mesen.Windows
 			if(_toastWindow != null && _toastWindow.IsVisible) {
 				PositionToastWindow();
 			}
+			if(_trackerWindow != null && _trackerWindow.IsVisible) {
+				PositionTrackerWindow();
+			}
+		}
+
+		private void PositionTrackerWindow()
+		{
+			if(_trackerWindow == null) {
+				return;
+			}
+			double dpiScale = LayoutHelper.GetLayoutScale(this);
+			const double trackerHeight = 28;
+			const double margin = 16;
+
+			var panelBounds = _rendererPanel.Bounds;
+			var panelBottomLeft = _rendererPanel.TranslatePoint(new Point(0, panelBounds.Height), this);
+			double leftDip = panelBottomLeft.HasValue ? panelBottomLeft.Value.X : panelBounds.Left;
+			double bottomDip = panelBottomLeft.HasValue ? panelBottomLeft.Value.Y : panelBounds.Bottom;
+
+			int x = (int)Math.Round(Position.X + (leftDip + margin) * dpiScale);
+			int y = (int)Math.Round(Position.Y + (bottomDip - trackerHeight - margin) * dpiScale);
+			_trackerWindow.Position = new PixelPoint(x, y);
 		}
 
 		private void PositionToastWindow()

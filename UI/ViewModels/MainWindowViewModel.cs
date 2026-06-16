@@ -42,6 +42,10 @@ namespace Mesen.ViewModels
 		[Reactive] public string AchievementToastTitle { get; set; } = "";
 		[Reactive] public string AchievementToastPoints { get; set; } = "";
 
+		//RetroAchievements leaderboard tracker (live value shown while a leaderboard attempt is active)
+		[Reactive] public bool LeaderboardTrackerVisible { get; set; }
+		[Reactive] public string LeaderboardTrackerText { get; set; } = "";
+
 		[Reactive] public bool IsNativeRendererVisible { get; set; }
 		[Reactive] public bool IsSoftwareRendererVisible { get; set; }
 
