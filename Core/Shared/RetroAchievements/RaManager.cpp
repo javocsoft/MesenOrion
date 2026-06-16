@@ -509,16 +509,9 @@ bool RaManager::IsHardcoreEnabled()
 
 bool RaManager::AreRestrictionsActive()
 {
-	return _client && _gameLoaded && rc_client_get_hardcore_enabled(_client) != 0;
-}
-
-void RaManager::DropToSoftcoreForResume()
-{
-	//RetroAchievements requires that resuming a session from a save state drops to softcore.
-	if(_client && rc_client_get_hardcore_enabled(_client)) {
-		rc_client_set_hardcore_enabled(_client, 0);
-		MessageManager::DisplayMessage("RetroAchievements", "RaResumeSoftcore");
-	}
+	//Hardcore restrictions apply whenever hardcore is enabled (even before/without an RA game
+	//session), so save states, rewind, resume, etc. are blocked consistently.
+	return _client && rc_client_get_hardcore_enabled(_client) != 0;
 }
 
 void RaManager::ProcessFrame()

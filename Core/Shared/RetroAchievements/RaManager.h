@@ -101,8 +101,6 @@ public:
 	//True when hardcore restrictions (no save states/rewind/cheats/speed) should be enforced:
 	//hardcore enabled AND an achievement-tracked game session is active.
 	bool AreRestrictionsActive();
-	//Drops the current session to softcore (used by the quick-resume feature, as required by RA).
-	void DropToSoftcoreForResume();
 
 	//Called once per emulated frame from the emulation thread
 	void ProcessFrame();

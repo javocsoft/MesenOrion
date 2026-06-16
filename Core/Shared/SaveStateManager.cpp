@@ -345,11 +345,10 @@ void SaveStateManager::LoadRecentGame(string filename, bool resetGame)
 
 	try {
 		if(_emu->LoadRom(romPath, patchPath)) {
-			if(!resetGame) {
-				//Resuming the previous session loads a save state, which RA requires to drop to softcore
-				if(_emu->GetRaManager()) {
-					_emu->GetRaManager()->DropToSoftcoreForResume();
-				}
+			//In RetroAchievements hardcore mode the previous session is NOT resumed - the game
+			//starts fresh so hardcore stays active (loading a save state is not allowed).
+			bool hardcore = _emu->GetRaManager() && _emu->GetRaManager()->IsHardcoreEnabled();
+			if(!resetGame && !hardcore) {
 				auto lock = _emu->AcquireLock();
 				SaveStateManager::LoadState(stateStream);
 			}
