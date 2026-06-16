@@ -143,6 +143,7 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 			case EmulatorShortcut::ToggleRewind: case EmulatorShortcut::Rewind: case EmulatorShortcut::RewindTenSecs: case EmulatorShortcut::RewindOneMin:
 			case EmulatorShortcut::FastForward: case EmulatorShortcut::ToggleFastForward:
 			case EmulatorShortcut::IncreaseSpeed: case EmulatorShortcut::DecreaseSpeed: case EmulatorShortcut::MaxSpeed:
+			case EmulatorShortcut::RunSingleFrame:
 			case EmulatorShortcut::ToggleCheats:
 				return false;
 			default:

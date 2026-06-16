@@ -99,7 +99,10 @@ namespace Mesen.ViewModels
 			sb.Append("  ·  " + ResourceHelper.GetMessage("StatusBarVsync") + ": " + ResourceHelper.GetMessage(video.VerticalSync ? "StatusBarOn" : "StatusBarOff"));
 
 			bool raActive = Config.RetroAchievements.Enabled && RetroAchievementsApi.IsLoggedIn();
-			sb.Append("  ·  RA: " + ResourceHelper.GetMessage(raActive ? "StatusBarOn" : "StatusBarOff"));
+			string raState = !raActive
+				? ResourceHelper.GetMessage("StatusBarOff")
+				: (RetroAchievementsApi.IsHardcoreEnabled() ? "Hardcore" : ResourceHelper.GetMessage("StatusBarOn"));
+			sb.Append("  ·  RA: " + raState);
 
 			StatusBarText = sb.ToString();
 		}

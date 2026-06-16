@@ -6,6 +6,7 @@
 #include "Shared/SaveStateManager.h"
 #include "Shared/MessageManager.h"
 #include "Shared/Emulator.h"
+#include "Shared/RetroAchievements/RaManager.h"
 #include "Shared/EmuSettings.h"
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/RenderedFrame.h"
@@ -159,6 +160,10 @@ bool SaveStateManager::LoadState(istream &stream)
 		return false;
 	} else if(_emu->GetGameClient()->Connected()) {
 		MessageManager::DisplayMessage("Netplay", "NetplayNotAllowed");
+		return false;
+	} else if(_emu->GetRaManager() && _emu->GetRaManager()->AreRestrictionsActive()) {
+		//Loading save states is always blocked in RetroAchievements hardcore mode
+		MessageManager::DisplayMessage("SaveStates", "RaLoadStateDisabled");
 		return false;
 	}
 
@@ -341,6 +346,10 @@ void SaveStateManager::LoadRecentGame(string filename, bool resetGame)
 	try {
 		if(_emu->LoadRom(romPath, patchPath)) {
 			if(!resetGame) {
+				//Resuming the previous session loads a save state, which RA requires to drop to softcore
+				if(_emu->GetRaManager()) {
+					_emu->GetRaManager()->DropToSoftcoreForResume();
+				}
 				auto lock = _emu->AcquireLock();
 				SaveStateManager::LoadState(stateStream);
 			}

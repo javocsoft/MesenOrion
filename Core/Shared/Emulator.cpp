@@ -1077,6 +1077,11 @@ void Emulator::ResetDebugger(bool startDebugger)
 
 void Emulator::InitDebugger()
 {
+	if(_raManager && _raManager->AreRestrictionsActive()) {
+		//RetroAchievements hardcore mode prohibits the debugger, memory tools and scripting (Lua scripts rely on the debugger)
+		return;
+	}
+
 	if(!_debugger) {
 		//Lock to make sure we don't try to start debuggers in 2 separate threads at once
 		auto lock = _debuggerLock.AcquireSafe();

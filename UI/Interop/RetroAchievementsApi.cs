@@ -70,7 +70,18 @@ namespace Mesen.Interop
 			_initialized = true;
 
 			_http.Timeout = TimeSpan.FromSeconds(30);
-			_http.DefaultRequestHeaders.UserAgent.ParseAdd("MesenOrion/1.0");
+			//RetroAchievements requires a unique, stable user agent with a numeric, incrementing version:
+			//"EmulatorName/x.y.z (OS ver)"
+			string version = EmuApi.GetMesenVersion().ToString(3);
+			string os = System.Runtime.InteropServices.RuntimeInformation.OSDescription.Replace("(", "").Replace(")", "").Trim();
+			if(os.Length > 60) {
+				os = os.Substring(0, 60).Trim();
+			}
+			try {
+				_http.DefaultRequestHeaders.UserAgent.ParseAdd($"MesenOrion/{version} ({os})");
+			} catch {
+				_http.DefaultRequestHeaders.UserAgent.ParseAdd($"MesenOrion/{version}");
+			}
 
 			_callback = OnHttpRequest;
 			RaSetHttpCallback(_callback);

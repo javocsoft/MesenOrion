@@ -7,6 +7,8 @@
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/Movies/MesenMovie.h"
 #include "Shared/Movies/MovieRecorder.h"
+#include "Shared/RetroAchievements/RaManager.h"
+#include "Shared/MessageManager.h"
 
 MovieManager::MovieManager(Emulator* emu)
 {
@@ -26,6 +28,12 @@ void MovieManager::Record(RecordMovieOptions options)
 
 void MovieManager::Play(VirtualFile file, bool forTest)
 {
+	if(!forTest && _emu->GetRaManager() && _emu->GetRaManager()->AreRestrictionsActive()) {
+		//RetroAchievements hardcore mode prohibits playing back recorded input (TAS/movies)
+		MessageManager::DisplayMessage("Movies", "RaMovieDisabled");
+		return;
+	}
+
 	vector<uint8_t> fileData;
 	if(file.IsValid() && file.ReadFile(fileData)) {
 		shared_ptr<IMovie> player;

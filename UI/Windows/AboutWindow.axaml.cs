@@ -69,6 +69,7 @@ namespace Mesen.Windows
 				new("orfanidis_eq", "", "MIT", "https://github.com/thedrgreenthumb/orfanidis_eq"),
 				new("ELFSharp", "", "MIT", "https://github.com/konrad-kruczynski/elfsharp"),
 				new("ymfm", "", "BSD 3-clause", "https://github.com/aaronsgiles/ymfm"),
+				new("rcheevos", "RetroAchievements.org", "MIT", "https://github.com/RetroAchievements/rcheevos"),
 				new("GBA Multiply Algo (zaydlang)", "", "zlib", "https://github.com/zaydlang/multiplication-algorithm/"),
 			};
 

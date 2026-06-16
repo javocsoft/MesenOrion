@@ -461,6 +461,15 @@ bool RaManager::AreRestrictionsActive()
 	return _client && _gameLoaded && rc_client_get_hardcore_enabled(_client) != 0;
 }
 
+void RaManager::DropToSoftcoreForResume()
+{
+	//RetroAchievements requires that resuming a session from a save state drops to softcore.
+	if(_client && rc_client_get_hardcore_enabled(_client)) {
+		rc_client_set_hardcore_enabled(_client, 0);
+		MessageManager::DisplayMessage("RetroAchievements", "RaResumeSoftcore");
+	}
+}
+
 void RaManager::ProcessFrame()
 {
 	if(!_client) {
