@@ -627,6 +627,8 @@ namespace Mesen.Debugger.Utilities
 
 		[IconFile("Help")]
 		OnlineHelp,
+
+		PrivacyPolicy,
 		[IconFile("CommandLine")]
 		CommandLineHelp,
 		[IconFile("Update")]

@@ -1239,6 +1239,12 @@ namespace Mesen.ViewModels
 					IsVisible = () => false,
 					OnClick = () => ApplicationHelper.OpenBrowser("https://www.mesen.ca/reportbug/")
 				},
+				new MainMenuAction() {
+					ActionType = ActionType.PrivacyPolicy,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new PrivacyPolicyWindow());
+					}
+				},
 				new ContextMenuSeparator(),
 				new MainMenuAction() {
 					ActionType = ActionType.About,
