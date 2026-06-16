@@ -5,6 +5,7 @@ using Mesen.Config;
 using Mesen.Interop;
 using Mesen.Utilities;
 using System;
+using System.ComponentModel;
 
 namespace Mesen.Windows
 {
@@ -38,6 +39,9 @@ namespace Mesen.Windows
 			this.GetControl<Button>("btnAchievements").Click += OnViewAchievements;
 			this.GetControl<Button>("btnClose").Click += OnClose;
 			_showPassword.IsCheckedChanged += (s, e) => _password.RevealPassword = _showPassword.IsChecked == true;
+
+			//Apply + persist any setting change immediately (no need to use the Close button)
+			((INotifyPropertyChanged)_cfg).PropertyChanged += OnConfigChanged;
 
 			RetroAchievementsApi.StateChanged += OnStateChanged;
 			UpdateStatus();
@@ -103,6 +107,15 @@ namespace Mesen.Windows
 			}
 		}
 
+		private void OnConfigChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			//Hardcore needs to be pushed to the core; the rest just needs to be persisted
+			if(e.PropertyName == nameof(RetroAchievementsConfig.HardcoreMode)) {
+				RetroAchievementsApi.SetHardcoreEnabled(_cfg.HardcoreMode);
+			}
+			ConfigManager.Config.Save();
+		}
+
 		private void OnViewAchievements(object? sender, RoutedEventArgs e)
 		{
 			ApplicationHelper.GetOrCreateUniqueWindow(this, () => new RaAchievementListWindow());
@@ -110,15 +123,13 @@ namespace Mesen.Windows
 
 		private void OnClose(object? sender, RoutedEventArgs e)
 		{
-			//Apply the chosen hardcore setting. Note: until RA approves this emulator, hardcore
-			//unlocks won't be saved on the server, but the local restrictions are enforced.
-			RetroAchievementsApi.SetHardcoreEnabled(_cfg.HardcoreMode);
-			ConfigManager.Config.Save();
+			//Settings are already applied and saved live (see OnConfigChanged); just close.
 			Close();
 		}
 
 		protected override void OnClosed(EventArgs e)
 		{
+			((INotifyPropertyChanged)_cfg).PropertyChanged -= OnConfigChanged;
 			RetroAchievementsApi.StateChanged -= OnStateChanged;
 			base.OnClosed(e);
 		}

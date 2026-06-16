@@ -37,7 +37,7 @@
 		<Separator Margin="0 4" />
 
 		<CheckBox Content="Enable RetroAchievements" IsChecked="{Binding Enabled}" />
-		<CheckBox IsChecked="{Binding HardcoreMode}"
+		<CheckBox Name="chkHardcore" IsChecked="{Binding HardcoreMode}"
 				  ToolTip.Tip="Enabling hardcore disables save states, rewind, cheats and speed changes. RetroAchievements approval for Mesen Orion is still pending, so hardcore unlocks are not yet saved on the server.">
 			<TextBlock Text="Hardcore mode (disables save states, rewind, cheats and speed changes)" TextWrapping="Wrap" />
 		</CheckBox>
