@@ -4,6 +4,7 @@
 #include "Shared/KeyManager.h"
 #include "Shared/MessageManager.h"
 #include "Shared/Emulator.h"
+#include "Shared/RetroAchievements/RaManager.h"
 #include "Shared/DebuggerRequest.h"
 #include "Shared/NotificationManager.h"
 #include "Utilities/FolderUtilities.h"
@@ -450,6 +451,11 @@ OverscanDimensions EmuSettings::GetOverscan()
 
 uint32_t EmuSettings::GetEmulationSpeed()
 {
+	if(_emu->GetRaManager() && _emu->GetRaManager()->AreRestrictionsActive()) {
+		//RetroAchievements hardcore mode always runs at normal speed (no fast-forward/slowdown/rewind)
+		return 100;
+	}
+
 	if(CheckFlag(EmulationFlags::MaximumSpeed)) {
 		return 0;
 	} else if(CheckFlag(EmulationFlags::Turbo)) {

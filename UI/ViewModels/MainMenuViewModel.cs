@@ -139,7 +139,7 @@ namespace Mesen.ViewModels
 
 				new MainMenuAction(EmulatorShortcut.LoadLastSession) {
 					ActionType = ActionType.LoadLastSession,
-					IsEnabled = () => File.Exists(Path.Combine(ConfigManager.RecentGamesFolder, MainWindow.RomInfo.GetRomName() + ".rgd"))
+					IsEnabled = () => EmuApi.IsShortcutAllowed(EmulatorShortcut.LoadLastSession, 0) && File.Exists(Path.Combine(ConfigManager.RecentGamesFolder, MainWindow.RomInfo.GetRomName() + ".rgd"))
 				},
 
 				new ContextMenuSeparator(),
@@ -771,6 +771,8 @@ namespace Mesen.ViewModels
 					ConfigManager.Config.Emulation.EmulationSpeed = (uint)speed;
 					ConfigManager.Config.Emulation.ApplyConfig();
 				};
+				//Speed changes are disabled in RetroAchievements hardcore mode
+				item.IsEnabled = () => !RetroAchievementsApi.IsHardcoreEnabled();
 			}
 
 			return item;
@@ -783,7 +785,8 @@ namespace Mesen.ViewModels
 				SubActions = new List<object> {
 					new MainMenuAction() {
 						ActionType = ActionType.Play,
-						IsEnabled = () => IsGameRunning && !RecordApi.MovieRecording() && !RecordApi.MoviePlaying(),
+						//Movie (recorded input) playback is prohibited in RetroAchievements hardcore mode
+						IsEnabled = () => IsGameRunning && !RecordApi.MovieRecording() && !RecordApi.MoviePlaying() && !RetroAchievementsApi.IsHardcoreEnabled(),
 						OnClick = async () => {
 							string? filename = await FileDialogHelper.OpenFile(ConfigManager.MovieFolder, wnd, FileDialogHelper.MesenMovieExt);
 							if(filename != null) {
@@ -816,7 +819,8 @@ namespace Mesen.ViewModels
 			ToolsMenuItems = new List<object>() {
 				new MainMenuAction() {
 					ActionType = ActionType.Cheats,
-					IsEnabled = () => IsGameRunning && MainWindow.RomInfo.ConsoleType.SupportsCheats(),
+					//Cheats are disabled in RetroAchievements hardcore mode
+					IsEnabled = () => IsGameRunning && MainWindow.RomInfo.ConsoleType.SupportsCheats() && !RetroAchievementsApi.IsHardcoreEnabled(),
 					OnClick = () => {
 						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new CheatListWindow());
 					}
@@ -1217,6 +1221,15 @@ namespace Mesen.ViewModels
 					OnClick = () => DebuggerConfigWindow.Open(DebugConfigWindowTab.Debugger, wnd)
 				}
 			};
+
+			//The debugger, memory tools and scripting are prohibited in RetroAchievements hardcore
+			//mode, so the whole Debug menu is disabled while hardcore is active.
+			foreach(object obj in DebugMenuItems) {
+				if(obj is BaseMenuAction action) {
+					Func<bool>? prev = action.IsEnabled;
+					action.IsEnabled = () => (prev == null || prev()) && !RetroAchievementsApi.IsHardcoreEnabled();
+				}
+			}
 
 			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 		}
