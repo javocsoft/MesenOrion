@@ -647,6 +647,8 @@ namespace Mesen.Debugger.Utilities
 		CaptureGallery,
 		[IconFile("HistoryViewer")]
 		GameStatistics,
+		[IconFile("Folder")]
+		GameLibrary,
 
 		[IconFile("Help")]
 		OnlineHelp,

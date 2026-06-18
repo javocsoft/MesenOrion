@@ -3625,6 +3625,7 @@ E
 			<Value ID="RetroAchievements">RetroAchievements...</Value>
 			<Value ID="CaptureGallery">Capture Gallery...</Value>
 			<Value ID="GameStatistics">Game Statistics...</Value>
+			<Value ID="GameLibrary">Game Library...</Value>
 
 			<Value ID="OnlineHelp">Online Help</Value>
 			<Value ID="PrivacyPolicy">Privacy Policy</Value>

@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -109,6 +110,50 @@ namespace Mesen.Utilities
 					psi.ArgumentList.Add(path);
 				}
 				using Process? process = Process.Start(psi);
+			} catch { }
+		}
+
+		//Opens the folder containing 'path' and, where supported, highlights the file within it.
+		public static void ShowInFolder(string path)
+		{
+			try {
+				if(OperatingSystem.IsWindows()) {
+					ProcessStartInfo psi = new ProcessStartInfo { FileName = "explorer.exe", UseShellExecute = false };
+					psi.ArgumentList.Add("/select,");
+					psi.ArgumentList.Add(path);
+					Process.Start(psi);
+					return;
+				}
+				if(OperatingSystem.IsMacOS()) {
+					ProcessStartInfo psi = new ProcessStartInfo { FileName = "open", UseShellExecute = false };
+					psi.ArgumentList.Add("-R");
+					psi.ArgumentList.Add(path);
+					Process.Start(psi);
+					return;
+				}
+				//Linux: ask the file manager (via D-Bus) to reveal the file; fall back to opening the folder.
+				try {
+					ProcessStartInfo psi = new ProcessStartInfo { FileName = "dbus-send", UseShellExecute = false };
+					psi.ArgumentList.Add("--print-reply");
+					psi.ArgumentList.Add("--dest=org.freedesktop.FileManager1");
+					psi.ArgumentList.Add("--type=method_call");
+					psi.ArgumentList.Add("/org/freedesktop/FileManager1");
+					psi.ArgumentList.Add("org.freedesktop.FileManager1.ShowItems");
+					psi.ArgumentList.Add("array:string:" + new Uri(path).AbsoluteUri);
+					psi.ArgumentList.Add("string:");
+					Process? p = Process.Start(psi);
+					if(p != null) {
+						p.WaitForExit(2000);
+						if(p.HasExited && p.ExitCode == 0) {
+							return;
+						}
+					}
+				} catch { }
+				//Fallback: just open the containing folder
+				string? dir = Path.GetDirectoryName(path);
+				if(dir != null) {
+					OpenFileOrFolder(dir);
+				}
 			} catch { }
 		}
 

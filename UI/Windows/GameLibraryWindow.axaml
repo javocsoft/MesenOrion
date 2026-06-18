@@ -1,0 +1,113 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:u="using:Mesen.Utilities"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.GameLibraryWindow"
+	Width="760" Height="640"
+	Title="Game Library"
+	Name="root"
+>
+	<DockPanel Margin="12">
+		<!-- Header -->
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="0 0 0 8">
+			<StackPanel Grid.Column="0" Spacing="1" VerticalAlignment="Center">
+				<TextBlock Text="Game Library" FontSize="16" FontWeight="Bold" />
+				<TextBlock Name="lblSummary" Opacity="0.7" FontSize="12" />
+			</StackPanel>
+			<Button Name="btnAddFolder" Grid.Column="1" Content="Add folder…" Margin="0 0 6 0" VerticalAlignment="Center" />
+			<Button Name="btnRefresh" Grid.Column="2" Content="Rescan" VerticalAlignment="Center"
+					ToolTip.Tip="Re-scan the folders for new or removed games" />
+		</Grid>
+
+		<!-- Folder chips -->
+		<ItemsControl Name="lstFolders" DockPanel.Dock="Top" Margin="0 0 0 8">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel Orientation="Horizontal" />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate x:DataType="x:String">
+					<Border Margin="0 0 6 6" Padding="6 2" CornerRadius="4"
+							Background="{DynamicResource ThemeControlLowBrush}"
+							BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1">
+						<StackPanel Orientation="Horizontal" Spacing="4">
+							<TextBlock Text="{Binding}" FontSize="11" VerticalAlignment="Center"
+									   MaxWidth="320" TextTrimming="CharacterEllipsis" />
+							<Button Content="✕" FontSize="10" Padding="4 0" MinWidth="0"
+									Background="Transparent" BorderThickness="0"
+									Click="OnRemoveFolder" ToolTip.Tip="Remove this folder" />
+						</StackPanel>
+					</Border>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<!-- Filters -->
+		<Grid Name="pnlFilters" DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="0 0 0 10">
+			<TextBox Name="txtSearch" Grid.Column="0" Watermark="Search…" />
+			<ComboBox Name="cboSystem" Grid.Column="1" MinWidth="150" Margin="6 0 0 0" SelectedIndex="0" />
+			<ToggleButton Name="tglFavorites" Grid.Column="2" Margin="6 0 0 0" Content="★ Favorites" />
+			<TextBlock Grid.Column="3" Text="Size" VerticalAlignment="Center" Margin="12 0 4 0" Opacity="0.7" />
+			<Slider Name="sldSize" Grid.Column="4" Width="90" Minimum="1" Maximum="3" SmallChange="1"
+					TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+		</Grid>
+
+		<Panel>
+		<ScrollViewer Name="scroll" HorizontalScrollBarVisibility="Disabled">
+			<LayoutTransformControl Name="scaleHost" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+			<ItemsControl Name="lstGames">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="u:LibraryGame">
+						<Border Width="150" Height="156" Margin="0 0 8 8" Padding="6" CornerRadius="6"
+								Background="{DynamicResource ThemeControlLowBrush}"
+								BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1"
+								Cursor="Hand" DoubleTapped="OnGameDoubleTapped"
+								ContextRequested="OnGameContextRequested"
+								ToolTip.Tip="{Binding Name}">
+							<Grid RowDefinitions="*,Auto,Auto">
+								<Border Grid.Row="0" CornerRadius="4" ClipToBounds="True" Background="#101010">
+									<Panel>
+										<Image Source="{Binding IconImage}" Stretch="UniformToFill"
+											   IsVisible="{Binding HasCover}" />
+										<Image Source="{Binding IconImage}" Width="46" Height="46" Stretch="Uniform"
+											   HorizontalAlignment="Center" VerticalAlignment="Center"
+											   IsVisible="{Binding !HasCover}" />
+										<Button Click="OnToggleFavorite" HorizontalAlignment="Right" VerticalAlignment="Top"
+												Background="Transparent" BorderThickness="0" Padding="2" MinWidth="0"
+												ToolTip.Tip="Toggle favorite">
+											<Panel>
+												<TextBlock Text="★" FontSize="15" Foreground="Gold" IsVisible="{Binding IsFavorite}" />
+												<TextBlock Text="☆" FontSize="15" Opacity="0.7" IsVisible="{Binding !IsFavorite}" />
+											</Panel>
+										</Button>
+									</Panel>
+								</Border>
+								<TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+										   Margin="0 4 0 0" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+								<TextBlock Grid.Row="2" Text="{Binding System}" FontSize="10" Opacity="0.6" />
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			</LayoutTransformControl>
+		</ScrollViewer>
+
+		<TextBlock Name="lblEmpty" TextWrapping="Wrap" Opacity="0.6" IsVisible="False"
+				   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+				   Text="Add a folder containing your ROMs to build your library." />
+
+		<TextBlock Name="lblLoading" Text="Loading library…" Opacity="0.7" FontSize="14"
+				   HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="True" />
+		</Panel>
+	</DockPanel>
+</Window>

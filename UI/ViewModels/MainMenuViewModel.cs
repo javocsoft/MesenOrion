@@ -97,6 +97,12 @@ namespace Mesen.ViewModels
 		{
 			FileMenuItems = new List<object>() {
 				new MainMenuAction(EmulatorShortcut.OpenFile) { ActionType = ActionType.Open },
+				new MainMenuAction() {
+					ActionType = ActionType.GameLibrary,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(null, () => new GameLibraryWindow());
+					}
+				},
 				new ContextMenuSeparator(),
 				new MainMenuAction() {
 					ActionType = ActionType.SaveState,
