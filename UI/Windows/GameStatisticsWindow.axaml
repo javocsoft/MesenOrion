@@ -19,6 +19,16 @@
 			<Button Name="btnClear" Grid.Column="1" Content="Clear All" VerticalAlignment="Center" />
 		</Grid>
 
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="0 0 0 8">
+			<TextBox Name="txtSearch" Grid.Column="0" Watermark="Search…" />
+			<TextBlock Grid.Column="1" Text="Sort:" VerticalAlignment="Center" Margin="8 0 4 0" Opacity="0.7" />
+			<ComboBox Name="cboSort" Grid.Column="2" MinWidth="150" SelectedIndex="0">
+				<ComboBoxItem>Last played</ComboBoxItem>
+				<ComboBoxItem>Name (A → Z)</ComboBoxItem>
+				<ComboBoxItem>Playtime (most first)</ComboBoxItem>
+			</ComboBox>
+		</Grid>
+
 		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="4 0 16 4">
 			<TextBlock Grid.Column="0" Text="Game" FontWeight="Bold" FontSize="11" Opacity="0.7" />
 			<TextBlock Grid.Column="1" Text="Playtime" FontWeight="Bold" FontSize="11" Opacity="0.7" Width="90" />
