@@ -47,6 +47,16 @@ Building on Mesen 2.1.1, this fork adds:
 - The **status bar** shows whether RA is active (`RA: On` / `RA: Off` / `RA: Hardcore`).
 - **Hardcore mode** is enforced locally: save states, rewind, cheats, speed changes and the debugger are disabled while it's active (locked menu items show a 🔒), with a confirmation prompt when enabling it mid-game. Official approval by retroachievements.org is **still pending** for Mesen Orion, so hardcore unlocks **don't count on the server yet** — but the restrictions apply locally. **Softcore** is fully supported.
 
+#### Game library
+- A **Game Library** (*File → Game Library…*) that scans your configured ROM folders and lists every game, **grouped/filterable by system** (detected by extension — including by peeking inside `.zip` archives), with a **search** box, **favorites**, and an adjustable **thumbnail size** (1×–3×).
+- **Box-art** uses each game's captured cover (the `Ctrl + Shift + F12` cover, or its most recent screenshot) when available, otherwise a system icon.
+- **Double-click to launch**; right-click for **Play**, **View in folder** (reveals the ROM in your file manager) and favorite toggling. The scan is **cached** so the window opens instantly; re-scan on demand with the *Rescan* button.
+
+#### On-screen quick menu (controller-friendly)
+- A **RetroArch-style quick menu** drawn over the running game, fully navigable with a **controller** or the keyboard. It works in **Steam Deck Game Mode / Gamescope** because it's painted on the game canvas (not a pop-up window).
+- Open it with **L2 + R2** on a gamepad (or `Ctrl + F1`); move with the D-pad/arrows, **A**/Enter to select, **B**/Backspace to go back. Every binding is configurable in *Preferences → Shortcut Keys*.
+- Actions: **Resume, Load Game, Save State, Load State, Reset, Power Cycle, Power Off**. **Load Game** lists your library **favorites** so you can switch games without leaving the couch. The game is paused while the menu is open.
+
 #### Recording & capture
 - Built-in **GIF recorder** with `Shift + G` to toggle Record / Stop, plus *Tools → GIF Recorder* menu entries.
 - An **always-visible on-screen indicator** while recording, and a notification showing where each GIF was saved.
@@ -59,6 +69,10 @@ Building on Mesen 2.1.1, this fork adds:
 - **Custom recent-game cover:** press `Ctrl + Shift + F12` while playing to capture the current frame and use it as that game's thumbnail on the recent-games screen (instead of the automatic one taken when the game stops). The chosen frame is kept per game.
 - **Take Screenshot** moved to `Shift + F12` (plain `F12` is left free for the developer tools). Both keys are rebindable in *Preferences → Shortcut Keys*.
 - A **View Shortcuts** window (*Tools → View Shortcuts*) lists the main in-game shortcuts (screenshot, game cover, shader switching, picture presets, GIF/video recording) with their currently configured keys, in a window placed beside the emulator.
+- A **Capture Gallery** (*Tools → Capture Gallery…*) to browse your screenshots and recorded GIFs as thumbnails — click one to open it, or jump straight to its folder.
+- **Game Statistics** (*Tools → Game Statistics…*) — automatic per-game **playtime** and **last-played** tracking.
+- **Named save states** (*File → Named Save States…*) — save and load states under custom names (with thumbnails), kept separate from the numbered slots.
+- **Display language** — *Preferences → General* lets you switch the UI language (**English / Español**); any untranslated strings fall back to English.
 - The online **auto-update** check has been disabled and the *Check for updates* entry hidden (this fork is distributed independently).
 
 #### Quality, performance & accessibility
@@ -74,6 +88,7 @@ Pre-built releases are published on the [fork's releases page](https://github.co
 - **Linux (x64):**
   - `mesen-orion_<version>_amd64.deb` — Debian/Ubuntu package. Install with `sudo dpkg -i mesen-orion_<version>_amd64.deb` (or `sudo apt install ./mesen-orion_<version>_amd64.deb`).
   - `MesenOrion-<version>-x86_64.AppImage` — portable, no installation needed. Just `chmod +x` it and run.
+  - **Flatpak** — a manifest and a `build-flatpak.sh` helper are provided to build/install it (see **Compiling**).
 
 Prefer to build it yourself? You can — see **Compiling** below. (macOS is build-from-source only for now.)
 
@@ -114,6 +129,15 @@ Or build a portable **AppImage** (bundles the Shaders collection and AppStream m
 
 The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.2-x86_64.AppImage`);
 the version is read from `distributable/mesen-orion/DEBIAN/control`.
+
+Or build a **Flatpak** (packages the built binary; auto-resolves the SDL2 source hash and offers to
+install `flatpak-builder` if it's missing):
+
+```sh
+./build-flatpak.sh              # build the app + export MesenOrion-<version>.flatpak
+./build-flatpak.sh --install    # also install it for the current user
+```
+Run `./build-flatpak.sh --help` for all options. See [flatpak/README.md](flatpak/README.md) for details.
 
 For how to publish a GitHub Release and list the AppImage on AppImageHub, see
 [publishin-a-release.md](publishin-a-release.md).
