@@ -733,6 +733,7 @@
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 			
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
+			<Control ID="lblLanguageRestart">(restart required)</Control>
 			<Control ID="chkSingleInstance">Only allow one instance of Mesen Orion at a time</Control>
 			<Control ID="chkAutomaticallyCheckForUpdates">Automatically check for updates</Control>
 
@@ -2556,6 +2557,10 @@ E
 		<Enum ID="MesenTheme">
 			<Value ID="Light">Light</Value>
 			<Value ID="Dark">Dark</Value>
+		</Enum>
+		<Enum ID="Language">
+			<Value ID="English">English</Value>
+			<Value ID="Spanish">Español</Value>
 		</Enum>
 		<Enum ID="PceConsoleType">
 			<Value ID="Auto">Auto (recommended)</Value>

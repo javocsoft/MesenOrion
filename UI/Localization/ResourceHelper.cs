@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using Mesen.Config;
 using Mesen.Interop;
 
 namespace Mesen.Localization
@@ -18,22 +19,51 @@ namespace Mesen.Localization
 
 		public static void LoadResources()
 		{
+			_enumLabelCache.Clear();
+			_viewLabelCache.Clear();
+			_messageCache.Clear();
+
+			//English is always loaded as the base so any untranslated string falls back to English.
+			LoadResourceFile("Mesen.Localization.resources.en.xml", isBase: true);
+
+			string? langFile = ConfigManager.Config.Preferences.Language switch {
+				Language.Spanish => "Mesen.Localization.resources.es.xml",
+				_ => null
+			};
+			if(langFile != null) {
+				LoadResourceFile(langFile, isBase: false);
+			}
+		}
+
+		//Loads a resource file's strings into the caches (overwriting existing entries). When isBase is
+		//true the document is also kept for GetEnumValues (which needs the full set of enum values).
+		private static void LoadResourceFile(string resourceName, bool isBase)
+		{
 			try {
 				Assembly assembly = Assembly.GetExecutingAssembly();
-
-				using(StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("Mesen.Localization.resources.en.xml")!)) {
-					_resources.LoadXml(reader.ReadToEnd());
+				Stream? stream = assembly.GetManifestResourceStream(resourceName);
+				if(stream == null) {
+					return;
 				}
 
-				foreach(XmlNode node in _resources.SelectNodes("/Resources/Messages/Message")!) {
+				XmlDocument doc = new XmlDocument();
+				using(StreamReader reader = new StreamReader(stream)) {
+					doc.LoadXml(reader.ReadToEnd());
+				}
+
+				if(isBase) {
+					_resources = doc;
+				}
+
+				foreach(XmlNode node in doc.SelectNodes("/Resources/Messages/Message")!) {
 					_messageCache[node.Attributes!["ID"]!.Value] = node.InnerText;
 				}
 
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
 				Dictionary<string, Type> enumTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsEnum).ToDictionary(t => t.Name);
-#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+#pragma warning restore IL2026
 
-				foreach(XmlNode node in _resources.SelectNodes("/Resources/Enums/Enum")!) {
+				foreach(XmlNode node in doc.SelectNodes("/Resources/Enums/Enum")!) {
 					string enumName = node.Attributes!["ID"]!.Value;
 					if(enumTypes.TryGetValue(enumName, out Type? enumType)) {
 						foreach(XmlNode enumNode in node.ChildNodes) {
@@ -41,12 +71,11 @@ namespace Mesen.Localization
 								_enumLabelCache[(Enum)value!] = enumNode.InnerText;
 							}
 						}
-					} else {
-						throw new Exception("Unknown enum type: " + enumName);
 					}
+					//Unknown enum types are skipped (a translation overlay may omit/typo entries safely)
 				}
 
-				foreach(XmlNode node in _resources.SelectNodes("/Resources/Forms/Form")!) {
+				foreach(XmlNode node in doc.SelectNodes("/Resources/Forms/Form")!) {
 					string viewName = node.Attributes!["ID"]!.Value;
 					foreach(XmlNode formNode in node.ChildNodes) {
 						if(formNode is XmlElement elem) {

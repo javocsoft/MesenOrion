@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Resources>
+	<Forms>
+		<Form ID="MainMenuView">
+			<Control ID="mnuFile">_Archivo</Control>
+			<Control ID="mnuGame">_Juego</Control>
+			<Control ID="mnuOptions">A_justes</Control>
+			<Control ID="mnuTools">_Herramientas</Control>
+			<Control ID="mnuDebug">_Depurar</Control>
+			<Control ID="mnuHelp">A_yuda</Control>
+		</Form>
+		<Form ID="PreferencesConfigView">
+			<Control ID="lblTheme">Tema:</Control>
+			<Control ID="lblDisplayLanguage">Idioma:</Control>
+			<Control ID="lblLanguageRestart">(requiere reiniciar)</Control>
+		</Form>
+		<Form ID="RetroAchievementsWindow">
+			<Control ID="lblAccount">Cuenta</Control>
+			<Control ID="lblOptions">Opciones</Control>
+			<Control ID="lblUsername">Usuario</Control>
+			<Control ID="lblPassword">Contraseña</Control>
+			<Control ID="chkShow">Mostrar</Control>
+			<Control ID="btnLogin">Iniciar sesión</Control>
+			<Control ID="btnLogout">Cerrar sesión</Control>
+			<Control ID="lblProvider">retroachievements.org</Control>
+			<Control ID="chkEnabled">Activar RetroAchievements</Control>
+			<Control ID="chkHardcore">Modo hardcore</Control>
+			<Control ID="lblHardcoreDesc">Desactiva el guardado de estados, el rebobinado, los trucos y los cambios de velocidad.</Control>
+			<Control ID="lblHardcoreWarning">La aprobación del modo hardcore para Mesen Orion por retroachievements.org sigue pendiente, así que los desbloqueos aún no cuentan en el servidor. Las restricciones se aplican localmente.</Control>
+			<Control ID="chkNotifications">Mostrar notificaciones de logros</Control>
+			<Control ID="chkSound">Reproducir un sonido al desbloquear un logro</Control>
+			<Control ID="btnViewAchievements">Ver logros...</Control>
+			<Control ID="btnViewLeaderboards">Ver clasificaciones...</Control>
+			<Control ID="btnClose">Cerrar</Control>
+		</Form>
+	</Forms>
+	<Enums>
+		<Enum ID="Language">
+			<Value ID="English">English</Value>
+			<Value ID="Spanish">Español</Value>
+		</Enum>
+		<Enum ID="MesenTheme">
+			<Value ID="Light">Claro</Value>
+			<Value ID="Dark">Oscuro</Value>
+		</Enum>
+		<Enum ID="ActionType">
+			<Value ID="Open">Abrir</Value>
+			<Value ID="GameLibrary">Biblioteca de juegos...</Value>
+			<Value ID="SaveState">Guardar estado</Value>
+			<Value ID="LoadState">Cargar estado</Value>
+			<Value ID="SaveStateDialog">Menú de guardar estado</Value>
+			<Value ID="LoadStateDialog">Menú de cargar estado</Value>
+			<Value ID="SaveStateToFile">Guardar en archivo...</Value>
+			<Value ID="LoadStateFromFile">Cargar desde archivo...</Value>
+			<Value ID="RecentFiles">Archivos recientes</Value>
+			<Value ID="LoadLastSession">Cargar última sesión</Value>
+			<Value ID="Exit">Salir</Value>
+			<Value ID="Pause">Pausar</Value>
+			<Value ID="Resume">Reanudar</Value>
+			<Value ID="Reset">Reiniciar</Value>
+			<Value ID="PowerCycle">Apagar y encender</Value>
+			<Value ID="ReloadRom">Recargar ROM</Value>
+			<Value ID="PowerOff">Apagar</Value>
+			<Value ID="GameConfig">Ajustes del juego</Value>
+			<Value ID="SelectDisk">Seleccionar disco</Value>
+			<Value ID="EjectDisk">Expulsar disco</Value>
+			<Value ID="InsertCoin1">Insertar moneda (1)</Value>
+			<Value ID="InputBarcode">Introducir código de barras...</Value>
+			<Value ID="TapeRecorder">Grabadora de cinta</Value>
+			<Value ID="Cheats">Trucos</Value>
+			<Value ID="HistoryViewer">Visor de historial</Value>
+			<Value ID="Movies">Películas</Value>
+			<Value ID="Play">Reproducir...</Value>
+			<Value ID="Record">Grabar...</Value>
+			<Value ID="Stop">Detener</Value>
+			<Value ID="NetPlay">Juego en red</Value>
+			<Value ID="Connect">Conectar al servidor...</Value>
+			<Value ID="Disconnect">Desconectar</Value>
+			<Value ID="StartServer">Iniciar servidor...</Value>
+			<Value ID="StopServer">Detener servidor</Value>
+			<Value ID="SelectController">Seleccionar mando</Value>
+			<Value ID="SoundRecorder">Grabadora de sonido</Value>
+			<Value ID="VideoRecorder">Grabadora de vídeo</Value>
+			<Value ID="GifRecorder">Grabadora de GIF</Value>
+			<Value ID="HdPacks">HD Packs (NES)</Value>
+			<Value ID="InstallHdPack">Instalar HD Pack</Value>
+			<Value ID="HdPackBuilder">Constructor de HD Pack</Value>
+			<Value ID="LogWindow">Ventana de registro</Value>
+			<Value ID="TakeScreenshot">Capturar pantalla</Value>
+			<Value ID="ViewShortcuts">Ver atajos</Value>
+			<Value ID="RetroAchievements">RetroAchievements...</Value>
+			<Value ID="CaptureGallery">Galería de capturas...</Value>
+			<Value ID="GameStatistics">Estadísticas de juego...</Value>
+			<Value ID="Preferences">Preferencias</Value>
+			<Value ID="Audio">Audio</Value>
+			<Value ID="Video">Vídeo</Value>
+			<Value ID="Input">Entrada</Value>
+			<Value ID="Emulation">Emulación</Value>
+			<Value ID="OtherConsoles">Otros sistemas</Value>
+			<Value ID="Speed">Velocidad</Value>
+			<Value ID="NormalSpeed">Normal (100%)</Value>
+			<Value ID="DoubleSpeed">Doble (200%)</Value>
+			<Value ID="TripleSpeed">Triple (300%)</Value>
+			<Value ID="MaximumSpeed">Velocidad máxima</Value>
+			<Value ID="HalfSpeed">Mitad (50%)</Value>
+			<Value ID="QuarterSpeed">Cuarto (25%)</Value>
+			<Value ID="IncreaseSpeed">Aumentar velocidad</Value>
+			<Value ID="DecreaseSpeed">Reducir velocidad</Value>
+			<Value ID="ShowFps">Mostrar FPS</Value>
+			<Value ID="ShowStatusBar">Mostrar barra de estado</Value>
+			<Value ID="VideoScale">Tamaño de vídeo</Value>
+			<Value ID="AspectRatio">Relación de aspecto</Value>
+			<Value ID="Fullscreen">Pantalla completa</Value>
+			<Value ID="VideoFilter">Filtro de vídeo</Value>
+			<Value ID="FavoriteShader">Shader favorito</Value>
+			<Value ID="Region">Región / Modelo</Value>
+			<Value ID="OnlineHelp">Ayuda en línea</Value>
+			<Value ID="PrivacyPolicy">Política de privacidad</Value>
+			<Value ID="CommandLineHelp">Opciones de línea de comandos</Value>
+			<Value ID="CheckForUpdates">Buscar actualizaciones</Value>
+			<Value ID="ReportBug">Reportar un error</Value>
+			<Value ID="About">Acerca de</Value>
+			<Value ID="HelpApiReference">Referencia de la API</Value>
+		</Enum>
+	</Enums>
+	<Messages>
+		<Message ID="StatusBarNoGame">Sin juego</Message>
+		<Message ID="StatusBarSpeed">Velocidad</Message>
+		<Message ID="StatusBarMaxSpeed">Máx</Message>
+		<Message ID="StatusBarSize">Tamaño</Message>
+		<Message ID="StatusBarFilter">Filtro</Message>
+		<Message ID="StatusBarShader">Shader</Message>
+		<Message ID="StatusBarAspect">Aspecto</Message>
+		<Message ID="StatusBarVsync">VSync</Message>
+		<Message ID="StatusBarOn">Sí</Message>
+		<Message ID="StatusBarOff">No</Message>
+		<Message ID="LastSession">Última sesión</Message>
+		<Message ID="AutoSave">Autoguardado</Message>
+		<Message ID="SlotNumber">Ranura #{0}</Message>
+		<Message ID="ConfirmExit">¿Seguro que quieres salir?</Message>
+		<Message ID="RetroAchievementsHardcoreConfirm">El modo hardcore desactiva el guardado de estados, el rebobinado, los trucos y los cambios de velocidad mientras hay un juego en marcha. ¿Activarlo ahora?</Message>
+	</Messages>
+</Resources>

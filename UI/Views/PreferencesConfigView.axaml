@@ -26,6 +26,12 @@
 						<TextBlock Text="{l:Translate lblTheme}" Margin="3 0 5 0" />
 						<c:EnumComboBox SelectedItem="{Binding Config.Theme}" Width="75" />
 					</StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="0 4 0 0">
+						<TextBlock Text="{l:Translate lblDisplayLanguage}" Margin="3 0 5 0" VerticalAlignment="Center" />
+						<c:EnumComboBox SelectedItem="{Binding Config.Language}" MinWidth="110" />
+						<TextBlock Text="{l:Translate lblLanguageRestart}" Margin="6 0 0 0" Opacity="0.6"
+								   VerticalAlignment="Center" FontSize="11" />
+					</StackPanel>
 					<!-- Update check disabled in Mesen Orion (points at upstream mesen.ca) - hidden for now.
 						<CheckBox Content="{l:Translate chkAutomaticallyCheckForUpdates}" IsChecked="{Binding Config.AutomaticallyCheckForUpdates}" /> -->
 					<CheckBox Content="{l:Translate chkSingleInstance}" IsChecked="{Binding Config.SingleInstance}" />
