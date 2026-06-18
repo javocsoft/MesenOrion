@@ -112,25 +112,39 @@ void QuickMenu::Draw(DebugHud* hud, uint32_t width, uint32_t height)
 		return;
 	}
 
-	const int itemHeight = 12;
+	const int itemHeight = 13;
+	const int pad = 8;
 	int count = (int)_items.size();
-	int panelW = 120;
-	int panelH = (count + 1) * itemHeight + 14;
+	int panelW = 150;
+	int panelH = pad * 2 + (count + 1) * itemHeight + 4;
 	int x = ((int)width - panelW) / 2;
 	int y = ((int)height - panelH) / 2;
 
-	//Panel background + accent border
-	hud->DrawRectangle(x, y, panelW, panelH, 0xC0000000, true, 1);
-	hud->DrawRectangle(x, y, panelW, panelH, 0xFFFFCC00, false, 1);
+	//NOTE: the HUD uses an inverted alpha byte (0x00 = opaque, 0xFF = transparent).
+	//Solid dark background + gold border so it stays readable over any scene.
+	const int BG = 0x00101010;        //solid dark
+	const int ACCENT = 0x00FFCC00;    //gold (opaque)
+	const int HILITE = 0x002860D0;    //blue (opaque)
+	const int WHITE = 0x00FFFFFF;     //opaque white text
+	const int GRAY = 0x00C8C8C8;      //opaque light-grey text
+	const int NOBG = 0xFF000000;      //transparent text background (no box)
 
-	hud->DrawString(x + 8, y + 5, "QUICK MENU", 0xFFFFCC00, 0, 1);
+	hud->DrawRectangle(x, y, panelW, panelH, BG, true, 1);
+	hud->DrawRectangle(x, y, panelW, panelH, ACCENT, false, 1);
+	hud->DrawRectangle(x + 1, y + 1, panelW - 2, panelH - 2, ACCENT, false, 1);
+
+	int tx = x + pad;
+	hud->DrawString(tx, y + pad, "QUICK MENU", ACCENT, NOBG, 1);
 
 	int sel = _selected.load();
 	for(int i = 0; i < count; i++) {
-		int ty = y + 7 + (i + 1) * itemHeight;
+		int iy = y + pad + (i + 1) * itemHeight + 4;
 		if(i == sel) {
-			hud->DrawRectangle(x + 3, ty - 1, panelW - 6, itemHeight, 0xFF3060C0, true, 1);
+			//Highlight bar for the selected entry
+			hud->DrawRectangle(x + 4, iy - 2, panelW - 8, itemHeight, HILITE, true, 1);
+			hud->DrawString(tx, iy, _items[i].Label, WHITE, NOBG, 1);
+		} else {
+			hud->DrawString(tx, iy, _items[i].Label, GRAY, NOBG, 1);
 		}
-		hud->DrawString(x + 8, ty, _items[i].Label, 0xFFFFFFFF, 0, 1);
 	}
 }

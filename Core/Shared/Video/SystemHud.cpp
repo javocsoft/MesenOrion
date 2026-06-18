@@ -22,9 +22,6 @@ SystemHud::~SystemHud()
 
 void SystemHud::Draw(DebugHud* hud, uint32_t width, uint32_t height) const
 {
-	//On-screen quick menu (drawn over everything; no-op when closed)
-	_emu->GetQuickMenu()->Draw(hud, width, height);
-
 	DrawCounters(hud, width);
 	DrawMessages(hud, width, height);
 
@@ -53,6 +50,9 @@ void SystemHud::Draw(DebugHud* hud, uint32_t width, uint32_t height) const
 			}
 		}
 	}
+
+	//Drawn last so it sits on top of the pause icon / OSD messages (no-op when closed)
+	_emu->GetQuickMenu()->Draw(hud, width, height);
 }
  
 void SystemHud::DrawMessage(DebugHud* hud, MessageInfo &msg, uint32_t screenWidth, uint32_t screenHeight, int& lastHeight) const

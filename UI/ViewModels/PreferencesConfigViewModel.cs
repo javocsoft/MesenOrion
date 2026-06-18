@@ -149,7 +149,13 @@ namespace Mesen.ViewModels
 				EmulatorShortcut.SelectSaveSlot7,
 				EmulatorShortcut.SelectSaveSlot8,
 				EmulatorShortcut.SelectSaveSlot9,
-				EmulatorShortcut.SelectSaveSlot10
+				EmulatorShortcut.SelectSaveSlot10,
+
+				EmulatorShortcut.ToggleQuickMenu,
+				EmulatorShortcut.QuickMenuUp,
+				EmulatorShortcut.QuickMenuDown,
+				EmulatorShortcut.QuickMenuSelect,
+				EmulatorShortcut.QuickMenuBack
 			};
 
 			Dictionary<EmulatorShortcut, ShortcutKeyInfo> shortcuts = new Dictionary<EmulatorShortcut, ShortcutKeyInfo>();
