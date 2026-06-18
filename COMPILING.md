@@ -26,7 +26,7 @@ Run it from a **Developer PowerShell for VS** prompt (so MSBuild is in PATH):
 .\build-windows.ps1 -Package
 
 # Build Release + generate ZIP with a custom name
-.\build-windows.ps1 -Package -ZipName "MesenOrion-v3.0.1-win-x64.zip"
+.\build-windows.ps1 -Package -ZipName "MesenOrion-v3.0.2-win-x64.zip"
 ```
 
 Run `.\build-windows.ps1 -Help` for the full list of parameters.

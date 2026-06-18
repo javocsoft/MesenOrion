@@ -37,11 +37,15 @@ Building on Mesen 2.1.1, this fork adds:
 
 #### RetroAchievements
 - Built-in **[RetroAchievements](https://retroachievements.org/)** support (powered by the official **rcheevos** library) for **NES, SNES, Game Boy / Game Boy Color and Game Boy Advance**.
-- Log in from *Tools → RetroAchievements…*; only the session **token is stored** (not your password) so you're logged in automatically on the next launch.
-- Achievements unlock as you play, with an animated **on-screen toast** (badge image + name + points that fades in/out over the game) and an optional **unlock sound** — both toggleable, on by default.
-- An **achievements window** lists the current game's achievements — badge image, points, progress and locked/unlocked state — and updates **live** as you earn them.
-- The **status bar** shows whether RA is active (`RA: On` / `RA: Off`).
-- **Softcore** is fully supported. **Hardcore** mode is shown but disabled: it requires the emulator to be officially approved by retroachievements.org, which is still pending for Mesen Orion.
+- Log in from *Tools → RetroAchievements…* (press **Enter** to submit); only the session **token is stored** (not your password), so you're logged in automatically on the next launch. The window shows your **avatar, display name and points** (hardcore + softcore) and a live, colour-coded **connection status**.
+- Achievements unlock as you play, with an animated **on-screen toast** (badge + name + points that fades in/out over the game) and an optional **unlock sound** — both toggleable, on by default. Simultaneous unlocks **queue** and show one after another instead of overwriting each other.
+- An **achievements window** lists the current game's achievements — badge, points, live **progress** and locked/unlocked state — with the **game's icon and title**, a **mastery progress bar**, **filter** (all / unlocked / locked) and **sort** options. It updates **live** as you earn them, and clicking an achievement opens it on **retroachievements.org**.
+- **On-screen challenge indicators** — small badges shown while you're actively satisfying an achievement's condition (hover for its name and description); can be toggled off in settings.
+- **Mastery celebration** — a special toast when you complete (master) a game.
+- **Leaderboards** — a live on-screen **tracker** while an attempt is in progress, a **Leaderboards window** (*View Leaderboards…*) listing the game's leaderboards and which are active, and a **rank notification** when you submit a new entry.
+- **Rich Presence** — your current in-game status (the same text shown on your retroachievements.org profile) is displayed in the status bar.
+- The **status bar** shows whether RA is active (`RA: On` / `RA: Off` / `RA: Hardcore`).
+- **Hardcore mode** is enforced locally: save states, rewind, cheats, speed changes and the debugger are disabled while it's active (locked menu items show a 🔒), with a confirmation prompt when enabling it mid-game. Official approval by retroachievements.org is **still pending** for Mesen Orion, so hardcore unlocks **don't count on the server yet** — but the restrictions apply locally. **Softcore** is fully supported.
 
 #### Recording & capture
 - Built-in **GIF recorder** with `Shift + G` to toggle Record / Stop, plus *Tools → GIF Recorder* menu entries.
@@ -108,7 +112,7 @@ Or build a portable **AppImage** (bundles the Shaders collection and AppStream m
 ./Linux/appimage/appimage-arm64.sh    # ARM64   -> MesenOrion-<version>-aarch64.AppImage
 ```
 
-The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.1-x86_64.AppImage`);
+The file name follows AppImageHub's standard nomenclature (`MesenOrion-3.0.2-x86_64.AppImage`);
 the version is read from `distributable/mesen-orion/DEBIAN/control`.
 
 For how to publish a GitHub Release and list the AppImage on AppImageHub, see

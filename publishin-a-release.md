@@ -8,10 +8,10 @@
 
 2. **Create the GitHub Release** with the artifacts as assets (using the `gh` CLI):
    ```sh
-   gh release create v3.0.1 \
-     MesenOrion-3.0.1-x86_64.AppImage \
-     mesen-orion_3.0.1_amd64.deb \
-     --title "Mesen Orion 3.0.1" --notes "Release notes here"
+   gh release create v3.0.2 \
+     MesenOrion-3.0.2-x86_64.AppImage \
+     mesen-orion_3.0.2_amd64.deb \
+     --title "Mesen Orion 3.0.2" --notes "Release notes here"
    ```
    > Don't rename the AppImage asset — the `MesenOrion-<version>-x86_64.AppImage` naming is what
    > AppImageHub's auto-detection relies on.

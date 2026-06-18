@@ -8,7 +8,7 @@ namespace Mesen.Windows
 	{
 		//Kept in sync with PRIVACY.md in the repository root.
 		private const string PolicyText =
-@"Last updated: 2026-06-16 (applies to Mesen Orion 3.0.1)
+@"Last updated: 2026-06-18 (applies to Mesen Orion 3.0.2)
 
 OVERVIEW
 Mesen Orion is a free, open-source emulator. It does NOT operate any server, does
