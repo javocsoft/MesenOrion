@@ -111,6 +111,16 @@ namespace Mesen.Utilities
 			}
 		}
 
+		//Favorite games as (name, path), for the on-screen quick menu. Derived from the saved paths,
+		//so it doesn't require a (potentially slow) folder rescan.
+		public static List<(string Name, string Path)> GetFavorites()
+		{
+			return _data.Favorites
+				.Select(p => (System.IO.Path.GetFileNameWithoutExtension(p), p))
+				.OrderBy(g => g.Item1, StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
+
 		public static void ToggleFavorite(LibraryGame game)
 		{
 			if(_data.Favorites.Contains(game.Path)) {

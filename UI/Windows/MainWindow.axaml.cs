@@ -304,6 +304,12 @@ namespace Mesen.Windows
 
 				ConfigManager.Config.RemoveObsoleteConfig();
 
+				//On-screen quick menu "Load Game" list: push the favorites to the core and load the
+				//ROM (on the UI thread) when one is picked there.
+				QuickMenuApi.Init();
+				QuickMenuApi.LoadRequested += path => LoadRomHelper.LoadFile(path);
+				QuickMenuApi.SetFavorites();
+
 				//Register the RetroAchievements HTTP transport (rcheevos in the core delegates
 				//its server requests to .NET's HttpClient), then auto-login with the saved token.
 				RetroAchievementsApi.Init();

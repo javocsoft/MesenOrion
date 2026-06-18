@@ -204,6 +204,7 @@ namespace Mesen.Windows
 		{
 			if(sender is Control c && c.DataContext is LibraryGame game) {
 				GameLibrary.ToggleFavorite(game);
+				Interop.QuickMenuApi.SetFavorites();   //keep the on-screen quick menu list in sync
 				if(_favorites.IsChecked == true) {
 					ApplyFilter();
 				}

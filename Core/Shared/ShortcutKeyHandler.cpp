@@ -288,7 +288,7 @@ void ShortcutKeyHandler::ProcessShortcutPressed(EmulatorShortcut shortcut, uint3
 		case EmulatorShortcut::QuickMenuUp: _emu->GetQuickMenu()->MoveUp(); break;
 		case EmulatorShortcut::QuickMenuDown: _emu->GetQuickMenu()->MoveDown(); break;
 		case EmulatorShortcut::QuickMenuSelect: _emu->GetQuickMenu()->Select(); break;
-		case EmulatorShortcut::QuickMenuBack: _emu->GetQuickMenu()->Close(); break;
+		case EmulatorShortcut::QuickMenuBack: _emu->GetQuickMenu()->Back(); break;
 
 		case EmulatorShortcut::FastForward: settings->SetFlag(EmulationFlags::Turbo); break;
 		case EmulatorShortcut::ToggleFastForward:
@@ -437,6 +437,22 @@ void ShortcutKeyHandler::ProcessKeys()
 		}
 
 		_lastPressedKeys = _pressedKeys;
+	}
+
+	//The quick menu defers resuming/loading until the key that closed it is released, so it doesn't
+	//bleed through to the game. Complete that close here once those keys are up.
+	QuickMenu* quickMenu = _emu->GetQuickMenu();
+	if(quickMenu->IsClosing()) {
+		bool held = false;
+		for(int ks = 0; ks < 2 && !held; ks++) {
+			_keySetIndex = ks;
+			held = IsKeyPressed(EmulatorShortcut::QuickMenuSelect) ||
+				IsKeyPressed(EmulatorShortcut::QuickMenuBack) ||
+				IsKeyPressed(EmulatorShortcut::ToggleQuickMenu);
+		}
+		if(!held) {
+			quickMenu->FinishClose();
+		}
 	}
 
 	if(_needRepeat) {
