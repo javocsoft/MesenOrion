@@ -100,13 +100,15 @@
 						</Transitions>
 					</Border.Transitions>
 					<StackPanel Orientation="Horizontal" Spacing="10">
-						<Border Width="48" Height="48" CornerRadius="4" ClipToBounds="True">
+						<Border Width="48" Height="48" CornerRadius="4" ClipToBounds="True"
+								IsVisible="{Binding AchievementToastHasBadge}">
 							<Image Source="{Binding AchievementToastBadge}" Width="48" Height="48" Stretch="Uniform" />
 						</Border>
 						<StackPanel VerticalAlignment="Center" Spacing="1">
-							<TextBlock Text="Achievement Unlocked" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
+							<TextBlock Text="{Binding AchievementToastHeader}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SystemAccentColor}" />
 							<TextBlock Text="{Binding AchievementToastTitle}" FontWeight="SemiBold" Foreground="White" />
-							<TextBlock Text="{Binding AchievementToastPoints}" FontSize="11" Foreground="#C0C0C0" />
+							<TextBlock Text="{Binding AchievementToastPoints}" FontSize="11" Foreground="#C0C0C0"
+									   IsVisible="{Binding AchievementToastPoints.Length}" />
 						</StackPanel>
 					</StackPanel>
 				</Border>
@@ -125,9 +127,73 @@
 				Topmost="True"
 				IsOpen="{Binding LeaderboardTrackerVisible}"
 			>
+				<Border Padding="9 6" CornerRadius="6" Background="#E61C1C1C"
+						BorderBrush="{DynamicResource SystemAccentColor}" BorderThickness="1" IsHitTestVisible="False"
+						BoxShadow="0 2 14 0 #90000000">
+					<StackPanel Orientation="Horizontal" Spacing="7">
+						<TextBlock Text="🏆" FontSize="14" VerticalAlignment="Top" />
+						<TextBlock Text="{Binding LeaderboardTrackerText}" Foreground="White"
+								   FontFamily="Consolas,Menlo,monospace" FontSize="13" LineHeight="18" />
+					</StackPanel>
+				</Border>
+			</Popup>
+
+			<!-- RetroAchievements "primed"/challenge indicators: a row of small badges shown while the
+				  player is actively satisfying an achievement's condition (top-left). -->
+			<Popup
+				PlacementTarget="{Binding #RendererPanel}"
+				Placement="AnchorAndGravity"
+				PlacementAnchor="TopLeft"
+				PlacementGravity="BottomRight"
+				HorizontalOffset="12" VerticalOffset="12"
+				IsLightDismissEnabled="False"
+				Topmost="True"
+				IsOpen="{Binding ChallengeVisible}"
+			>
+				<ItemsControl ItemsSource="{Binding ChallengeBadges}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="4" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Border Width="32" Height="32" CornerRadius="4" ClipToBounds="True"
+									Background="#E61C1C1C" BorderBrush="{DynamicResource SystemAccentColor}"
+									BorderThickness="1" BoxShadow="0 1 6 0 #80000000"
+									ToolTip.Tip="{Binding Tooltip}" ToolTip.ShowDelay="300">
+								<Image Source="{Binding Badge}" Width="32" Height="32" Stretch="Uniform" />
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</Popup>
+
+			<!-- RetroAchievements transient progress indicator (badge + "5/10", auto-hides, top-center). -->
+			<Popup
+				PlacementTarget="{Binding #RendererPanel}"
+				Placement="AnchorAndGravity"
+				PlacementAnchor="Top"
+				PlacementGravity="Bottom"
+				VerticalOffset="12"
+				IsLightDismissEnabled="False"
+				Topmost="True"
+				IsOpen="{Binding ProgressVisible}"
+			>
 				<Border Padding="8 5" CornerRadius="6" Background="#E61C1C1C"
-						BorderBrush="{DynamicResource SystemAccentColor}" BorderThickness="1" IsHitTestVisible="False">
-					<TextBlock Text="{Binding LeaderboardTrackerText}" Foreground="White" FontFamily="Consolas,Menlo,monospace" FontSize="13" />
+						BorderBrush="{DynamicResource SystemAccentColor}" BorderThickness="1"
+						IsHitTestVisible="False" Opacity="{Binding ProgressOpacity}"
+						BoxShadow="0 2 14 0 #90000000">
+					<Border.Transitions>
+						<Transitions>
+							<DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+						</Transitions>
+					</Border.Transitions>
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<Image Source="{Binding ProgressBadge}" Width="28" Height="28" Stretch="Uniform" />
+						<TextBlock Text="{Binding ProgressText}" Foreground="White" FontWeight="SemiBold"
+								   VerticalAlignment="Center" />
+					</StackPanel>
 				</Border>
 			</Popup>
 		</Panel>

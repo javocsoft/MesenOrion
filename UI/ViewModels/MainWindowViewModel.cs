@@ -35,12 +35,25 @@ namespace Mesen.ViewModels
 		[Reactive] public bool IsStatusBarVisible { get; set; }
 		[Reactive] public string StatusBarText { get; private set; } = "";
 
-		//RetroAchievements unlock toast
+		//RetroAchievements unlock toast (also reused for mastery + leaderboard rank notifications)
 		[Reactive] public bool AchievementToastVisible { get; set; }
 		[Reactive] public double AchievementToastOpacity { get; set; } = 0;
 		[Reactive] public Avalonia.Media.Imaging.Bitmap? AchievementToastBadge { get; set; }
+		[Reactive] public bool AchievementToastHasBadge { get; set; }
+		[Reactive] public string AchievementToastHeader { get; set; } = "Achievement Unlocked";
 		[Reactive] public string AchievementToastTitle { get; set; } = "";
 		[Reactive] public string AchievementToastPoints { get; set; } = "";
+
+		//RetroAchievements "primed"/challenge indicators (small badges shown while an achievement's
+		//condition is actively being satisfied)
+		public System.Collections.ObjectModel.ObservableCollection<RaChallengeIndicator> ChallengeBadges { get; } = new();
+		[Reactive] public bool ChallengeVisible { get; set; }
+
+		//RetroAchievements transient progress indicator (badge + "5/10" text, auto-hides)
+		[Reactive] public bool ProgressVisible { get; set; }
+		[Reactive] public double ProgressOpacity { get; set; } = 0;
+		[Reactive] public Avalonia.Media.Imaging.Bitmap? ProgressBadge { get; set; }
+		[Reactive] public string ProgressText { get; set; } = "";
 
 		//RetroAchievements leaderboard tracker (live value shown while a leaderboard attempt is active)
 		[Reactive] public bool LeaderboardTrackerVisible { get; set; }
@@ -108,6 +121,14 @@ namespace Mesen.ViewModels
 				: (RetroAchievementsApi.IsHardcoreEnabled() ? "Hardcore" : ResourceHelper.GetMessage("StatusBarOn"));
 			sb.Append("  ·  RA: " + raState);
 
+			//Rich presence (the text shown on the player's retroachievements.org profile)
+			if(raActive && Config.RetroAchievements.EnableRichPresence && EmuApi.IsRunning()) {
+				string rp = RetroAchievementsApi.GetRichPresence();
+				if(rp.Length > 0) {
+					sb.Append("  ·  " + rp);
+				}
+			}
+
 			StatusBarText = sb.ToString();
 		}
 
@@ -161,5 +182,15 @@ namespace Mesen.ViewModels
 			}
 			WindowTitle = title;
 		}
+	}
+
+	//A RetroAchievements "primed"/challenge indicator shown on-screen (badge + hover tooltip).
+	public class RaChallengeIndicator
+	{
+		public uint Id { get; set; }
+		public Avalonia.Media.Imaging.Bitmap? Badge { get; set; }
+		public string Title { get; set; } = "";
+		public string Description { get; set; } = "";
+		public string Tooltip => Description.Length > 0 ? Title + "\n" + Description : Title;
 	}
 }

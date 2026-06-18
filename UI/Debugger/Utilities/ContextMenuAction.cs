@@ -55,6 +55,12 @@ namespace Mesen.Debugger.Utilities
 					}
 				}
 
+				if(IsLocked?.Invoke() == true) {
+					//Prefix a padlock so the user can see at a glance why the item is greyed out
+					//(e.g. disabled by RetroAchievements hardcore mode)
+					label = "🔒 " + label;
+				}
+
 				if(!label.StartsWith("_")) {
 					//Escape underscores to prevent them from getting removed
 					//(underscore is used to highlight the next letter when alt is pressed)
@@ -111,6 +117,14 @@ namespace Mesen.Debugger.Utilities
 		}
 
 		public Func<string>? HintText { get; set; }
+
+		//Optional extra tooltip shown on the menu item (e.g. to explain why an item is disabled).
+		//Kept separate from TooltipText so it only appears when there's something worth saying.
+		public Func<string>? DynamicTooltip { get; set; }
+
+		//When true, a padlock is prefixed to the label (used to flag items locked by hardcore mode).
+		public Func<bool>? IsLocked { get; set; }
+
 		public Func<bool>? IsEnabled { get; set; }
 		public Func<bool>? IsSelected { get; set; }
 		public Func<bool>? IsVisible { get; set; }
@@ -128,6 +142,7 @@ namespace Mesen.Debugger.Utilities
 		[Reactive] public bool Visible { get; set; }
 		
 		[Reactive] public string TooltipText { get; set; } = "";
+		[Reactive] public string? MenuTooltip { get; set; }
 
 		private static SimpleCommand _emptyCommand = new SimpleCommand(() => { });
 
@@ -176,6 +191,9 @@ namespace Mesen.Debugger.Utilities
 			} else {
 				TooltipText = Name;
 			}
+
+			string? menuTip = DynamicTooltip?.Invoke();
+			MenuTooltip = string.IsNullOrWhiteSpace(menuTip) ? null : menuTip;
 
 			string? iconFile = GetIconFile();
 			if(_currentIcon != iconFile) {

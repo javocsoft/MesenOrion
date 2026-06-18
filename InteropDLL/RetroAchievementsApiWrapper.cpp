@@ -172,4 +172,87 @@ extern "C"
 		RaManager* ra = _emu->GetRaManager();
 		return ra && ra->IsHardcoreEnabled();
 	}
+
+	//Copies the logged-in user's display name.
+	DllExport void __stdcall RaGetUserDisplayName(char* outBuffer, int maxLength)
+	{
+		if(!outBuffer || maxLength <= 0) {
+			return;
+		}
+		RaManager* ra = _emu->GetRaManager();
+		string name = ra ? ra->GetUserDisplayName() : "";
+		strncpy(outBuffer, name.c_str(), maxLength - 1);
+		outBuffer[maxLength - 1] = '\0';
+	}
+
+	//Copies the logged-in user's avatar image URL.
+	DllExport void __stdcall RaGetUserAvatarUrl(char* outBuffer, int maxLength)
+	{
+		if(!outBuffer || maxLength <= 0) {
+			return;
+		}
+		RaManager* ra = _emu->GetRaManager();
+		string url = ra ? ra->GetUserAvatarUrl() : "";
+		strncpy(outBuffer, url.c_str(), maxLength - 1);
+		outBuffer[maxLength - 1] = '\0';
+	}
+
+	//Fills 'buffer' with the serialized leaderboard list and returns the full length (so the
+	//caller can resize and retry if it was truncated).
+	DllExport int __stdcall RaGetLeaderboardList(char* buffer, int maxLength)
+	{
+		RaManager* ra = _emu->GetRaManager();
+		string data = ra ? ra->GetLeaderboardListData() : "";
+		if(buffer && maxLength > 0) {
+			int copyLen = (int)data.size();
+			if(copyLen > maxLength - 1) {
+				copyLen = maxLength - 1;
+			}
+			memcpy(buffer, data.data(), copyLen);
+			buffer[copyLen] = '\0';
+		}
+		return (int)data.size();
+	}
+
+	//Shared helper: copies a std::string into a caller-provided buffer (null-terminated, truncated).
+	static void RaCopyString(const string& src, char* outBuffer, int maxLength)
+	{
+		if(!outBuffer || maxLength <= 0) {
+			return;
+		}
+		int copyLen = (int)src.size();
+		if(copyLen > maxLength - 1) {
+			copyLen = maxLength - 1;
+		}
+		memcpy(outBuffer, src.data(), copyLen);
+		outBuffer[copyLen] = '\0';
+	}
+
+	//Copies the logged-in user's score as "hardcoreScore <0x1F> softcoreScore".
+	DllExport void __stdcall RaGetUserScore(char* outBuffer, int maxLength)
+	{
+		RaManager* ra = _emu->GetRaManager();
+		RaCopyString(ra ? ra->GetUserScore() : "", outBuffer, maxLength);
+	}
+
+	//Copies the current game's title.
+	DllExport void __stdcall RaGetGameTitle(char* outBuffer, int maxLength)
+	{
+		RaManager* ra = _emu->GetRaManager();
+		RaCopyString(ra ? ra->GetGameTitle() : "", outBuffer, maxLength);
+	}
+
+	//Copies the current game's icon URL.
+	DllExport void __stdcall RaGetGameImageUrl(char* outBuffer, int maxLength)
+	{
+		RaManager* ra = _emu->GetRaManager();
+		RaCopyString(ra ? ra->GetGameImageUrl() : "", outBuffer, maxLength);
+	}
+
+	//Copies the current rich presence message (empty if unavailable).
+	DllExport void __stdcall RaGetRichPresence(char* outBuffer, int maxLength)
+	{
+		RaManager* ra = _emu->GetRaManager();
+		RaCopyString(ra ? ra->GetRichPresence() : "", outBuffer, maxLength);
+	}
 }

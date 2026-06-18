@@ -759,6 +759,9 @@ namespace Mesen.ViewModels
 			};
 		}
 
+		//Tooltip explaining why hardcore-gated menu items are disabled (empty when hardcore is off).
+		private static string HardcoreDisabledTooltip() => RetroAchievementsApi.IsHardcoreEnabled() ? "Disabled in RetroAchievements hardcore mode" : "";
+
 		private MainMenuAction GetSpeedMenuItem(ActionType action, int speed, EmulatorShortcut? shortcut = null)
 		{
 			MainMenuAction item = new MainMenuAction(shortcut) {
@@ -773,6 +776,8 @@ namespace Mesen.ViewModels
 				};
 				//Speed changes are disabled in RetroAchievements hardcore mode
 				item.IsEnabled = () => !RetroAchievementsApi.IsHardcoreEnabled();
+				item.DynamicTooltip = HardcoreDisabledTooltip;
+				item.IsLocked = RetroAchievementsApi.IsHardcoreEnabled;
 			}
 
 			return item;
@@ -787,6 +792,8 @@ namespace Mesen.ViewModels
 						ActionType = ActionType.Play,
 						//Movie (recorded input) playback is prohibited in RetroAchievements hardcore mode
 						IsEnabled = () => IsGameRunning && !RecordApi.MovieRecording() && !RecordApi.MoviePlaying() && !RetroAchievementsApi.IsHardcoreEnabled(),
+						DynamicTooltip = HardcoreDisabledTooltip,
+						IsLocked = RetroAchievementsApi.IsHardcoreEnabled,
 						OnClick = async () => {
 							string? filename = await FileDialogHelper.OpenFile(ConfigManager.MovieFolder, wnd, FileDialogHelper.MesenMovieExt);
 							if(filename != null) {
@@ -821,6 +828,8 @@ namespace Mesen.ViewModels
 					ActionType = ActionType.Cheats,
 					//Cheats are disabled in RetroAchievements hardcore mode
 					IsEnabled = () => IsGameRunning && MainWindow.RomInfo.ConsoleType.SupportsCheats() && !RetroAchievementsApi.IsHardcoreEnabled(),
+					DynamicTooltip = HardcoreDisabledTooltip,
+					IsLocked = RetroAchievementsApi.IsHardcoreEnabled,
 					OnClick = () => {
 						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new CheatListWindow());
 					}
@@ -1228,6 +1237,8 @@ namespace Mesen.ViewModels
 				if(obj is BaseMenuAction action) {
 					Func<bool>? prev = action.IsEnabled;
 					action.IsEnabled = () => (prev == null || prev()) && !RetroAchievementsApi.IsHardcoreEnabled();
+					action.DynamicTooltip = HardcoreDisabledTooltip;
+					action.IsLocked = RetroAchievementsApi.IsHardcoreEnabled;
 				}
 			}
 

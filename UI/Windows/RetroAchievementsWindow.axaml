@@ -3,52 +3,96 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:cfg="using:Mesen.Config"
+	xmlns:c="using:Mesen.Controls"
+	xmlns:l="using:Mesen.Localization"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	x:Class="Mesen.Windows.RetroAchievementsWindow"
 	x:DataType="cfg:RetroAchievementsConfig"
-	Width="430"
+	Width="440"
 	SizeToContent="Height"
 	CanResize="False"
 	Title="RetroAchievements"
 	Name="root"
 >
 	<StackPanel Margin="16" Spacing="10">
-		<TextBlock Text="RetroAchievements" FontSize="17" FontWeight="Bold" />
-		<TextBlock Name="lblStatus" Opacity="0.8" TextWrapping="Wrap" />
-
-		<!-- Login panel (shown when not logged in) -->
-		<StackPanel Name="pnlLogin" Spacing="5">
-			<TextBlock Text="Username" />
-			<TextBox Name="txtUsername" />
-			<TextBlock Text="Password" Margin="0 4 0 0" />
-			<Grid ColumnDefinitions="*,Auto">
-				<TextBox Name="txtPassword" PasswordChar="•" />
-				<CheckBox Name="chkShow" Grid.Column="1" Content="Show" Margin="6 0 0 0" VerticalAlignment="Center" />
-			</Grid>
-			<Button Name="btnLogin" Content="Log In" HorizontalAlignment="Right" Margin="0 4 0 0" />
+		<!-- Title -->
+		<StackPanel Orientation="Horizontal" Spacing="8">
+			<Image Source="/Assets/Coins.png" Width="20" Height="20" VerticalAlignment="Center" />
+			<TextBlock Text="RetroAchievements" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" />
 		</StackPanel>
 
-		<!-- Logged-in panel -->
-		<StackPanel Name="pnlLoggedIn" Spacing="5" IsVisible="False">
-			<Button Name="btnLogout" Content="Log Out" HorizontalAlignment="Right" />
+		<!-- Connection status (dot + text) -->
+		<StackPanel Orientation="Horizontal" Spacing="6">
+			<Ellipse Name="statusDot" Width="9" Height="9" VerticalAlignment="Center" Fill="#888888" />
+			<TextBlock Name="lblStatus" VerticalAlignment="Center" TextWrapping="Wrap" />
 		</StackPanel>
 
-		<Separator Margin="0 4" />
+		<!-- Account section -->
+		<c:GroupBox Header="{l:Translate lblAccount}">
+			<StackPanel Spacing="5">
+				<!-- Login panel (shown when not logged in) -->
+				<StackPanel Name="pnlLogin" Spacing="5">
+					<TextBlock Text="{l:Translate lblUsername}" />
+					<TextBox Name="txtUsername" />
+					<TextBlock Text="{l:Translate lblPassword}" Margin="0 4 0 0" />
+					<Grid ColumnDefinitions="*,Auto">
+						<TextBox Name="txtPassword" PasswordChar="•" />
+						<CheckBox Name="chkShow" Grid.Column="1" Content="{l:Translate chkShow}" Margin="6 0 0 0" VerticalAlignment="Center" />
+					</Grid>
+					<Button Name="btnLogin" Content="{l:Translate btnLogin}" HorizontalAlignment="Right" Margin="0 4 0 0" />
+				</StackPanel>
 
-		<CheckBox Content="Enable RetroAchievements" IsChecked="{Binding Enabled}" />
-		<CheckBox Name="chkHardcore" IsChecked="{Binding HardcoreMode}"
-				  ToolTip.Tip="Enabling hardcore disables save states, rewind, cheats and speed changes. RetroAchievements approval for Mesen Orion is still pending, so hardcore unlocks are not yet saved on the server.">
-			<TextBlock Text="Hardcore mode (disables save states, rewind, cheats and speed changes)" TextWrapping="Wrap" />
-		</CheckBox>
-		<TextBlock Margin="24 0 0 0" FontSize="11" Opacity="0.7" TextWrapping="Wrap"
-				   Text="Note: hardcore approval for this emulator (Mesen Orion) by retroachievements.org is still pending, so hardcore unlocks won't count on the server yet. The hardcore restrictions still apply locally." />
-		<CheckBox Content="Show achievement notifications" IsChecked="{Binding EnableNotifications}" />
-		<CheckBox Content="Play a sound when an achievement is unlocked" IsChecked="{Binding EnableSound}" />
+				<!-- Logged-in panel -->
+				<Grid Name="pnlLoggedIn" IsVisible="False" ColumnDefinitions="Auto,*,Auto">
+					<Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" ClipToBounds="True"
+							Background="{DynamicResource ThemeControlMidBrush}" Margin="0 0 10 0">
+						<Panel>
+							<Image Name="imgAvatarFallback" Source="/Assets/Coins.png" Width="22" Height="22"
+								   HorizontalAlignment="Center" VerticalAlignment="Center" />
+							<Image Name="imgAvatar" Width="36" Height="36" Stretch="UniformToFill" IsVisible="False" />
+						</Panel>
+					</Border>
+					<StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+						<TextBlock Name="lblUser" FontWeight="SemiBold" />
+						<TextBlock Name="lblProvider" Text="{l:Translate lblProvider}" FontSize="11"
+								   Foreground="{DynamicResource ThemeForegroundLowBrush}" />
+					</StackPanel>
+					<Button Name="btnLogout" Grid.Column="2" Content="{l:Translate btnLogout}" VerticalAlignment="Center" />
+				</Grid>
+			</StackPanel>
+		</c:GroupBox>
 
-		<Grid ColumnDefinitions="Auto,*,Auto" Margin="0 6 0 0">
-			<Button Name="btnAchievements" Grid.Column="0" Content="View Achievements..." />
-			<Button Name="btnClose" Grid.Column="2" Content="Close" />
+		<!-- Options section -->
+		<c:GroupBox Header="{l:Translate lblOptions}">
+			<StackPanel Spacing="6">
+				<CheckBox Content="{l:Translate chkEnabled}" IsChecked="{Binding Enabled}" />
+
+				<CheckBox Name="chkHardcore" Content="{l:Translate chkHardcore}"
+						  ToolTip.Tip="{l:Translate lblHardcoreDesc}" />
+				<TextBlock Margin="24 0 0 0" FontSize="11" Foreground="{DynamicResource ThemeForegroundLowBrush}"
+						   TextWrapping="Wrap"
+						   Text="{l:Translate lblHardcoreDesc}" />
+				<Border Name="pnlHardcoreWarning" Margin="24 2 0 0" Padding="8 6" CornerRadius="4"
+						Background="{DynamicResource ErrorLowBrush}" IsVisible="{Binding HardcoreMode}">
+					<StackPanel Orientation="Horizontal" Spacing="6">
+						<Image Source="/Assets/Warning.png" Width="16" Height="16" VerticalAlignment="Top" />
+						<TextBlock FontSize="11" TextWrapping="Wrap" MaxWidth="330"
+								   Text="{l:Translate lblHardcoreWarning}" />
+					</StackPanel>
+				</Border>
+
+				<CheckBox Content="{l:Translate chkNotifications}" IsChecked="{Binding EnableNotifications}" />
+				<CheckBox Content="{l:Translate chkSound}" IsChecked="{Binding EnableSound}" />
+				<CheckBox Content="{l:Translate chkChallengeIndicators}" IsChecked="{Binding EnableChallengeIndicators}"
+						  ToolTip.Tip="Show small badges on screen while you're actively working on an achievement." />
+			</StackPanel>
+		</c:GroupBox>
+
+		<Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0 4 0 0">
+			<Button Name="btnAchievements" Grid.Column="0" Content="{l:Translate btnViewAchievements}" />
+			<Button Name="btnLeaderboards" Grid.Column="1" Margin="6 0 0 0" Content="{l:Translate btnViewLeaderboards}" />
+			<Button Name="btnClose" Grid.Column="3" Content="{l:Translate btnClose}" />
 		</Grid>
 	</StackPanel>
 </Window>

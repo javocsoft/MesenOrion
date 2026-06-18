@@ -9,6 +9,10 @@
 #include "rc_consoles.h"
 #include "rc_error.h"
 
+//Defined later in this file; forward-declared so the event handler can use them.
+static string RaSanitize(const char* text);
+static string GetAchievementBadgeUrl(const rc_client_achievement_t* ach);
+
 RaManager::RaManager(Emulator* emu)
 {
 	_emu = emu;
@@ -197,8 +201,60 @@ void RaManager::HandleEvent(const rc_client_event_t* event)
 			OnAchievementTriggered(event->achievement);
 			break;
 
-		case RC_CLIENT_EVENT_GAME_COMPLETED:
-			MessageManager::DisplayMessage("RetroAchievements", "RaGameCompleted");
+		case RC_CLIENT_EVENT_GAME_COMPLETED: {
+			//Mastery! Notify the UI so it can show a celebration toast (title <0x1F> game badge URL)
+			string payload;
+			const rc_client_game_t* game = rc_client_get_game_info(_client);
+			if(game) {
+				payload = string(game->title ? game->title : "");
+				payload += '\x1f';
+				char gameBadge[256] = {};
+				if(rc_client_game_get_image_url(game, gameBadge, sizeof(gameBadge)) == RC_OK) {
+					payload += gameBadge;
+				}
+			}
+			NotifyState(RaUiEvent::RaGameCompleted, payload);
+			break;
+		}
+
+		case RC_CLIENT_EVENT_ACHIEVEMENT_CHALLENGE_INDICATOR_SHOW:
+			if(event->achievement) {
+				//id <0x1F> badgeUrl <0x1F> title <0x1F> description
+				string payload = std::to_string(event->achievement->id);
+				payload += '\x1f'; payload += GetAchievementBadgeUrl(event->achievement);
+				payload += '\x1f'; payload += RaSanitize(event->achievement->title);
+				payload += '\x1f'; payload += RaSanitize(event->achievement->description);
+				NotifyState(RaUiEvent::RaChallengeShow, payload);
+			}
+			break;
+
+		case RC_CLIENT_EVENT_ACHIEVEMENT_CHALLENGE_INDICATOR_HIDE:
+			if(event->achievement) {
+				NotifyState(RaUiEvent::RaChallengeHide, std::to_string(event->achievement->id));
+			}
+			break;
+
+		case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW:
+		case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_UPDATE:
+			if(event->achievement) {
+				NotifyState(RaUiEvent::RaProgressShow,
+					GetAchievementBadgeUrl(event->achievement) + "\x1f" + RaSanitize(event->achievement->measured_progress));
+			}
+			break;
+
+		case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_HIDE:
+			NotifyState(RaUiEvent::RaProgressHide, "");
+			break;
+
+		case RC_CLIENT_EVENT_LEADERBOARD_SCOREBOARD:
+			if(event->leaderboard && event->leaderboard_scoreboard) {
+				const rc_client_leaderboard_scoreboard_t* sb = event->leaderboard_scoreboard;
+				string payload = string(event->leaderboard->title ? event->leaderboard->title : "");
+				payload += '\x1f'; payload += sb->submitted_score;
+				payload += '\x1f'; payload += std::to_string(sb->new_rank);
+				payload += '\x1f'; payload += std::to_string(sb->num_entries);
+				NotifyState(RaUiEvent::RaLeaderboardScoreboard, payload);
+			}
 			break;
 
 		case RC_CLIENT_EVENT_LEADERBOARD_STARTED:
@@ -287,14 +343,7 @@ void RaManager::OnAchievementTriggered(const rc_client_achievement_t* ach)
 	payload += sep;
 	payload += std::to_string((int)ach->points);
 	payload += sep;
-	// Use the API to get the URL - this handles the case where badge_url is null
-	// and falls back to building the URL from badge_name.
-	char badgeUrlBuf[512] = {};
-	if(rc_client_achievement_get_image_url(ach, RC_CLIENT_ACHIEVEMENT_STATE_UNLOCKED, badgeUrlBuf, sizeof(badgeUrlBuf)) == RC_OK) {
-		payload += badgeUrlBuf;
-	} else {
-		payload += (ach->badge_url ? ach->badge_url : "");
-	}
+	payload += GetAchievementBadgeUrl(ach);
 	NotifyState(RaUiEvent::RaAchievementUnlocked, payload);
 }
 
@@ -399,6 +448,19 @@ static string RaSanitize(const char* text)
 	return out;
 }
 
+//Resolves an achievement's badge URL (handles null badge_url by falling back to the API/badge name).
+static string GetAchievementBadgeUrl(const rc_client_achievement_t* ach)
+{
+	if(!ach) {
+		return "";
+	}
+	char buffer[512] = {};
+	if(rc_client_achievement_get_image_url(ach, RC_CLIENT_ACHIEVEMENT_STATE_UNLOCKED, buffer, sizeof(buffer)) == RC_OK) {
+		return buffer;
+	}
+	return ach->badge_url ? ach->badge_url : "";
+}
+
 string RaManager::GetAchievementListData()
 {
 	string result;
@@ -437,6 +499,44 @@ string RaManager::GetAchievementListData()
 	return result;
 }
 
+//Serializes the loaded game's leaderboards as records (one per line), fields separated by the
+//unit-separator char (0x1F): id, state, format, lower_is_better, title, description, tracker_value.
+string RaManager::GetLeaderboardListData()
+{
+	string result;
+	if(!_client || !_gameLoaded) {
+		return result;
+	}
+
+	rc_client_leaderboard_list_t* list = rc_client_create_leaderboard_list(_client,
+		RC_CLIENT_LEADERBOARD_LIST_GROUPING_NONE);
+	if(!list) {
+		return result;
+	}
+
+	const char sep = '\x1f';
+	for(uint32_t b = 0; b < list->num_buckets; b++) {
+		const rc_client_leaderboard_bucket_t& bucket = list->buckets[b];
+		for(uint32_t i = 0; i < bucket.num_leaderboards; i++) {
+			const rc_client_leaderboard_t* lb = bucket.leaderboards[i];
+			if(!lb) {
+				continue;
+			}
+			result += std::to_string(lb->id); result += sep;
+			result += std::to_string((int)lb->state); result += sep;
+			result += std::to_string((int)lb->format); result += sep;
+			result += std::to_string((int)lb->lower_is_better); result += sep;
+			result += RaSanitize(lb->title); result += sep;
+			result += RaSanitize(lb->description); result += sep;
+			result += RaSanitize(lb->tracker_value ? lb->tracker_value : "");
+			result += '\n';
+		}
+	}
+
+	rc_client_destroy_leaderboard_list(list);
+	return result;
+}
+
 bool RaManager::IsLoggedIn()
 {
 	return _client && rc_client_get_user_info(_client) != nullptr;
@@ -448,6 +548,79 @@ string RaManager::GetLoginToken()
 		const rc_client_user_t* user = rc_client_get_user_info(_client);
 		if(user && user->token) {
 			return user->token;
+		}
+	}
+	return "";
+}
+
+string RaManager::GetUserDisplayName()
+{
+	if(_client) {
+		const rc_client_user_t* user = rc_client_get_user_info(_client);
+		if(user && user->display_name) {
+			return user->display_name;
+		}
+	}
+	return "";
+}
+
+string RaManager::GetUserAvatarUrl()
+{
+	if(_client) {
+		const rc_client_user_t* user = rc_client_get_user_info(_client);
+		if(user) {
+			char buffer[256];
+			if(rc_client_user_get_image_url(user, buffer, sizeof(buffer)) == RC_OK) {
+				return buffer;
+			}
+		}
+	}
+	return "";
+}
+
+string RaManager::GetUserScore()
+{
+	if(_client) {
+		const rc_client_user_t* user = rc_client_get_user_info(_client);
+		if(user) {
+			return std::to_string(user->score) + "\x1f" + std::to_string(user->score_softcore);
+		}
+	}
+	return "";
+}
+
+string RaManager::GetGameTitle()
+{
+	if(_client) {
+		const rc_client_game_t* game = rc_client_get_game_info(_client);
+		if(game && game->title) {
+			return game->title;
+		}
+	}
+	return "";
+}
+
+string RaManager::GetGameImageUrl()
+{
+	if(_client) {
+		const rc_client_game_t* game = rc_client_get_game_info(_client);
+		if(game) {
+			char buffer[256];
+			if(rc_client_game_get_image_url(game, buffer, sizeof(buffer)) == RC_OK) {
+				return buffer;
+			}
+		}
+	}
+	return "";
+}
+
+string RaManager::GetRichPresence()
+{
+	if(_client) {
+		char buffer[512];
+		size_t len = rc_client_get_rich_presence_message(_client, buffer, sizeof(buffer));
+		if(len > 0) {
+			return string(buffer, len < sizeof(buffer) ? len : sizeof(buffer) - 1);
 		}
 	}
 	return "";

@@ -168,6 +168,8 @@
 		<Setter Property="Tag" Value="{Binding ShortcutText, DataType={x:Type du:BaseMenuAction}}" />
 		<Setter Property="ItemsSource" Value="{Binding SubActions, DataType={x:Type du:BaseMenuAction}}" />
 		<Setter Property="Command" Value="{Binding ClickCommand, DataType={x:Type du:BaseMenuAction}}" />
+		<Setter Property="ToolTip.Tip" Value="{Binding MenuTooltip, DataType={x:Type du:BaseMenuAction}}" />
+		<Setter Property="ToolTip.ShowDelay" Value="400" />
 	</Style>
 	
 	<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">

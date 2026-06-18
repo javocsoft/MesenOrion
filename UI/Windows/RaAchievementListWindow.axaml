@@ -6,17 +6,48 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	x:Class="Mesen.Windows.RaAchievementListWindow"
-	Width="500" Height="620"
+	Width="500" Height="640"
 	Title="Achievements"
 	Name="root"
 >
 	<DockPanel Margin="12">
-		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0 0 0 10">
-			<StackPanel Grid.Column="0" Spacing="1">
-				<TextBlock Text="Achievements" FontSize="16" FontWeight="Bold" />
+		<!-- Header: game icon + title + summary -->
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 8">
+			<Border Grid.Column="0" Name="pnlGameIcon" Width="40" Height="40" CornerRadius="4"
+					ClipToBounds="True" Margin="0 0 10 0" VerticalAlignment="Top"
+					Background="{DynamicResource ButtonBackground}" IsVisible="False">
+				<Image Name="imgGameIcon" Width="40" Height="40" Stretch="UniformToFill" />
+			</Border>
+			<StackPanel Grid.Column="1" Spacing="1">
+				<TextBlock Name="lblGameTitle" Text="Achievements" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" />
 				<TextBlock Name="lblSummary" Opacity="0.7" FontSize="12" />
 			</StackPanel>
-			<Button Name="btnRefresh" Grid.Column="1" Content="Refresh" VerticalAlignment="Center" />
+			<Button Name="btnRefresh" Grid.Column="2" Content="Refresh" VerticalAlignment="Top" />
+		</Grid>
+
+		<!-- Mastery progress -->
+		<Grid Name="pnlMastery" DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0 0 0 10">
+			<ProgressBar Name="barMastery" Grid.Column="0" Minimum="0" Maximum="100" Height="8"
+						 VerticalAlignment="Center" />
+			<TextBlock Name="lblMastery" Grid.Column="1" Margin="8 0 0 0" FontSize="11"
+					   VerticalAlignment="Center" Opacity="0.8" />
+		</Grid>
+
+		<!-- Filter + sort -->
+		<Grid Name="pnlFilters" DockPanel.Dock="Top" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0 0 0 10">
+			<TextBlock Grid.Column="0" Text="Show:" VerticalAlignment="Center" Margin="0 0 5 0" />
+			<ComboBox Name="cboFilter" Grid.Column="1" MinWidth="120" SelectedIndex="0">
+				<ComboBoxItem>All</ComboBoxItem>
+				<ComboBoxItem>Unlocked</ComboBoxItem>
+				<ComboBoxItem>Locked</ComboBoxItem>
+			</ComboBox>
+			<TextBlock Grid.Column="3" Text="Sort:" VerticalAlignment="Center" Margin="0 0 5 0" />
+			<ComboBox Name="cboSort" Grid.Column="4" MinWidth="130" SelectedIndex="0">
+				<ComboBoxItem>Default</ComboBoxItem>
+				<ComboBoxItem>Points (high → low)</ComboBoxItem>
+				<ComboBoxItem>Points (low → high)</ComboBoxItem>
+				<ComboBoxItem>Name (A → Z)</ComboBoxItem>
+			</ComboBox>
 		</Grid>
 
 		<TextBlock Name="lblEmpty" Text="No achievements loaded. Log in and start a supported game."
@@ -27,25 +58,42 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate x:DataType="i:RaAchievement">
 						<Border CornerRadius="6" BorderThickness="1"
-								BorderBrush="{DynamicResource SystemAccentColor}"
-								Padding="10" Margin="0 0 0 8">
+								Classes.unlocked="{Binding Unlocked}"
+								BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+								Background="{DynamicResource ThemeControlLowBrush}"
+								Padding="10" Margin="0 0 0 8"
+								Cursor="Hand" PointerPressed="OnAchievementClick"
+								ToolTip.Tip="Open on retroachievements.org">
+							<Border.Styles>
+								<!-- Highlight unlocked achievements with the accent colour -->
+								<Style Selector="Border.unlocked">
+									<Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
+								</Style>
+							</Border.Styles>
 							<Grid ColumnDefinitions="Auto,*,Auto">
 								<Border Grid.Column="0" Width="48" Height="48" Margin="0 0 10 0"
 										VerticalAlignment="Top" CornerRadius="4" ClipToBounds="True"
 										Background="{DynamicResource ButtonBackground}">
 									<Image Source="{Binding Badge}" Width="48" Height="48" Stretch="Uniform" />
 								</Border>
-								<StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+								<StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
 									<TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" />
 									<TextBlock Text="{Binding Description}" Opacity="0.8" TextWrapping="Wrap" />
-									<TextBlock Text="{Binding Progress}" FontSize="11" Opacity="0.6"
-											   IsVisible="{Binding Progress.Length}" />
+									<!-- Live progress bar for measured achievements -->
+									<Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasProgress}" Margin="0 2 0 0">
+										<ProgressBar Grid.Column="0" Minimum="0" Maximum="100"
+													 Value="{Binding Percent}" Height="6" VerticalAlignment="Center" />
+										<TextBlock Grid.Column="1" Text="{Binding Progress}" Margin="6 0 0 0"
+												   FontSize="11" Opacity="0.7" VerticalAlignment="Center" />
+									</Grid>
 								</StackPanel>
 								<StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0 0 0">
 									<TextBlock Text="{Binding Points, StringFormat='{}{0} pts'}"
 											   HorizontalAlignment="Right" FontWeight="SemiBold" />
 									<TextBlock Text="✔ Unlocked" Foreground="{DynamicResource SystemAccentColor}"
 											   HorizontalAlignment="Right" FontSize="12" IsVisible="{Binding Unlocked}" />
+									<TextBlock Text="🔒 Locked" Opacity="0.5"
+											   HorizontalAlignment="Right" FontSize="12" IsVisible="{Binding Locked}" />
 								</StackPanel>
 							</Grid>
 						</Border>

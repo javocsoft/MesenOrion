@@ -1,0 +1,65 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="using:Mesen.Interop"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.RaLeaderboardListWindow"
+	Width="500" Height="600"
+	Title="Leaderboards"
+	Name="root"
+>
+	<DockPanel Margin="12">
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0 0 0 10">
+			<StackPanel Grid.Column="0" Spacing="1">
+				<TextBlock Text="Leaderboards" FontSize="16" FontWeight="Bold" />
+				<TextBlock Name="lblSummary" Opacity="0.7" FontSize="12" />
+			</StackPanel>
+			<Button Name="btnRefresh" Grid.Column="1" Content="Refresh" VerticalAlignment="Center" />
+		</Grid>
+
+		<TextBlock Name="lblEmpty" Text="No leaderboards loaded. Log in and start a supported game that has leaderboards."
+				   Opacity="0.6" TextWrapping="Wrap" IsVisible="False" />
+
+		<ScrollViewer>
+			<ItemsControl Name="lstLeaderboards">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="i:RaLeaderboard">
+						<Border CornerRadius="6" BorderThickness="1"
+								Classes.tracking="{Binding IsTracking}"
+								BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+								Background="{DynamicResource ThemeControlLowBrush}"
+								Padding="10" Margin="0 0 0 8">
+							<Border.Styles>
+								<!-- Highlight leaderboards with an attempt currently in progress -->
+								<Style Selector="Border.tracking">
+									<Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
+								</Style>
+							</Border.Styles>
+							<Grid ColumnDefinitions="Auto,*,Auto">
+								<TextBlock Grid.Column="0" Text="🏆" FontSize="18" VerticalAlignment="Top"
+										   Margin="0 0 10 0" />
+								<StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+									<TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" />
+									<TextBlock Text="{Binding Description}" Opacity="0.8" TextWrapping="Wrap" />
+								</StackPanel>
+								<StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0 0 0">
+									<TextBlock Text="{Binding TrackerValue}" FontFamily="Consolas,Menlo,monospace"
+											   FontWeight="SemiBold" HorizontalAlignment="Right"
+											   Foreground="{DynamicResource SystemAccentColor}"
+											   IsVisible="{Binding HasValue}" />
+									<TextBlock Text="Tracking…" FontSize="11" Opacity="0.7"
+											   HorizontalAlignment="Right" IsVisible="{Binding IsTracking}" />
+									<!-- Armed for this session but no attempt currently in progress -->
+									<TextBlock Text="Active" FontSize="11" Opacity="0.45"
+											   HorizontalAlignment="Right" IsVisible="{Binding IsArmedOnly}" />
+								</StackPanel>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</DockPanel>
+</Window>

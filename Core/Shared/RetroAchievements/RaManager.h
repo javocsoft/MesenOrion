@@ -20,7 +20,13 @@ enum RaUiEvent
 	RaGameFailed = 4,
 	RaLoggedOut = 5,
 	RaAchievementUnlocked = 6,
-	RaLeaderboardTracker = 7
+	RaLeaderboardTracker = 7,
+	RaGameCompleted = 8,          //mastery / game completed (message: title <0x1F> badgeUrl)
+	RaChallengeShow = 9,          //primed achievement appears (message: id <0x1F> badgeUrl)
+	RaChallengeHide = 10,         //primed achievement disappears (message: id)
+	RaProgressShow = 11,          //transient progress indicator (message: badgeUrl <0x1F> progressText)
+	RaProgressHide = 12,          //hide transient progress indicator
+	RaLeaderboardScoreboard = 13  //rank received (message: title <0x1F> score <0x1F> rank <0x1F> total)
 };
 typedef void (*RaStateChangedHandler)(int eventType, const char* message);
 
@@ -83,6 +89,7 @@ public:
 	//UI state notifications + data
 	void SetStateHandler(RaStateChangedHandler handler) { _stateHandler = handler; }
 	string GetAchievementListData();
+	string GetLeaderboardListData();
 
 	//Account
 	void Login(const string& username, const string& password);
@@ -90,6 +97,17 @@ public:
 	void Logout();
 	bool IsLoggedIn();
 	string GetLoginToken();
+	string GetUserDisplayName();
+	string GetUserAvatarUrl();
+	//"score <0x1F> softcoreScore"
+	string GetUserScore();
+
+	//Current game info (for the achievements window header)
+	string GetGameTitle();
+	string GetGameImageUrl();
+
+	//Rich presence text (empty if unavailable). Pushed to the UI/server when enabled.
+	string GetRichPresence();
 
 	//Game session
 	void LoadGame();

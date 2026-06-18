@@ -9,6 +9,26 @@
 			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuHelp">_Help</Control>
 		</Form>
+		<Form ID="RetroAchievementsWindow">
+			<Control ID="lblAccount">Account</Control>
+			<Control ID="lblOptions">Options</Control>
+			<Control ID="lblUsername">Username</Control>
+			<Control ID="lblPassword">Password</Control>
+			<Control ID="chkShow">Show</Control>
+			<Control ID="btnLogin">Log In</Control>
+			<Control ID="btnLogout">Log Out</Control>
+			<Control ID="lblProvider">retroachievements.org</Control>
+			<Control ID="chkEnabled">Enable RetroAchievements</Control>
+			<Control ID="chkHardcore">Hardcore mode</Control>
+			<Control ID="lblHardcoreDesc">Disables save states, rewind, cheats and speed changes.</Control>
+			<Control ID="lblHardcoreWarning">Hardcore approval for Mesen Orion by retroachievements.org is still pending, so unlocks won't count on the server yet. The restrictions still apply locally.</Control>
+			<Control ID="chkNotifications">Show achievement notifications</Control>
+			<Control ID="chkSound">Play a sound when an achievement is unlocked</Control>
+			<Control ID="chkChallengeIndicators">Show on-screen challenge indicators</Control>
+			<Control ID="btnViewAchievements">View Achievements...</Control>
+			<Control ID="btnViewLeaderboards">View Leaderboards...</Control>
+			<Control ID="btnClose">Close</Control>
+		</Form>
 		<Form ID="AudioConfigView">
 			<Control ID="tpgGeneral">General</Control>
 
@@ -1905,6 +1925,7 @@ E
 		<Message ID="ConfirmReloadRom">Are you sure you want to reload the ROM from the disk?</Message>
 		<Message ID="ConfirmPowerOff">Are you sure you want to power off?</Message>
 		<Message ID="ConfirmExit">Are you sure you want to exit?</Message>
+		<Message ID="RetroAchievementsHardcoreConfirm">Hardcore mode disables save states, rewind, cheats and speed changes while a game is running. Enable it now?</Message>
 
 		<Message ID="InstallHdPackWrongRom">The selected HD Pack is not compatible with the currently running game and cannot be installed.</Message>
 		<Message ID="InstallHdPackError">An error occurred while trying to install the HD Pack: &#xA;&#xA;{0}</Message>

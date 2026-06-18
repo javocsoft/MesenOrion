@@ -21,7 +21,17 @@ namespace Mesen.Interop
 		GameFailed = 4,
 		LoggedOut = 5,
 		AchievementUnlocked = 6,
-		LeaderboardTracker = 7
+		LeaderboardTracker = 7,
+		GameCompleted = 8,          //mastery (message: title \x1f badgeUrl)
+		ChallengeShow = 9,          //primed achievement appears (message: id \x1f badgeUrl)
+		ChallengeHide = 10,         //primed achievement disappears (message: id)
+		ProgressShow = 11,          //transient progress indicator (message: badgeUrl \x1f progressText)
+		ProgressHide = 12,          //hide transient progress indicator
+		LeaderboardScoreboard = 13, //rank received (message: title \x1f score \x1f rank \x1f total)
+		//Raised from the C# side (not the core) when hardcore mode is toggled, so open RA windows
+		//can refresh — toggling hardcore resets the runtime and changes which achievements/leaderboards
+		//count as unlocked/active.
+		HardcoreChanged = 100
 	}
 
 	public class RaAchievement : ReactiveObject
@@ -38,6 +48,28 @@ namespace Mesen.Interop
 		[Reactive] public Bitmap? Badge { get; set; }
 
 		public bool Unlocked => State == 2; //RC_CLIENT_ACHIEVEMENT_STATE_UNLOCKED
+
+		//Measured achievements (e.g. "5/10 enemies") report live progress text + a 0-100 percent.
+		public bool HasProgress => !Unlocked && Progress.Length > 0;
+		public bool Locked => !Unlocked;
+	}
+
+	public class RaLeaderboard
+	{
+		public uint Id { get; set; }
+		public int State { get; set; } //RC_CLIENT_LEADERBOARD_STATE_*
+		public int Format { get; set; }
+		public bool LowerIsBetter { get; set; }
+		public string Title { get; set; } = "";
+		public string Description { get; set; } = "";
+		public string TrackerValue { get; set; } = "";
+
+		//ACTIVE (1) = armed/available for this session; TRACKING (2) = an attempt is in progress right
+		//now, with a live value showing on-screen.
+		public bool IsActive => State == 1 || State == 2;
+		public bool IsTracking => State == 2;
+		public bool IsArmedOnly => State == 1; //available this session, but no attempt in progress
+		public bool HasValue => IsTracking && TrackerValue.Length > 0;
 	}
 
 	//Bridges rcheevos' server requests (issued by the C++ RaManager) to .NET's HttpClient,
@@ -246,19 +278,79 @@ namespace Mesen.Interop
 		public static void LoginWithToken(string username, string token) => RaLoginWithToken(username, token);
 		public static void Logout() => RaLogout();
 		public static bool IsLoggedIn() => RaIsLoggedIn();
-		public static void SetHardcoreEnabled(bool enabled) => RaSetHardcoreEnabled(enabled);
+		public static void SetHardcoreEnabled(bool enabled)
+		{
+			RaSetHardcoreEnabled(enabled);
+			//Notify open RA windows (achievements/leaderboards) to refresh their state. Posted to the
+			//UI thread since this can be called from a background thread during startup.
+			Action<RaEvent, string>? handler = StateChanged;
+			if(handler != null) {
+				Dispatcher.UIThread.Post(() => handler(RaEvent.HardcoreChanged, ""));
+			}
+		}
 		public static bool IsHardcoreEnabled() => RaIsHardcoreEnabled();
 		public static void PlaySound() => RaPlaySound();
 
-		public static string GetToken()
+		public static string GetToken() => ReadString(RaGetToken, 128);
+		public static string GetUserDisplayName() => ReadString(RaGetUserDisplayName, 128);
+		public static string GetUserAvatarUrl() => ReadString(RaGetUserAvatarUrl, 256);
+		public static string GetGameTitle() => ReadString(RaGetGameTitle, 512);
+		public static string GetGameImageUrl() => ReadString(RaGetGameImageUrl, 256);
+		public static string GetRichPresence() => ReadString(RaGetRichPresence, 512);
+
+		//Returns (hardcore score, softcore score).
+		public static (int Score, int Softcore) GetUserScore()
 		{
-			byte[] buffer = new byte[128];
-			RaGetToken(buffer, buffer.Length);
+			string[] f = ReadString(RaGetUserScore, 64).Split('\x1f');
+			int score = f.Length > 0 && int.TryParse(f[0], out int s) ? s : 0;
+			int soft = f.Length > 1 && int.TryParse(f[1], out int sc) ? sc : 0;
+			return (score, soft);
+		}
+
+		//Downloads the logged-in user's avatar (cached like badges). Returns null on error.
+		public static Task<Bitmap?> GetAvatarAsync(string url) => GetBadgeAsync(url);
+
+		//Downloads (and caches) an arbitrary RA image (badge/icon). Returns null on error.
+		public static Task<Bitmap?> GetImageAsync(string url) => GetBadgeAsync(url);
+
+		private static string ReadString(Action<byte[], int> fill, int size)
+		{
+			byte[] buffer = new byte[size];
+			fill(buffer, buffer.Length);
 			int len = Array.IndexOf(buffer, (byte)0);
 			if(len < 0) {
 				len = buffer.Length;
 			}
 			return Encoding.UTF8.GetString(buffer, 0, len);
+		}
+
+		public static List<RaLeaderboard> GetLeaderboardList()
+		{
+			List<RaLeaderboard> list = new List<RaLeaderboard>();
+			byte[] buffer = new byte[128 * 1024];
+			int length = RaGetLeaderboardList(buffer, buffer.Length);
+			if(length > buffer.Length - 1) {
+				buffer = new byte[length + 1];
+				length = RaGetLeaderboardList(buffer, buffer.Length);
+			}
+
+			string data = Encoding.UTF8.GetString(buffer, 0, Math.Min(length, buffer.Length - 1));
+			foreach(string line in data.Split('\n', StringSplitOptions.RemoveEmptyEntries)) {
+				string[] f = line.Split('\x1f');
+				if(f.Length < 7) {
+					continue;
+				}
+				list.Add(new RaLeaderboard() {
+					Id = uint.TryParse(f[0], out uint id) ? id : 0,
+					State = int.TryParse(f[1], out int st) ? st : 0,
+					Format = int.TryParse(f[2], out int fmt) ? fmt : 0,
+					LowerIsBetter = f[3] == "1",
+					Title = f[4],
+					Description = f[5],
+					TrackerValue = f[6]
+				});
+			}
+			return list;
 		}
 
 		[DllImport(EmuApi.DllName)] private static extern void RaSetHttpCallback(RaHttpRequestCallback callback);
@@ -270,6 +362,13 @@ namespace Mesen.Interop
 		[DllImport(EmuApi.DllName)] private static extern void RaLogout();
 		[DllImport(EmuApi.DllName)] [return: MarshalAs(UnmanagedType.I1)] private static extern bool RaIsLoggedIn();
 		[DllImport(EmuApi.DllName)] private static extern void RaGetToken(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetUserDisplayName(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetUserAvatarUrl(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetUserScore(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetGameTitle(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetGameImageUrl(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern void RaGetRichPresence(byte[] outBuffer, int maxLength);
+		[DllImport(EmuApi.DllName)] private static extern int RaGetLeaderboardList(byte[] buffer, int maxLength);
 		[DllImport(EmuApi.DllName)] private static extern void RaSetHardcoreEnabled([MarshalAs(UnmanagedType.I1)] bool enabled);
 		[DllImport(EmuApi.DllName)] private static extern void RaPlaySound();
 		[DllImport(EmuApi.DllName)] [return: MarshalAs(UnmanagedType.I1)] private static extern bool RaIsHardcoreEnabled();

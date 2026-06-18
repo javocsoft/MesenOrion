@@ -64,6 +64,23 @@ namespace Mesen.Windows
 		private AchievementToastWindow? _toastWindow;
 		private LeaderboardTrackerWindow? _trackerWindow;
 
+		// Achievement unlock toasts are shown one at a time; when several fire at once (common in
+		// RetroAchievements) they queue up and display sequentially instead of overwriting each other.
+		// Reused for achievement unlocks, mastery and leaderboard-rank notifications.
+		private class ToastInfo
+		{
+			public string Header = "";
+			public string Title = "";
+			public string Subtitle = "";
+			public Avalonia.Media.Imaging.Bitmap? Badge;
+		}
+		private Queue<ToastInfo> _toastQueue = new();
+		private bool _toastShowing;
+
+		// Active "primed"/challenge achievement badges, keyed by achievement id
+		private Dictionary<uint, RaChallengeIndicator> _challengeBadges = new();
+		private DispatcherTimer _progressToastTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(2) };
+
 		private FrameInfo _prevScreenSize;
 
 		private Size _originalSize;
@@ -311,42 +328,59 @@ namespace Mesen.Windows
 						} else {
 							_model.LeaderboardTrackerVisible = show;
 						}
+					} else if(ev == RaEvent.GameCompleted) {
+						OnGameMastered(msg);
+					} else if(ev == RaEvent.LeaderboardScoreboard) {
+						OnLeaderboardScoreboard(msg);
+					} else if(ev == RaEvent.ChallengeShow) {
+						OnChallengeShow(msg);
+					} else if(ev == RaEvent.ChallengeHide) {
+						OnChallengeHide(msg);
+					} else if(ev == RaEvent.ProgressShow) {
+						OnProgressShow(msg);
+					} else if(ev == RaEvent.ProgressHide) {
+						OnProgressHide();
 					}
+				};
+				_progressToastTimer.Tick += (s, e) => {
+					_progressToastTimer.Stop();
+					_model.ProgressOpacity = 0;
+					DispatcherTimer.RunOnce(() => _model.ProgressVisible = false, TimeSpan.FromMilliseconds(400));
 				};
 				_achievementToastTimer.Tick += (s, e) => {
 					_achievementToastTimer.Stop();
-					//Fade out, then hide the popup/window once the fade has finished
+					//Fade out, then hide the popup/window once the fade has finished and show the
+					//next queued toast (if any).
 					_model.AchievementToastOpacity = 0;
-					if(_toastWindow != null) {
-						DispatcherTimer.RunOnce(() => _toastWindow.Hide(), TimeSpan.FromMilliseconds(400));
-					} else {
-						DispatcherTimer.RunOnce(() => _model.AchievementToastVisible = false, TimeSpan.FromMilliseconds(400));
-					}
+					DispatcherTimer.RunOnce(() => {
+						if(_toastWindow != null) {
+							_toastWindow.Hide();
+						} else {
+							_model.AchievementToastVisible = false;
+						}
+						_toastShowing = false;
+						ShowNextToast();
+					}, TimeSpan.FromMilliseconds(400));
 				};
 				RetroAchievementsApi.AchievementUnlocked += (ach) => {
 					if(!ConfigManager.Config.RetroAchievements.EnableNotifications) {
 						return;
 					}
-					_model.AchievementToastBadge = ach.Badge;
-					_model.AchievementToastTitle = ach.Title;
-					_model.AchievementToastPoints = ach.Points > 0 ? (ach.Points + " points") : "";
-					_model.AchievementToastOpacity = 0;
-					if(_toastWindow != null) {
-						// Windows: show the separate Topmost window positioned over the bottom-right
-						// corner of the main window (above the native renderer HWND).
-						// Set the badge image directly (bypasses compiled-binding IImage coercion).
-						_toastWindow.SetBadge(ach.Badge);
-						PositionToastWindow();
-						if(!_toastWindow.IsVisible) {
-							_toastWindow.Show(this);
-						}
-					} else {
-						_model.AchievementToastVisible = true;
+					//Queue the unlock; if nothing is showing it'll be displayed immediately, otherwise
+					//it waits its turn so simultaneous unlocks don't overwrite one another.
+					EnqueueToast(new ToastInfo() {
+						Header = "Achievement Unlocked",
+						Title = ach.Title,
+						Subtitle = ach.Points > 0 ? (ach.Points + " points") : "",
+						Badge = ach.Badge
+					});
+				};
+				//Toggle the on-screen challenge indicators live when the setting changes (hide when
+				//turned off, restore the currently-active set when turned back on).
+				((System.ComponentModel.INotifyPropertyChanged)ConfigManager.Config.RetroAchievements).PropertyChanged += (s, e) => {
+					if(e.PropertyName == nameof(RetroAchievementsConfig.EnableChallengeIndicators)) {
+						RefreshChallengeOverlay();
 					}
-					//Fade in shortly after the popup/window opens, then auto-hide
-					DispatcherTimer.RunOnce(() => _model.AchievementToastOpacity = 1, TimeSpan.FromMilliseconds(30));
-					_achievementToastTimer.Stop();
-					_achievementToastTimer.Start();
 				};
 				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
 				if(raConfig.Enabled && raConfig.Username.Length > 0 && raConfig.Token.Length > 0) {
@@ -724,6 +758,146 @@ namespace Mesen.Windows
 			int x = (int)Math.Round(Position.X + (rightDip - toastWidth - margin) * dpiScale);
 			int y = (int)Math.Round(Position.Y + (bottomDip - toastHeight - margin) * dpiScale);
 			_toastWindow.Position = new PixelPoint(x, y);
+		}
+
+		private void EnqueueToast(ToastInfo toast)
+		{
+			if(!ConfigManager.Config.RetroAchievements.EnableNotifications) {
+				return;
+			}
+			_toastQueue.Enqueue(toast);
+			ShowNextToast();
+		}
+
+		//Displays the next queued toast (achievement/mastery/leaderboard), if one isn't showing.
+		private void ShowNextToast()
+		{
+			if(_toastShowing || _toastQueue.Count == 0) {
+				return;
+			}
+
+			ToastInfo toast = _toastQueue.Dequeue();
+			_toastShowing = true;
+
+			_model.AchievementToastBadge = toast.Badge;
+			_model.AchievementToastHasBadge = toast.Badge != null;
+			_model.AchievementToastHeader = toast.Header;
+			_model.AchievementToastTitle = toast.Title;
+			_model.AchievementToastPoints = toast.Subtitle;
+			_model.AchievementToastOpacity = 0;
+			if(_toastWindow != null) {
+				// Windows: show the separate Topmost window positioned over the bottom-right
+				// corner of the main window (above the native renderer HWND).
+				// Set the badge image directly (bypasses compiled-binding IImage coercion).
+				_toastWindow.SetBadge(toast.Badge);
+				PositionToastWindow();
+				if(!_toastWindow.IsVisible) {
+					_toastWindow.Show(this);
+				}
+			} else {
+				_model.AchievementToastVisible = true;
+			}
+			//Fade in shortly after the popup/window opens, then auto-hide via the timer tick
+			DispatcherTimer.RunOnce(() => _model.AchievementToastOpacity = 1, TimeSpan.FromMilliseconds(30));
+			_achievementToastTimer.Stop();
+			_achievementToastTimer.Start();
+		}
+
+		//----- RetroAchievements: mastery, leaderboard rank, challenge & progress indicators -----
+
+		private void OnGameMastered(string msg)
+		{
+			string[] f = msg.Split('\x1f');
+			string title = f.Length > 0 ? f[0] : "";
+			string badgeUrl = f.Length > 1 ? f[1] : "";
+			ShowToastWithBadge("Game Mastered!", title, "All achievements unlocked", badgeUrl);
+		}
+
+		private void OnLeaderboardScoreboard(string msg)
+		{
+			string[] f = msg.Split('\x1f');
+			string title = f.Length > 0 ? f[0] : "";
+			string score = f.Length > 1 ? f[1] : "";
+			string rank = f.Length > 2 ? f[2] : "";
+			string total = f.Length > 3 ? f[3] : "";
+			string subtitle = score;
+			if(rank.Length > 0) {
+				subtitle += "   #" + rank + (total.Length > 0 ? " / " + total : "");
+			}
+			EnqueueToast(new ToastInfo() { Header = "Leaderboard: " + title, Title = subtitle, Subtitle = "", Badge = null });
+		}
+
+		//Loads the badge then enqueues the toast (used by mastery, which carries an image URL)
+		private async void ShowToastWithBadge(string header, string title, string subtitle, string badgeUrl)
+		{
+			Avalonia.Media.Imaging.Bitmap? badge = badgeUrl.Length > 0 ? await RetroAchievementsApi.GetImageAsync(badgeUrl) : null;
+			EnqueueToast(new ToastInfo() { Header = header, Title = title, Subtitle = subtitle, Badge = badge });
+		}
+
+		private async void OnChallengeShow(string msg)
+		{
+			//Always track the primed achievement (even when the indicators are hidden), so re-enabling
+			//the feature can restore the currently-active set without waiting for the core to re-fire.
+			//id <0x1F> badgeUrl <0x1F> title <0x1F> description
+			string[] f = msg.Split('\x1f');
+			if(f.Length < 2 || !uint.TryParse(f[0], out uint id) || _challengeBadges.ContainsKey(id)) {
+				return;
+			}
+			RaChallengeIndicator indicator = new RaChallengeIndicator() {
+				Id = id,
+				Title = f.Length > 2 ? f[2] : "",
+				Description = f.Length > 3 ? f[3] : "",
+				Badge = await RetroAchievementsApi.GetImageAsync(f[1])
+			};
+			//Re-check after the await: the indicator may have been hidden meanwhile
+			if(indicator.Badge == null || _challengeBadges.ContainsKey(id)) {
+				return;
+			}
+			_challengeBadges[id] = indicator;
+			if(ConfigManager.Config.RetroAchievements.EnableChallengeIndicators) {
+				_model.ChallengeBadges.Add(indicator);
+				_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
+			}
+		}
+
+		private void OnChallengeHide(string msg)
+		{
+			if(uint.TryParse(msg, out uint id) && _challengeBadges.TryGetValue(id, out var indicator)) {
+				_challengeBadges.Remove(id);
+				_model.ChallengeBadges.Remove(indicator);
+				_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
+			}
+		}
+
+		//Rebuilds the visible challenge overlay from the tracked set (after the feature is toggled).
+		private void RefreshChallengeOverlay()
+		{
+			_model.ChallengeBadges.Clear();
+			if(ConfigManager.Config.RetroAchievements.EnableChallengeIndicators) {
+				foreach(RaChallengeIndicator indicator in _challengeBadges.Values) {
+					_model.ChallengeBadges.Add(indicator);
+				}
+			}
+			_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
+		}
+
+		private async void OnProgressShow(string msg)
+		{
+			string[] f = msg.Split('\x1f');
+			string badgeUrl = f.Length > 0 ? f[0] : "";
+			string progress = f.Length > 1 ? f[1] : "";
+			_model.ProgressBadge = badgeUrl.Length > 0 ? await RetroAchievementsApi.GetImageAsync(badgeUrl) : null;
+			_model.ProgressText = progress;
+			_model.ProgressVisible = true;
+			DispatcherTimer.RunOnce(() => _model.ProgressOpacity = 1, TimeSpan.FromMilliseconds(30));
+			_progressToastTimer.Stop();
+			_progressToastTimer.Start();
+		}
+
+		private void OnProgressHide()
+		{
+			_progressToastTimer.Stop();
+			_progressToastTimer.Start();
 		}
 
 		private void OnWindowStateChanged()
