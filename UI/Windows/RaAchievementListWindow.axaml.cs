@@ -23,6 +23,8 @@ namespace Mesen.Windows
 		private TextBlock _gameTitle = null!;
 		private Border _gameIconPanel = null!;
 		private Image _gameIcon = null!;
+		private Border _challengesPanel = null!;
+		private ItemsControl _challenges = null!;
 
 		private List<RaAchievement> _all = new();
 		private string _gameIconUrl = "";
@@ -41,12 +43,16 @@ namespace Mesen.Windows
 			_gameTitle = this.GetControl<TextBlock>("lblGameTitle");
 			_gameIconPanel = this.GetControl<Border>("pnlGameIcon");
 			_gameIcon = this.GetControl<Image>("imgGameIcon");
+			_challengesPanel = this.GetControl<Border>("pnlChallenges");
+			_challenges = this.GetControl<ItemsControl>("lstChallenges");
 
 			this.GetControl<Button>("btnRefresh").Click += (s, e) => Refresh();
 			_filter.SelectionChanged += (s, e) => ApplyView();
 			_sort.SelectionChanged += (s, e) => ApplyView();
 			RetroAchievementsApi.StateChanged += OnStateChanged;
+			RetroAchievementsApi.ChallengesChanged += RefreshChallenges;
 			Refresh();
+			RefreshChallenges();
 		}
 
 		private void InitializeComponent()
@@ -126,6 +132,13 @@ namespace Mesen.Windows
 			}
 		}
 
+		private void RefreshChallenges()
+		{
+			List<RaChallenge> challenges = RetroAchievementsApi.GetActiveChallenges();
+			_challenges.ItemsSource = challenges;
+			_challengesPanel.IsVisible = challenges.Count > 0;
+		}
+
 		private void OnAchievementClick(object? sender, PointerPressedEventArgs e)
 		{
 			if(sender is Control c && c.DataContext is RaAchievement ach && ach.Id > 0) {
@@ -136,6 +149,7 @@ namespace Mesen.Windows
 		protected override void OnClosed(EventArgs e)
 		{
 			RetroAchievementsApi.StateChanged -= OnStateChanged;
+			RetroAchievementsApi.ChallengesChanged -= RefreshChallenges;
 			base.OnClosed(e);
 		}
 	}

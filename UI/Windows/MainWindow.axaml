@@ -138,37 +138,6 @@
 				</Border>
 			</Popup>
 
-			<!-- RetroAchievements "primed"/challenge indicators: a row of small badges shown while the
-				  player is actively satisfying an achievement's condition (top-left). -->
-			<Popup
-				PlacementTarget="{Binding #RendererPanel}"
-				Placement="AnchorAndGravity"
-				PlacementAnchor="TopLeft"
-				PlacementGravity="BottomRight"
-				HorizontalOffset="12" VerticalOffset="12"
-				IsLightDismissEnabled="False"
-				Topmost="True"
-				IsOpen="{Binding ChallengeVisible}"
-			>
-				<ItemsControl ItemsSource="{Binding ChallengeBadges}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<StackPanel Orientation="Horizontal" Spacing="4" />
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Border Width="32" Height="32" CornerRadius="4" ClipToBounds="True"
-									Background="#E61C1C1C" BorderBrush="{DynamicResource SystemAccentColor}"
-									BorderThickness="1" BoxShadow="0 1 6 0 #80000000"
-									ToolTip.Tip="{Binding Tooltip}" ToolTip.ShowDelay="300">
-								<Image Source="{Binding Badge}" Width="32" Height="32" Stretch="Uniform" />
-							</Border>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</Popup>
-
 			<!-- RetroAchievements transient progress indicator (badge + "5/10", auto-hides, top-center). -->
 			<Popup
 				PlacementTarget="{Binding #RendererPanel}"

@@ -84,8 +84,6 @@
 
 				<CheckBox Content="{l:Translate chkNotifications}" IsChecked="{Binding EnableNotifications}" />
 				<CheckBox Content="{l:Translate chkSound}" IsChecked="{Binding EnableSound}" />
-				<CheckBox Content="{l:Translate chkChallengeIndicators}" IsChecked="{Binding EnableChallengeIndicators}"
-						  ToolTip.Tip="Show small badges on screen while you're actively working on an achievement." />
 			</StackPanel>
 		</c:GroupBox>
 

@@ -24,7 +24,6 @@
 			<Control ID="lblHardcoreWarning">Hardcore approval for Mesen Orion by retroachievements.org is still pending, so unlocks won't count on the server yet. The restrictions still apply locally.</Control>
 			<Control ID="chkNotifications">Show achievement notifications</Control>
 			<Control ID="chkSound">Play a sound when an achievement is unlocked</Control>
-			<Control ID="chkChallengeIndicators">Show on-screen challenge indicators</Control>
 			<Control ID="btnViewAchievements">View Achievements...</Control>
 			<Control ID="btnViewLeaderboards">View Leaderboards...</Control>
 			<Control ID="btnClose">Close</Control>

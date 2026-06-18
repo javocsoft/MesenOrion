@@ -77,8 +77,6 @@ namespace Mesen.Windows
 		private Queue<ToastInfo> _toastQueue = new();
 		private bool _toastShowing;
 
-		// Active "primed"/challenge achievement badges, keyed by achievement id
-		private Dictionary<uint, RaChallengeIndicator> _challengeBadges = new();
 		private DispatcherTimer _progressToastTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(2) };
 
 		private FrameInfo _prevScreenSize;
@@ -332,15 +330,13 @@ namespace Mesen.Windows
 						OnGameMastered(msg);
 					} else if(ev == RaEvent.LeaderboardScoreboard) {
 						OnLeaderboardScoreboard(msg);
-					} else if(ev == RaEvent.ChallengeShow) {
-						OnChallengeShow(msg);
-					} else if(ev == RaEvent.ChallengeHide) {
-						OnChallengeHide(msg);
 					} else if(ev == RaEvent.ProgressShow) {
 						OnProgressShow(msg);
 					} else if(ev == RaEvent.ProgressHide) {
 						OnProgressHide();
 					}
+					//Challenge ("primed") indicators are tracked centrally in RetroAchievementsApi and
+					//shown in the achievements window, not as a game overlay.
 				};
 				_progressToastTimer.Tick += (s, e) => {
 					_progressToastTimer.Stop();
@@ -374,13 +370,6 @@ namespace Mesen.Windows
 						Subtitle = ach.Points > 0 ? (ach.Points + " points") : "",
 						Badge = ach.Badge
 					});
-				};
-				//Toggle the on-screen challenge indicators live when the setting changes (hide when
-				//turned off, restore the currently-active set when turned back on).
-				((System.ComponentModel.INotifyPropertyChanged)ConfigManager.Config.RetroAchievements).PropertyChanged += (s, e) => {
-					if(e.PropertyName == nameof(RetroAchievementsConfig.EnableChallengeIndicators)) {
-						RefreshChallengeOverlay();
-					}
 				};
 				RetroAchievementsConfig raConfig = ConfigManager.Config.RetroAchievements;
 				if(raConfig.Enabled && raConfig.Username.Length > 0 && raConfig.Token.Length > 0) {
@@ -832,53 +821,6 @@ namespace Mesen.Windows
 		{
 			Avalonia.Media.Imaging.Bitmap? badge = badgeUrl.Length > 0 ? await RetroAchievementsApi.GetImageAsync(badgeUrl) : null;
 			EnqueueToast(new ToastInfo() { Header = header, Title = title, Subtitle = subtitle, Badge = badge });
-		}
-
-		private async void OnChallengeShow(string msg)
-		{
-			//Always track the primed achievement (even when the indicators are hidden), so re-enabling
-			//the feature can restore the currently-active set without waiting for the core to re-fire.
-			//id <0x1F> badgeUrl <0x1F> title <0x1F> description
-			string[] f = msg.Split('\x1f');
-			if(f.Length < 2 || !uint.TryParse(f[0], out uint id) || _challengeBadges.ContainsKey(id)) {
-				return;
-			}
-			RaChallengeIndicator indicator = new RaChallengeIndicator() {
-				Id = id,
-				Title = f.Length > 2 ? f[2] : "",
-				Description = f.Length > 3 ? f[3] : "",
-				Badge = await RetroAchievementsApi.GetImageAsync(f[1])
-			};
-			//Re-check after the await: the indicator may have been hidden meanwhile
-			if(indicator.Badge == null || _challengeBadges.ContainsKey(id)) {
-				return;
-			}
-			_challengeBadges[id] = indicator;
-			if(ConfigManager.Config.RetroAchievements.EnableChallengeIndicators) {
-				_model.ChallengeBadges.Add(indicator);
-				_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
-			}
-		}
-
-		private void OnChallengeHide(string msg)
-		{
-			if(uint.TryParse(msg, out uint id) && _challengeBadges.TryGetValue(id, out var indicator)) {
-				_challengeBadges.Remove(id);
-				_model.ChallengeBadges.Remove(indicator);
-				_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
-			}
-		}
-
-		//Rebuilds the visible challenge overlay from the tracked set (after the feature is toggled).
-		private void RefreshChallengeOverlay()
-		{
-			_model.ChallengeBadges.Clear();
-			if(ConfigManager.Config.RetroAchievements.EnableChallengeIndicators) {
-				foreach(RaChallengeIndicator indicator in _challengeBadges.Values) {
-					_model.ChallengeBadges.Add(indicator);
-				}
-			}
-			_model.ChallengeVisible = _model.ChallengeBadges.Count > 0;
 		}
 
 		private async void OnProgressShow(string msg)

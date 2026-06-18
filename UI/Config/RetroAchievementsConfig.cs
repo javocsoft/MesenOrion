@@ -16,7 +16,5 @@ namespace Mesen.Config
 		[Reactive] public bool EnableNotifications { get; set; } = true;
 		[Reactive] public bool EnableSound { get; set; } = true;
 		[Reactive] public bool EnableRichPresence { get; set; } = true;
-		//On-screen "primed" badges shown while an achievement's condition is actively being met
-		[Reactive] public bool EnableChallengeIndicators { get; set; } = true;
 	}
 }

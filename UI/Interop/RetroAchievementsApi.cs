@@ -5,6 +5,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
@@ -72,6 +73,19 @@ namespace Mesen.Interop
 		public bool HasValue => IsTracking && TrackerValue.Length > 0;
 	}
 
+	//A "primed"/challenge achievement: its condition is being actively satisfied right now.
+	public class RaChallenge : ReactiveObject
+	{
+		public uint Id { get; set; }
+		public string Title { get; set; } = "";
+		public string Description { get; set; } = "";
+		public string BadgeUrl { get; set; } = "";
+
+		[Reactive] public Bitmap? Badge { get; set; }
+
+		public string Tooltip => Description.Length > 0 ? Title + "\n" + Description : Title;
+	}
+
 	//Bridges rcheevos' server requests (issued by the C++ RaManager) to .NET's HttpClient,
 	//which handles HTTPS/TLS to retroachievements.org. Responses are returned to the core
 	//via RaDeliverHttpResponse.
@@ -94,6 +108,12 @@ namespace Mesen.Interop
 
 		//Raised (on the UI thread) when an achievement is unlocked, with its badge already loaded
 		public static event Action<RaAchievement>? AchievementUnlocked;
+
+		//Currently "primed"/active challenge achievements, tracked centrally so the achievements window
+		//can show them. Raised (on the UI thread) whenever the set changes.
+		private static readonly Dictionary<uint, RaChallenge> _challenges = new();
+		public static event Action? ChallengesChanged;
+		public static List<RaChallenge> GetActiveChallenges() => _challenges.Values.ToList();
 
 		public static void Init()
 		{
@@ -127,12 +147,65 @@ namespace Mesen.Interop
 		{
 			string message = Marshal.PtrToStringUTF8(messagePtr) ?? "";
 			RaEvent ev = (RaEvent)eventType;
-			//Marshal back to the UI thread before raising the event
-			Dispatcher.UIThread.Post(() => StateChanged?.Invoke(ev, message));
+			//Marshal back to the UI thread before updating challenge state / raising the event
+			Dispatcher.UIThread.Post(() => {
+				UpdateChallenges(ev, message);
+				StateChanged?.Invoke(ev, message);
+			});
 
 			if(ev == RaEvent.AchievementUnlocked) {
 				//message = "title \x1f points \x1f badgeUrl" - load the badge then raise the detailed event
 				_ = RaiseAchievementToastAsync(message);
+			}
+		}
+
+		//Maintains the central set of active "primed" challenge achievements (UI thread only).
+		private static void UpdateChallenges(RaEvent ev, string message)
+		{
+			switch(ev) {
+				case RaEvent.ChallengeShow: {
+					//id \x1f badgeUrl \x1f title \x1f description
+					string[] f = message.Split('\x1f');
+					if(f.Length < 1 || !uint.TryParse(f[0], out uint id) || _challenges.ContainsKey(id)) {
+						return;
+					}
+					RaChallenge ch = new RaChallenge() {
+						Id = id,
+						BadgeUrl = f.Length > 1 ? f[1] : "",
+						Title = f.Length > 2 ? f[2] : "",
+						Description = f.Length > 3 ? f[3] : ""
+					};
+					_challenges[id] = ch;
+					if(ch.BadgeUrl.Length > 0) {
+						_ = LoadChallengeBadgeAsync(ch);
+					}
+					ChallengesChanged?.Invoke();
+					break;
+				}
+
+				case RaEvent.ChallengeHide:
+					if(uint.TryParse(message, out uint hideId) && _challenges.Remove(hideId)) {
+						ChallengesChanged?.Invoke();
+					}
+					break;
+
+				case RaEvent.GameReady:
+				case RaEvent.GameFailed:
+				case RaEvent.LoggedOut:
+					//No game session / different game -> drop any lingering challenge indicators
+					if(_challenges.Count > 0) {
+						_challenges.Clear();
+						ChallengesChanged?.Invoke();
+					}
+					break;
+			}
+		}
+
+		private static async Task LoadChallengeBadgeAsync(RaChallenge ch)
+		{
+			Bitmap? bmp = await GetBadgeAsync(ch.BadgeUrl).ConfigureAwait(false);
+			if(bmp != null) {
+				Dispatcher.UIThread.Post(() => ch.Badge = bmp);
 			}
 		}
 
