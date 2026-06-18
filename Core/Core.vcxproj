@@ -754,6 +754,7 @@
     <ClInclude Include="Netplay\ServerInformationMessage.h" />
     <ClInclude Include="Shared\SettingTypes.h" />
     <ClInclude Include="Shared\ShortcutKeyHandler.h" />
+    <ClInclude Include="Shared\QuickMenu.h" />
     <ClInclude Include="SNES\Input\SnesController.h" />
     <ClInclude Include="Shared\MemoryType.h" />
     <ClInclude Include="SNES\Input\SnesMouse.h" />
@@ -1075,6 +1076,7 @@
     <ClCompile Include="SNES\Coprocessors\SDD1\Sdd1Decomp.cpp" />
     <ClCompile Include="SNES\Coprocessors\SDD1\Sdd1Mmc.cpp" />
     <ClCompile Include="Shared\ShortcutKeyHandler.cpp" />
+    <ClCompile Include="Shared\QuickMenu.cpp" />
     <ClCompile Include="SNES\Input\SnesController.cpp" />
     <ClCompile Include="Shared\Audio\SoundMixer.cpp" />
     <ClCompile Include="Shared\Audio\SoundResampler.cpp" />

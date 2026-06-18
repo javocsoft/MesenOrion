@@ -517,7 +517,13 @@
     <ClCompile Include="Shared\ShortcutKeyHandler.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="Shared\QuickMenu.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
     <ClInclude Include="Shared\ShortcutKeyHandler.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\QuickMenu.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Shared\SystemActionManager.h">

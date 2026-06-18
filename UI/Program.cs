@@ -38,8 +38,8 @@ namespace Mesen
 		}
 
 		[STAThread]
-		public static int Main(string[] args)
-		{
+			public static int Main(string[] args)
+			{
 			if(!System.Diagnostics.Debugger.IsAttached) {
 				NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), DllImportResolver);
 				NativeLibrary.SetDllImportResolver(typeof(SkiaSharp.SKGraphics).Assembly, DllImportResolver);

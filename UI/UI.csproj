@@ -571,6 +571,18 @@
     <Compile Update="Debugger\Windows\DebuggerWindow.axaml.cs">
       <DependentUpon>DebuggerWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Windows\CaptureGalleryWindow.axaml.cs">
+      <DependentUpon>CaptureGalleryWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\GameLibraryWindow.axaml.cs">
+      <DependentUpon>GameLibraryWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\GameStatisticsWindow.axaml.cs">
+      <DependentUpon>GameStatisticsWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\NamedSaveStatesWindow.axaml.cs">
+      <DependentUpon>NamedSaveStatesWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
 	  <AvaloniaResource Include="Assets\**" />
