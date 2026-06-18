@@ -4,6 +4,7 @@
 #include "Shared/SaveStateManager.h"
 #include "Shared/SystemActionManager.h"
 #include "Shared/Video/DebugHud.h"
+#include "Shared/Video/DrawStringCommand.h"
 
 QuickMenu::QuickMenu(Emulator* emu)
 {
@@ -226,6 +227,26 @@ static const int QM_WHITE = 0x00FFFFFF;   //opaque white text
 static const int QM_GRAY = 0x00C8C8C8;    //opaque light-grey text
 static const int QM_NOBG = 0xFF000000;    //transparent text background (no box)
 
+//Truncates a string with an ellipsis so it fits within maxW pixels (the HUD font is variable-width).
+static string TruncateToWidth(const string& text, int maxW)
+{
+	string full = text;
+	if((int)DrawStringCommand::MeasureString(full).X <= maxW) {
+		return text;
+	}
+	string ell = "...";
+	int ellW = (int)DrawStringCommand::MeasureString(ell).X;
+	string result;
+	for(size_t i = 0; i < text.size(); i++) {
+		string cand = result + text[i];
+		if((int)DrawStringCommand::MeasureString(cand).X + ellW > maxW) {
+			break;
+		}
+		result = cand;
+	}
+	return result + "...";
+}
+
 void QuickMenu::Draw(DebugHud* hud, uint32_t width, uint32_t height)
 {
 	if(!_open.load()) {
@@ -303,16 +324,18 @@ void QuickMenu::DrawGameList(DebugHud* hud, uint32_t width, uint32_t height)
 
 	int tx = x + pad;
 	int maxTextW = panelW - pad * 2;
-	hud->DrawString(tx, y + pad, "LOAD GAME (favorites)", QM_ACCENT, QM_NOBG, 1, -1, maxTextW, false);
+	hud->DrawString(tx, y + pad, "LOAD GAME (favorites)", QM_ACCENT, QM_NOBG, 1);
 
 	for(int row = 0; row < visible; row++) {
 		int i = start + row;
 		int iy = y + pad + (row + 1) * itemHeight + 6;
+		//Truncate long names with an ellipsis so they never wrap onto the next line
+		string name = TruncateToWidth(_games[i].Name, maxTextW);
 		if(i == sel) {
 			hud->DrawRectangle(x + 4, iy - 2, panelW - 8, itemHeight, QM_HILITE, true, 1);
-			hud->DrawString(tx, iy, _games[i].Name, QM_WHITE, QM_NOBG, 1, -1, maxTextW, false);
+			hud->DrawString(tx, iy, name, QM_WHITE, QM_NOBG, 1);
 		} else {
-			hud->DrawString(tx, iy, _games[i].Name, QM_GRAY, QM_NOBG, 1, -1, maxTextW, false);
+			hud->DrawString(tx, iy, name, QM_GRAY, QM_NOBG, 1);
 		}
 	}
 }
