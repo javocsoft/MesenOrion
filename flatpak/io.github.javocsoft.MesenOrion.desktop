@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Mesen Orion
+Comment=Multi-system emulator (NES, SNES, Game Boy, GBA, PC Engine, SMS/GG, WonderSwan)
+Exec=mesen-orion
+Icon=io.github.javocsoft.MesenOrion
+Terminal=false
+Type=Application
+Categories=Game;Emulator;

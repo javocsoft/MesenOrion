@@ -32,6 +32,7 @@ class BaseVideoFilter;
 class ShortcutKeyHandler;
 class SystemActionManager;
 class RaManager;
+class QuickMenu;
 class AudioPlayerHud;
 class GameServer;
 class GameClient;
@@ -80,6 +81,7 @@ private:
 	const unique_ptr<VideoRenderer> _videoRenderer;
 	const unique_ptr<VideoDecoder> _videoDecoder;
 	const unique_ptr<SaveStateManager> _saveStateManager;
+	unique_ptr<QuickMenu> _quickMenu;
 	const unique_ptr<CheatManager> _cheatManager;
 	const unique_ptr<MovieManager> _movieManager;
 	const unique_ptr<HistoryViewer> _historyViewer;
@@ -207,6 +209,7 @@ public:
 	GameServer* GetGameServer() { return _gameServer.get(); }
 	GameClient* GetGameClient() { return _gameClient.get(); }
 	shared_ptr<SystemActionManager> GetSystemActionManager() { return _systemActionManager; }
+	QuickMenu* GetQuickMenu();
 
 	BaseVideoFilter* GetVideoFilter(bool getDefaultFilter = false);
 	void GetScreenRotationOverride(uint32_t& rotation);

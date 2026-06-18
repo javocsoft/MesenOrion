@@ -201,3 +201,12 @@ appimagetool
 /MesenCore.so
 /bin/pgohelperlib.so
 rcheevos/src/**/*.o
+
+# Flatpak build artifacts (produced by build-flatpak.sh / flatpak-builder)
+/build-flatpak/
+/build-flatpak-repo/
+/.flatpak-builder/
+/.flatpak/
+*.flatpak
+# Temp working manifest written by build-flatpak.sh
+flatpak/.*.work.yml

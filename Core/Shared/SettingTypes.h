@@ -1042,6 +1042,12 @@ enum class EmulatorShortcut
 	ToggleGifRecorder,
 	SetRecentGameScreenshot,
 
+	ToggleQuickMenu,
+	QuickMenuUp,
+	QuickMenuDown,
+	QuickMenuSelect,
+	QuickMenuBack,
+
 	ShortcutCount,
 };
 

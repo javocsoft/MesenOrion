@@ -1,0 +1,69 @@
+# Flatpak manifest for Mesen Orion.
+#
+# This packages the *prebuilt* Linux binary (the same self-contained executable that the .deb /
+# AppImage ship), so you must build the app first with ./build-linux.sh, which produces the
+# staged install tree under ../distributable/mesen-orion/ that this manifest installs from.
+#
+# Build (from the repository root, on a machine with flatpak + flatpak-builder):
+#   flatpak install -y flathub org.freedesktop.Platform//23.08 org.freedesktop.Sdk//23.08
+#   flatpak-builder --user --install --force-clean build-flatpak flatpak/io.github.javocsoft.MesenOrion.yml
+#   flatpak run io.github.javocsoft.MesenOrion
+#
+# NOTE: the SDL2 module below needs a verified sha256 (see flatpak/README.md). On the first build
+# flatpak-builder will print the expected hash if the placeholder is wrong.
+
+app-id: io.github.javocsoft.MesenOrion
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: mesen-orion
+
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=network          # RetroAchievements, net play
+  - --device=all             # GPU acceleration + game controllers
+  - --filesystem=home        # access to ROMs, saves, screenshots, etc.
+  - --allow=bluetooth        # wireless controllers
+
+modules:
+  # The emulator core (MesenCore.so) links SDL2 dynamically, and the freedesktop runtime does not
+  # ship SDL2, so it is built here. Verify the version/sha256 before building (see README).
+  - name: sdl2
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DSDL_STATIC=OFF
+      - -DSDL_SHARED=ON
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL/releases/download/release-2.30.9/SDL2-2.30.9.tar.gz
+        # TODO: replace with the real hash (flatpak-builder prints it on a mismatch)
+        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    cleanup:
+      - /bin
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+      - /share
+
+  - name: mesen-orion
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 usr/bin/mesen-orion /app/bin/mesen-orion
+      - install -Dm644 usr/lib/mesen-orion/libSkiaSharp.so /app/lib/mesen-orion/libSkiaSharp.so
+      - install -Dm644 usr/lib/mesen-orion/libHarfBuzzSharp.so /app/lib/mesen-orion/libHarfBuzzSharp.so
+      - install -Dm644 io.github.javocsoft.MesenOrion.desktop /app/share/applications/io.github.javocsoft.MesenOrion.desktop
+      - install -Dm644 usr/share/metainfo/io.github.javocsoft.MesenOrion.metainfo.xml /app/share/metainfo/io.github.javocsoft.MesenOrion.metainfo.xml
+      # The .deb's metainfo points at "mesen-orion.desktop"; in the Flatpak the desktop file is
+      # renamed to the app-id, so point the launchable at it (needed by appstreamcli compose).
+      - sed -i 's/>mesen-orion.desktop</>io.github.javocsoft.MesenOrion.desktop</' /app/share/metainfo/io.github.javocsoft.MesenOrion.metainfo.xml
+      - install -Dm644 usr/share/icons/hicolor/128x128/apps/mesen-orion.png /app/share/icons/hicolor/128x128/apps/io.github.javocsoft.MesenOrion.png
+      - cp -r usr/share/mesen-orion /app/share/mesen-orion
+    sources:
+      - type: dir
+        path: ../distributable/mesen-orion
+      - type: file
+        path: io.github.javocsoft.MesenOrion.desktop

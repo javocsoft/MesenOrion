@@ -22,6 +22,7 @@
 #include "Shared/BatteryManager.h"
 #include "Shared/CheatManager.h"
 #include "Shared/SystemActionManager.h"
+#include "Shared/QuickMenu.h"
 #include "Shared/TimingInfo.h"
 #include "Shared/HistoryViewer.h"
 #include "Netplay/GameServer.h"
@@ -977,6 +978,14 @@ DeserializeResult Emulator::Deserialize(istream& in, uint32_t fileFormatVersion,
 		_notificationManager->SendNotification(ConsoleNotificationType::StateLoaded);
 	}
 	return DeserializeResult::Success;
+}
+
+QuickMenu* Emulator::GetQuickMenu()
+{
+	if(!_quickMenu) {
+		_quickMenu.reset(new QuickMenu(this));
+	}
+	return _quickMenu.get();
 }
 
 BaseVideoFilter* Emulator::GetVideoFilter(bool getDefaultFilter)

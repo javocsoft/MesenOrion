@@ -7,6 +7,7 @@
 #include "Shared/BaseControlManager.h"
 #include "Shared/Video/DrawStringCommand.h"
 #include "Shared/Interfaces/IMessageManager.h"
+#include "Shared/QuickMenu.h"
 
 SystemHud::SystemHud(Emulator* emu)
 {
@@ -21,6 +22,9 @@ SystemHud::~SystemHud()
 
 void SystemHud::Draw(DebugHud* hud, uint32_t width, uint32_t height) const
 {
+	//On-screen quick menu (drawn over everything; no-op when closed)
+	_emu->GetQuickMenu()->Draw(hud, width, height);
+
 	DrawCounters(hud, width);
 	DrawMessages(hud, width, height);
 

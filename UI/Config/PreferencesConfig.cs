@@ -129,6 +129,13 @@ namespace Mesen.Config
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.TakeScreenshot, KeyCombination = new KeyCombination() { Key1 = shift, Key2 = InputApi.GetKeyCode("F12") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.SetRecentGameScreenshot, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = shift, Key3 = InputApi.GetKeyCode("F12") } });
 
+			//On-screen quick menu (also bindable to a gamepad in Preferences > Shortcut Keys)
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ToggleQuickMenu, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("F1") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.QuickMenuUp, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Up Arrow") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.QuickMenuDown, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Down Arrow") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.QuickMenuSelect, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Enter") } });
+			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.QuickMenuBack, KeyCombination = new KeyCombination() { Key1 = InputApi.GetKeyCode("Backspace") } });
+
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.Reset, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = InputApi.GetKeyCode("R") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.PowerCycle, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = InputApi.GetKeyCode("T") } });
 			AddShortcut(new ShortcutKeyInfo { Shortcut = EmulatorShortcut.ReloadRom, KeyCombination = new KeyCombination() { Key1 = ctrl, Key2 = shift, Key3 = InputApi.GetKeyCode("R") } });

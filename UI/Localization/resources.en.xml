@@ -2071,6 +2071,11 @@ E
 			<Value ID="ApplyPicturePreset">Apply Picture Preset (cycle)</Value>
 			<Value ID="ToggleGifRecorder">Toggle GIF Recorder</Value>
 			<Value ID="SetRecentGameScreenshot">Set Recent Game Screenshot</Value>
+			<Value ID="ToggleQuickMenu">Quick Menu - Open/Close</Value>
+			<Value ID="QuickMenuUp">Quick Menu - Up</Value>
+			<Value ID="QuickMenuDown">Quick Menu - Down</Value>
+			<Value ID="QuickMenuSelect">Quick Menu - Select</Value>
+			<Value ID="QuickMenuBack">Quick Menu - Back</Value>
 
 			<Value ID="FdsSwitchDiskSide">FDS - Switch Disk Side</Value>
 			<Value ID="FdsEjectDisk">FDS - Eject Disk</Value>

@@ -43,6 +43,13 @@
 			<Value ID="Light">Claro</Value>
 			<Value ID="Dark">Oscuro</Value>
 		</Enum>
+		<Enum ID="EmulatorShortcut">
+			<Value ID="ToggleQuickMenu">Menú rápido - Abrir/Cerrar</Value>
+			<Value ID="QuickMenuUp">Menú rápido - Arriba</Value>
+			<Value ID="QuickMenuDown">Menú rápido - Abajo</Value>
+			<Value ID="QuickMenuSelect">Menú rápido - Seleccionar</Value>
+			<Value ID="QuickMenuBack">Menú rápido - Atrás</Value>
+		</Enum>
 		<Enum ID="ActionType">
 			<Value ID="Open">Abrir</Value>
 			<Value ID="GameLibrary">Biblioteca de juegos...</Value>

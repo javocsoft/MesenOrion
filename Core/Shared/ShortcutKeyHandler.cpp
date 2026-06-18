@@ -11,6 +11,7 @@
 #include "Shared/Video/ShaderManager.h"
 #include "Shared/RetroAchievements/RaManager.h"
 #include "Shared/SaveStateManager.h"
+#include "Shared/QuickMenu.h"
 #include "Shared/Movies/MovieManager.h"
 #include "Shared/BaseControlManager.h"
 #include "Shared/Interfaces/IBarcodeReader.h"
@@ -47,7 +48,7 @@ bool ShortcutKeyHandler::IsKeyPressed(EmulatorShortcut shortcut)
 	//When running while a keyboard is plugged into the console, disable all keyboard
 	//shortcut keys. The pause shortcut is always enabled, allowing it to be used to
 	//pause normally, which allows other shortcuts to be used (while paused)
-	bool blockKeyboardKeys = shortcut != EmulatorShortcut::Pause && _isKeyboardConnected && !_isPaused;
+	bool blockKeyboardKeys = shortcut != EmulatorShortcut::Pause && shortcut != EmulatorShortcut::ToggleQuickMenu && _isKeyboardConnected && !_isPaused;
 
 	KeyCombination keyComb = _emu->GetSettings()->GetShortcutKey(shortcut, _keySetIndex);
 	vector<KeyCombination> supersets = _emu->GetSettings()->GetShortcutSupersets(shortcut, _keySetIndex);
@@ -178,6 +179,13 @@ bool ShortcutKeyHandler::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t s
 		case EmulatorShortcut::ExecPowerOff:
 			return isRunning && !isNetplayClient;
 
+		case EmulatorShortcut::ToggleQuickMenu:
+		case EmulatorShortcut::QuickMenuUp:
+		case EmulatorShortcut::QuickMenuDown:
+		case EmulatorShortcut::QuickMenuSelect:
+		case EmulatorShortcut::QuickMenuBack:
+			return isRunning;
+
 		case EmulatorShortcut::TakeScreenshot:
 		case EmulatorShortcut::SetRecentGameScreenshot:
 			return isRunning;
@@ -275,6 +283,12 @@ void ShortcutKeyHandler::ProcessShortcutPressed(EmulatorShortcut shortcut, uint3
 		case EmulatorShortcut::ExecPowerCycle: _emu->GetSystemActionManager()->PowerCycle(); break;
 		case EmulatorShortcut::ExecReloadRom: _emu->ReloadRom(false); break;
 		case EmulatorShortcut::ExecPowerOff: _emu->Stop(true); break;
+
+		case EmulatorShortcut::ToggleQuickMenu: _emu->GetQuickMenu()->Toggle(); break;
+		case EmulatorShortcut::QuickMenuUp: _emu->GetQuickMenu()->MoveUp(); break;
+		case EmulatorShortcut::QuickMenuDown: _emu->GetQuickMenu()->MoveDown(); break;
+		case EmulatorShortcut::QuickMenuSelect: _emu->GetQuickMenu()->Select(); break;
+		case EmulatorShortcut::QuickMenuBack: _emu->GetQuickMenu()->Close(); break;
 
 		case EmulatorShortcut::FastForward: settings->SetFlag(EmulationFlags::Turbo); break;
 		case EmulatorShortcut::ToggleFastForward:

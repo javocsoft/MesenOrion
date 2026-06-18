@@ -149,6 +149,12 @@ namespace Mesen.Config.Shortcuts
 		ToggleGifRecorder,
 		SetRecentGameScreenshot,
 
+		ToggleQuickMenu,
+		QuickMenuUp,
+		QuickMenuDown,
+		QuickMenuSelect,
+		QuickMenuBack,
+
 		LastValidValue,
 		[Obsolete] LoadRandomGame,
 	}
