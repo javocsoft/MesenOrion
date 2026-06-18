@@ -39,6 +39,7 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(GameConfig))]
 [JsonSerializable(typeof(DebugWorkspace))]
 [JsonSerializable(typeof(UpdateInfo))]
+[JsonSerializable(typeof(Dictionary<string, GameStat>))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,

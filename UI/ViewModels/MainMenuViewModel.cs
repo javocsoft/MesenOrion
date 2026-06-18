@@ -899,6 +899,20 @@ namespace Mesen.ViewModels
 						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new RetroAchievementsWindow());
 					}
 				},
+
+				new MainMenuAction() {
+					ActionType = ActionType.CaptureGallery,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(null, () => new CaptureGalleryWindow());
+					}
+				},
+
+				new MainMenuAction() {
+					ActionType = ActionType.GameStatistics,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(null, () => new GameStatisticsWindow());
+					}
+				},
 			};
 		}
 

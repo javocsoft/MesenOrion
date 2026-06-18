@@ -96,6 +96,22 @@ namespace Mesen.Utilities
 			}
 		}
 
+		//Opens a local file or folder in the OS default handler. Unlike OpenBrowser, the path is passed
+		//as a single argument (via ArgumentList), so paths with spaces/parentheses work correctly.
+		public static void OpenFileOrFolder(string path)
+		{
+			try {
+				ProcessStartInfo psi;
+				if(OperatingSystem.IsWindows()) {
+					psi = new ProcessStartInfo { FileName = path, UseShellExecute = true };
+				} else {
+					psi = new ProcessStartInfo { FileName = OperatingSystem.IsMacOS() ? "open" : "xdg-open", UseShellExecute = false };
+					psi.ArgumentList.Add(path);
+				}
+				using Process? process = Process.Start(psi);
+			} catch { }
+		}
+
 		private static void ShellExec(string cmd, bool waitForExit = true)
 		{
 			var escapedArgs = Regex.Replace(cmd, "(?=[`~!#&*()|;'<>])", "\\").Replace("\"", "\\\\\\\"");

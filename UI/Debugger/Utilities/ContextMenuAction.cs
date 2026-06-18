@@ -643,6 +643,11 @@ namespace Mesen.Debugger.Utilities
 		[IconFile("Coins")]
 		RetroAchievements,
 
+		[IconFile("Camera")]
+		CaptureGallery,
+		[IconFile("HistoryViewer")]
+		GameStatistics,
+
 		[IconFile("Help")]
 		OnlineHelp,
 

@@ -205,6 +205,7 @@ namespace Mesen.Windows
 			}
 
 			_timerBackgroundFlag.Stop();
+			PlaytimeTracker.OnGameStop();
 			EmuApi.Stop();
 			_listener?.Dispose();
 			EmuApi.Release();
@@ -448,6 +449,7 @@ namespace Mesen.Windows
 				case ConsoleNotificationType.GameLoaded:
 					CheatCodes.ApplyCheats();
 					RomInfo romInfo = EmuApi.GetRomInfo();
+					PlaytimeTracker.OnGameStart(romInfo.GetRomName());
 					
 					Dispatcher.UIThread.Post(() => {
 						bool wasAudioFile = _model.AudioPlayer != null;
@@ -522,6 +524,7 @@ namespace Mesen.Windows
 					break;
 
 				case ConsoleNotificationType.EmulationStopped:
+					PlaytimeTracker.OnGameStop();
 					Dispatcher.UIThread.Post(() => {
 						_model.RomInfo = new RomInfo();
 						_model.RecentGames.Init(GameScreenMode.RecentGames);
