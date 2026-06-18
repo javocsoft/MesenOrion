@@ -91,6 +91,7 @@
 			<Value ID="RetroAchievements">RetroAchievements...</Value>
 			<Value ID="CaptureGallery">Galería de capturas...</Value>
 			<Value ID="GameStatistics">Estadísticas de juego...</Value>
+			<Value ID="NamedSaveStates">Estados guardados con nombre...</Value>
 			<Value ID="Preferences">Preferencias</Value>
 			<Value ID="Audio">Audio</Value>
 			<Value ID="Video">Vídeo</Value>
@@ -139,5 +140,6 @@
 		<Message ID="SlotNumber">Ranura #{0}</Message>
 		<Message ID="ConfirmExit">¿Seguro que quieres salir?</Message>
 		<Message ID="RetroAchievementsHardcoreConfirm">El modo hardcore desactiva el guardado de estados, el rebobinado, los trucos y los cambios de velocidad mientras hay un juego en marcha. ¿Activarlo ahora?</Message>
+		<Message ID="DeleteNamedStateConfirm">¿Eliminar el estado guardado "{0}"?</Message>
 	</Messages>
 </Resources>

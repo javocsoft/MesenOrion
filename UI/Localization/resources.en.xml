@@ -1926,6 +1926,7 @@ E
 		<Message ID="ConfirmPowerOff">Are you sure you want to power off?</Message>
 		<Message ID="ConfirmExit">Are you sure you want to exit?</Message>
 		<Message ID="RetroAchievementsHardcoreConfirm">Hardcore mode disables save states, rewind, cheats and speed changes while a game is running. Enable it now?</Message>
+		<Message ID="DeleteNamedStateConfirm">Delete the saved state "{0}"?</Message>
 
 		<Message ID="InstallHdPackWrongRom">The selected HD Pack is not compatible with the currently running game and cannot be installed.</Message>
 		<Message ID="InstallHdPackError">An error occurred while trying to install the HD Pack: &#xA;&#xA;{0}</Message>
@@ -3631,6 +3632,7 @@ E
 			<Value ID="CaptureGallery">Capture Gallery...</Value>
 			<Value ID="GameStatistics">Game Statistics...</Value>
 			<Value ID="GameLibrary">Game Library...</Value>
+			<Value ID="NamedSaveStates">Named Save States...</Value>
 
 			<Value ID="OnlineHelp">Online Help</Value>
 			<Value ID="PrivacyPolicy">Privacy Policy</Value>

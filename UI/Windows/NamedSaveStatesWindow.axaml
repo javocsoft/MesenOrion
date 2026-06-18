@@ -1,0 +1,57 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:w="using:Mesen.Windows"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mesen.Windows.NamedSaveStatesWindow"
+	Width="540" Height="600"
+	Title="Named Save States"
+	Name="root"
+>
+	<DockPanel Margin="12">
+		<StackPanel DockPanel.Dock="Top" Spacing="1" Margin="0 0 0 8">
+			<TextBlock Text="Named Save States" FontSize="16" FontWeight="Bold" />
+			<TextBlock Name="lblGame" Opacity="0.7" FontSize="12" />
+		</StackPanel>
+
+		<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="0 0 0 10">
+			<TextBox Name="txtName" Grid.Column="0" Watermark="Name for new state…" />
+			<Button Name="btnSave" Grid.Column="1" Content="Save State" Margin="6 0 0 0" />
+			<Button Name="btnRefresh" Grid.Column="2" Content="Refresh" Margin="6 0 0 0" />
+		</Grid>
+
+		<TextBlock Name="lblEmpty" TextWrapping="Wrap" Opacity="0.6" IsVisible="False"
+				   Text="No named states yet. Type a name and click Save State." />
+
+		<ScrollViewer>
+			<ItemsControl Name="lstStates">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="w:NamedState">
+						<Border Width="160" Margin="0 0 8 8" Padding="6" CornerRadius="6"
+								Background="{DynamicResource ThemeControlLowBrush}"
+								BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1"
+								Cursor="Hand" DoubleTapped="OnStateDoubleTapped"
+								ContextRequested="OnStateContextRequested"
+								ToolTip.Tip="{Binding Name}">
+							<StackPanel Spacing="4">
+								<Border Height="108" CornerRadius="4" ClipToBounds="True" Background="#101010">
+									<Image Source="{Binding Thumb}" Stretch="Uniform" />
+								</Border>
+								<TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+										   TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+								<TextBlock Text="{Binding DateText}" FontSize="10" Opacity="0.6" />
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</DockPanel>
+</Window>

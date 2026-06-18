@@ -143,6 +143,14 @@ namespace Mesen.ViewModels
 					}
 				},
 
+				new MainMenuAction() {
+					ActionType = ActionType.NamedSaveStates,
+					IsEnabled = () => IsGameRunning,
+					OnClick = () => {
+						ApplicationHelper.GetOrCreateUniqueWindow(wnd, () => new NamedSaveStatesWindow());
+					}
+				},
+
 				new MainMenuAction(EmulatorShortcut.LoadLastSession) {
 					ActionType = ActionType.LoadLastSession,
 					IsEnabled = () => EmuApi.IsShortcutAllowed(EmulatorShortcut.LoadLastSession, 0) && File.Exists(Path.Combine(ConfigManager.RecentGamesFolder, MainWindow.RomInfo.GetRomName() + ".rgd"))

@@ -649,6 +649,8 @@ namespace Mesen.Debugger.Utilities
 		GameStatistics,
 		[IconFile("Folder")]
 		GameLibrary,
+		[IconFile("SplitView")]
+		NamedSaveStates,
 
 		[IconFile("Help")]
 		OnlineHelp,
